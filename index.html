@@ -133,7 +133,11 @@ select:disabled{opacity:.45}
 .item p{margin:0}
 .item .fine{margin-top:6px}
 .relflow{margin-top:18px;padding-top:14px;border-top:1px solid var(--line)}
-.relflow .checks li::before{content:'❤';color:var(--accent)}
+.watch{list-style:none;margin:8px 0 0;padding:0}
+.watch li{padding:10px 0;border-bottom:1px solid var(--line,#efe9e0)}
+.watch li:last-child{border-bottom:0}
+.watch .key{display:block;font-size:14px;font-weight:700;margin-bottom:2px}
+.watch small{font-size:12px;color:var(--sub)}
 .basis .gt{font-weight:500;border-bottom:1px dotted var(--line);cursor:help}
 .yb{display:flex;align-items:flex-end;height:110px;border-bottom:1px solid var(--line);margin:8px 0 4px}
 .ybc{flex:1;height:100%;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;padding:0 1px}
@@ -291,7 +295,7 @@ function rawScore(chart,p){
   const g0=tenGod(day,p.s),g1=tenGod(day,HIDDEN[p.b][HIDDEN[p.b].length-1][0]);
   return {out,tags,gods:[g0,g1]}
 }
-let CAL={"money":[2.62,3.739],"achieve":[8.148,2.804],"relation":[4.305,2.512],"change":[7.645,4.148],"condition":[0.615,2.445]};
+let CAL={"money":[2.609,3.732],"achieve":[8.006,3.079],"relation":[4.395,2.401],"change":[7.274,3.89],"condition":[0.594,2.545]};
 const normK=(k,v)=>Math.round(Math.max(10,Math.min(95,50+(v-CAL[k][0])/CAL[k][1]*15)));
 const norm=v=>Math.round(Math.max(10,Math.min(95,50+v*2.2)));
 function mix(parts){const o={money:0,achieve:0,relation:0,change:0,condition:0};parts.forEach(([r,w])=>DOM.forEach(k=>o[k]+=r.out[k]*w));if(mix.raw)mix.raw.push(o);const sc={};DOM.forEach(k=>sc[k]=normK(k,o[k]));return sc}
@@ -500,7 +504,11 @@ function makeData(){
   tps.sort((a,b)=>a.year-b.year);
   const months=next12Months(chart,now);
   const mAvg={};DOM.forEach(k=>mAvg[k]=months.reduce((a,m)=>a+m.scores[k],0)/months.length);
-  months.forEach(m=>{const dev=DOM.map(k=>[k,m.scores[k]-mAvg[k]]).sort((a,b)=>Math.abs(b[1])-Math.abs(a[1]));m.top=dev[0][0];m.topDev=Math.round(dev[0][1]);m.second=dev[1][0];m.avg=mAvg});
+  // 대표 영역 = 내 12개월 평균보다 '가장 많이 높은' 영역.
+  // 절대 점수로 고르면 원국이 강한 한 영역이 12칸을 독식하고,
+  // 편차 절댓값으로 고르면 가장 낮은 영역이 대표가 된다. 양의 편차 최대가 둘 다 피한다.
+  months.forEach(m=>{const rank=DOM.slice().sort((a,b)=>(m.scores[b]-mAvg[b])-(m.scores[a]-mAvg[a]));
+    m.top=rank[0];m.second=rank[1];m.topDev=Math.round(m.scores[m.top]-mAvg[m.top]);m.avg=mAvg});
   const recent=years.filter(t=>t.year>=cy-5&&t.year<=cy+10);
   const bigMoney=years.filter(t=>t.year>=cy&&t.year<=cy+12).sort((a,b)=>b.scores.money-a.scores.money).slice(0,3).sort((a,b)=>a.year-b.year);
   const cautions=years.filter(t=>t.year>=cy&&t.year<=cy+10).map(t=>({t,risk:(100-t.scores.condition)+(t.scores.change>70?t.scores.change-70:0)})).sort((a,b)=>b.risk-a.risk).slice(0,2).map(x=>x.t).sort((a,b)=>a.year-b.year);
@@ -1021,17 +1029,38 @@ function card5(){const B=S.ai.M,M=S.data.months;
  let h=`<p class="fine" style="margin-top:0">운세 점수는 <b>0~100점</b>이고, 높을수록 그 영역의 운이 좋은 편이에요. (절기 기준 월)</p><div class="mg">${M.map((m,k)=>{const v=m.scores[m.top];const x=ok('M')?(B.months||[]).find(q=>+q.i===k)||{}:{};
   const kw=x.keyword||'';
   return `<button class="mt" style="--c:${DOMC[m.top]}" onclick="openM(${k})"><span>${m.label}</span>${kw?`<b>${esc(kw)}</b>`:''}<small>${DOMK[m.top]} ${m.scores[m.top]} · ${LEVEL(m.scores[m.top])}</small></button>`}).join('')}</div><div id="mdet"></div>`;
- h+=relFlow();
+ h+=watchMonths();
  return ok('M')?h:h+wait('M')}
-function relFlow(){const M=S.data.months,B=S.ai.M;
- const rows=M.map((m,k)=>({k,m,dev:Math.round(m.scores.relation-m.avg.relation)}))
-   .sort((a,b)=>Math.abs(b.dev)-Math.abs(a.dev)).slice(0,4).sort((a,b)=>a.k-b.k);
- const say=r=>{const x=ok('M')?((B.months||[]).find(q=>+q.i===r.k)||{}):{};
-   if(x.keyword&&Math.abs(r.dev)>=4)return x.keyword;
-   return r.dev>=0?'사람이 모이고 연락이 늘어나는 달':'대화를 천천히 고르게 되는 달'};
- return `<div class="relflow"><h4>❤️ 관계가 달라지는 달</h4>
-  <p class="fine">앞으로 12개월 중 관계운이 평소와 가장 크게 달라지는 네 달이에요.</p>
-  <ul class="checks">${rows.map(r=>`<li><b>${r.m.label}</b> · ${esc(say(r))} <small style="color:var(--sub)">관계 ${r.m.scores.relation}${r.dev>=0?' ↑':' ↓'}</small></li>`).join('')}</ul></div>`}
+// 눈여겨볼 달 — 제목은 코드가 점수 구간에 맞춰 쓴다(문구가 점수보다 세지 않게)
+const MTITLE={
+ money:   ['지출 속도를 조절하는 달','돈의 흐름을 이어가는 달','돈에 힘을 실어볼 수 있는 달','돈이 크게 움직이는 달'],
+ achieve: ['하던 일을 지켜가는 달','일의 흐름을 이어가는 달','목표에 힘을 실어보는 달','성과가 크게 움직이는 달'],
+ relation:['대화를 천천히 고르는 달','사람과의 흐름을 이어가는 달','사람에게 먼저 다가가보는 달','사람이 크게 모이는 달'],
+ change:  ['지금 방향을 지켜가는 달','변화를 살펴보는 달','새로운 방향을 움직여보는 달','큰 변화가 나타나는 달'],
+ condition:['속도를 조절하는 달','컨디션을 살피는 달','에너지를 잘 활용하는 달','에너지가 크게 오르는 달']};
+const mTitle=(d,v)=>MTITLE[d][v<40?0:v<60?1:v<80?2:3];
+// 왜 눈여겨보는지 — 전환점만 따로, 나머지는 점수가 정한다
+const whyText=(why,v)=>why==='turn'?'전환점으로 볼 달':v>=60?'적극적으로 쓸 달':v<50?'조절할 달':'흐름을 지켜볼 달';
+function watchMonths(){const M=S.data.months;
+ const rows=M.map((m,k)=>({k,m,v:m.scores[m.top]}));
+ const byHigh=rows.slice().sort((a,b)=>b.v-a.v);
+ const byLow =rows.slice().sort((a,b)=>a.v-b.v);
+ const pick=[],used=new Set(),domCount={};
+ const add=(r,why,cap=2)=>{if(!r||pick.length>=4||used.has(r.k))return;
+   const d=r.m.top; if((domCount[d]||0)>=cap)return;   // 같은 영역은 최대 2개까지
+   used.add(r.k);domCount[d]=(domCount[d]||0)+1;pick.push({...r,why})};
+ add(byHigh[0],'high');                                  // 가장 높은 달
+ const turn=rows.slice(1).map(r=>({...r,gap:Math.abs(r.v-rows[r.k-1].v)})).sort((a,b)=>b.gap-a.gap)[0];
+ add(turn,'turn');                                       // 앞달과 차이가 가장 큰 달
+ if(byLow[0]&&byLow[0].v<50)add(byLow[0],'low');          // 실제로 낮을 때만 '조절할 달'
+ for(const r of byHigh){if(pick.length>=4)break;if(!domCount[r.m.top])add(r,'high')}  // 아직 안 나온 영역 먼저
+ for(const r of byHigh){if(pick.length>=4)break;add(r,'high')}
+ for(const r of byLow){if(pick.length>=4)break;add(r,'low')}
+ // 한 영역만 높은 사주는 위 규칙으로 4개를 못 채우므로 제한을 푼다
+ for(const r of byHigh){if(pick.length>=4)break;add(r,'high',99)}
+ return `<div class="relflow"><h4>👀 눈여겨볼 달</h4>
+  <p class="fine">앞으로 12개월 중 특징이 뚜렷한 네 달이에요.</p>
+  <ul class="watch">${pick.sort((a,b)=>a.k-b.k).map(r=>`<li><b class="key">${r.m.label} · ${mTitle(r.m.top,r.v)}</b><small>${DOMK[r.m.top]} ${r.v} · ${LEVEL(r.v)} — ${whyText(r.why,r.v)}</small></li>`).join('')}</ul></div>`}
 window.openM=k=>{const m=S.data.months[k];const x=ok('M')?((S.ai.M.months||[]).find(q=>+q.i===k)||{}):{};
  $('mdet').innerHTML=`<div class="mdet"><h4 style="margin-top:0">${m.year}년 ${m.label} · ${esc(x.keyword||m.pillar)}</h4><p class="fine">괄호 안은 내 12개월 평균과의 차이예요.</p>
  <div class="dom">${Object.keys(DOMK).map(d=>`<div><span>${DOMK[d]}</span><div class="bar"><i style="width:${m.scores[d]}%;background:${DOMC[d]}"></i></div><small>${m.scores[d]} (${(v=>v>=0?'+'+v:v)(Math.round(m.scores[d]-m.avg[d]))})</small></div>`).join('')}</div>
