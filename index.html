@@ -34,6 +34,23 @@ p{margin:0 0 6px} small{color:var(--sub)}
 .bandhelp>summary::-webkit-details-marker{display:none}
 .bandhelp[open]>summary{margin-bottom:6px}
 .bandhelp .fine{margin:4px 0}
+/* 오늘의 운 타이포 4단계 — 섹션 제목 / 핵심 1줄 / 본문 / 라벨·보조 */
+.todaytop .hint{display:block;margin-top:6px;font-size:12px;font-weight:400;color:var(--sub);line-height:1.6}
+.todaytop .lead{margin:0;font-size:15px;font-weight:700;line-height:1.6}
+.sec{margin:22px 0 8px;font-size:12px;letter-spacing:.02em;color:var(--sub);font-weight:700}
+.weekbox{margin:20px 0 8px;border:1px solid var(--line,#e5e0d8);border-radius:12px;padding:10px 12px}
+.weekbox>summary{cursor:pointer;list-style:none;font-size:12px;letter-spacing:.02em;color:var(--sub);font-weight:700}
+.weekbox>summary::-webkit-details-marker{display:none}
+.weekbox>summary::after{content:' ▾'}
+.weekbox[open]>summary::after{content:' ▴'}
+.tri{border:1px solid var(--line,#e5e0d8);border-radius:12px;padding:12px 14px;margin-top:6px}
+.tri>p{margin:0 0 10px;font-size:14px;font-weight:400;line-height:1.65}
+.tri>p:last-child{margin-bottom:0}
+.tri .lab{display:block;font-size:11px;font-weight:600;color:var(--sub);margin-bottom:3px;letter-spacing:.02em}
+.tri .key{display:block;font-size:15px;font-weight:700;line-height:1.5;margin-bottom:3px}
+.tri .q{font-weight:600;font-size:14px}
+.tri.warn{border-color:#d9a441;background:rgba(217,164,65,.06)}
+.tri>p+p{padding-top:8px;border-top:1px solid var(--line,#efe9e0)}
 .intro .fine{font-size:13px;line-height:1.6;color:var(--sub);max-width:30em;margin:6px auto 0} .err{color:var(--accent);min-height:1.4em;font-size:14px}
 .stepno{font-size:12px;color:var(--sub);letter-spacing:.06em;margin:0}
 button{font:inherit;color:var(--ink);background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 14px;cursor:pointer}
@@ -67,9 +84,10 @@ select:disabled{opacity:.45}
 .scale{display:flex;flex-direction:column;gap:8px;margin:16px 0}
 .scale>button{text-align:left;padding:16px}.scale>button b{display:inline-grid;place-items:center;width:24px;height:24px;border-radius:50%;background:var(--chip);margin-right:10px;font-size:12px}
 .scale .mid{display:grid;grid-template-columns:1fr 1fr;gap:8px}.scale .mid button{font-size:13px;color:var(--sub);padding:10px}
-.axes{display:flex;flex-direction:column;gap:10px;margin:14px 0}.ax{display:grid;grid-template-columns:64px 1fr;gap:4px 10px;align-items:center;font-size:14px}
+.axes{display:flex;flex-direction:column;gap:10px;margin:14px 0}.ax{display:grid;grid-template-columns:64px minmax(0,1fr);gap:4px 10px;align-items:center;font-size:14px}.ax .bar{width:100%}
 .ax em{grid-column:2;font-style:normal;font-size:12px;color:var(--accent)} .axes.sm .ax{grid-template-columns:52px 1fr;font-size:12px}.axes.sm{gap:4px;margin:6px 0}
-.bar{height:8px;background:var(--chip);border-radius:4px;overflow:hidden}.bar i{display:block;height:100%;background:var(--ink)}
+.bar{position:relative;height:10px;background:var(--chip);border-radius:5px;overflow:hidden;min-width:0}
+.bar i{position:absolute;left:0;top:0;bottom:0;display:block;background:var(--ink);border-radius:5px}
 .hero{display:grid;grid-template-columns:86px minmax(0,1fr);gap:12px;align-items:center;margin-bottom:8px}
 .hero .char{width:86px;height:auto;margin-top:0}.hero h2{margin:1px 0 4px;font-size:clamp(18px,5vw,22px);line-height:1.25}.hero h2 .nm{display:block}
 .hero .brand{letter-spacing:.02em;font-size:12px}
@@ -88,8 +106,11 @@ select:disabled{opacity:.45}
 .col .tags{margin-bottom:5px}.col .tags span{font-size:11.5px;padding:1px 7px}
 .tags{display:flex;flex-wrap:wrap;gap:5px;margin:0 0 8px}.tags span{font-size:12px;background:var(--chip);border-radius:999px;padding:2px 9px}
 .tags.fields span{font-size:14px;padding:4px 12px;background:var(--paper);border:1px solid var(--line)}
-.combo{margin:12px 0 4px;padding:10px 14px;border-left:3px solid var(--to);background:var(--paper);border-radius:0 10px 10px 0}.combo p{margin:0;font-weight:500}
-.els{display:flex;flex-direction:column;gap:4px}.el{display:grid;grid-template-columns:28px 1fr 36px;gap:8px;align-items:center;font-size:13px}.el span{font-weight:600}
+.combo{margin:12px 0 4px;padding:10px 14px;border-left:3px solid var(--to);background:var(--paper);border-radius:0 10px 10px 0}
+.combo p{margin:0;font-size:14px;font-weight:400;line-height:1.65}
+.combo .key{display:block;font-size:15px;font-weight:700;line-height:1.5;margin-bottom:3px}
+.combo small{display:block;font-size:11px;font-weight:600;color:var(--sub);margin-bottom:3px}
+.els{display:flex;flex-direction:column;gap:5px}.el{display:grid;grid-template-columns:28px minmax(0,1fr) 40px;gap:8px;align-items:center;font-size:13px}.el .bar{width:100%}.el span{font-weight:600}
 .lc{width:100%;height:auto}.legend{display:flex;gap:12px;flex-wrap:wrap;font-size:12px;color:var(--sub);margin-bottom:8px}.legend i{display:inline-block;width:12px;height:3px;margin-right:4px;vertical-align:middle}
 .tl{list-style:none;padding:0;margin:8px 0 0}.tl li{display:grid;grid-template-columns:56px 1fr;gap:10px;padding:12px 0;border-top:1px solid var(--line)}
 .tl .age{background:var(--ink);color:var(--paper);border-radius:10px;text-align:center;font-weight:600;padding:6px 2px;height:max-content;line-height:1.25}
@@ -108,7 +129,7 @@ select:disabled{opacity:.45}
 .shop .fine{margin-top:8px;font-size:10.5px;line-height:1.5}
 .item{margin-top:12px;background:var(--chip);border-radius:12px;padding:12px 14px}
 .item small{color:var(--sub);font-size:12px}
-.item .ib{margin:4px 0 2px;font-family:"Gowun Batang",serif;font-size:18px}
+.item .ib{margin:0 0 4px;font-family:"Gowun Batang",serif;font-size:18px}
 .item p{margin:0}
 .item .fine{margin-top:6px}
 .relflow{margin-top:18px;padding-top:14px;border-top:1px solid var(--line)}
@@ -127,7 +148,10 @@ details summary{cursor:pointer;color:var(--sub);font-size:14px;padding:10px 0}
 .mt{display:flex;flex-direction:column;align-items:flex-start;padding:8px 10px;border-radius:12px;background:var(--paper);border:1px solid var(--line);box-shadow:inset 0 3px 0 var(--c);text-align:left;gap:0}
 .mt span{font-size:12px;color:var(--sub)}.mt b{font-size:14px}.mt small{font-size:11px;line-height:1.3;min-height:1.3em}
 .mdet{background:var(--paper);border-radius:12px;padding:14px;margin-top:6px}
-.dom{display:flex;flex-direction:column;gap:3px;margin-bottom:10px}.dom div{display:grid;grid-template-columns:48px 1fr 58px;gap:8px;align-items:center;font-size:12px}
+.dom{display:flex;flex-direction:column;gap:6px;margin-bottom:10px}
+.dom div{display:grid;grid-template-columns:46px minmax(0,1fr) 78px;gap:8px;align-items:center;font-size:12px}
+.dom small{white-space:nowrap;text-align:right;color:var(--sub)}
+.dom .bar{width:100%}
 .luck{background:var(--paper);border-radius:12px;padding:12px 14px;box-shadow:inset 3px 0 0 var(--c)}.luck .tags{margin:6px 0 0}
 .loading{display:flex;align-items:center;gap:10px;padding:18px 4px;color:var(--sub);font-size:14px;flex-wrap:wrap}
 .dot{width:10px;height:10px;border-radius:50%;background:var(--to)}
@@ -141,6 +165,7 @@ details summary{cursor:pointer;color:var(--sub);font-size:14px;padding:10px 0}
 .vswitch button[aria-selected="true"]{background:var(--ink);color:var(--paper)}
 .todaytop{background:var(--paper);border-radius:12px;padding:12px 14px;box-shadow:inset 3px 0 0 var(--c)}.todaytop .big{margin:2px 0 0!important}
 .wk{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin:6px 0}.wk div{display:flex;flex-direction:column;align-items:center;background:var(--paper);border-radius:10px;padding:6px 0;font-size:12px}
+.wk u{text-decoration:none;font-size:11px;font-weight:700;color:var(--c)}
 .wk div.on{outline:2px solid var(--ink)}.wk b{font-size:14px}.wk i{width:8px;height:8px;border-radius:50%;background:var(--c);margin:3px 0}.wk em{font-style:normal;font-size:10.5px;color:var(--sub)}
 #shareStage{position:fixed;left:-10000px;top:0}
 .share{width:360px;height:640px;background:#F4ECDF;color:#2B2622;padding:34px 26px;display:flex;flex-direction:column;align-items:center;text-align:center;font-family:"IBM Plex Sans KR",sans-serif}
@@ -659,8 +684,16 @@ async function callCard(g){
 }
 async function runAI(g){
   S.ai[g]={loading:true,len:0};render();
-  try{ S.ai[g]=await callCard(g); saveResults(); }
-  catch(e){ S.ai[g]={error: ERRMSG[e&&e.code] || (e instanceof SyntaxError?ERRMSG.validation:'해석을 불러오지 못했어요.'), tried:true} }
+  // network/upstream 은 일시적인 경우가 많아 한 번 더 시도한다
+  const RETRY=new Set(['network','upstream']);
+  for(let i=0;i<2;i++){
+    try{ S.ai[g]=await callCard(g); saveResults(); break; }
+    catch(e){
+      const code=e&&e.code;
+      if(i===0&&RETRY.has(code)){ await new Promise(r=>setTimeout(r,1200+Math.random()*800)); continue }
+      S.ai[g]={error: ERRMSG[code] || (e instanceof SyntaxError?ERRMSG.validation:'해석을 불러오지 못했어요.'), tried:true};
+    }
+  }
   if(S.step==='result')render()}
 // ---------- 오늘의 운 사용법 (AI 호출 없음) ----------
 const GRP={비견:'bi',겁재:'bi',식신:'sik',상관:'sik',편재:'jae',정재:'jae',편관:'gwan',정관:'gwan',편인:'in',정인:'in'};
@@ -719,12 +752,128 @@ function prodBox(cats,title){const rows=[];
   <ul>${rows.slice(0,3).map(([c,p])=>`<li><a href="${esc(p.url)}" target="_blank" rel="nofollow sponsored noopener"><b>${esc(p.name)}</b><em>${esc(CATNAME[c]||'')}</em></a></li>`).join('')}</ul>
   <p class="fine">이 영역에는 쿠팡 파트너스 링크가 포함되어 있으며, 구매가 일어나면 일정액의 수수료를 제공받습니다. 운을 바꾸는 물건이 아니라 오늘 흐름과 어울리는 생활 아이템이에요.</p></div>`}
 function mbtiKey(){const t=S.mbti?.type;return t?t[0]+t[3]:'N'}
+// ---------- ③ 오늘 하기 쉬운 실수 / ④ 잘 맞는 사람 / ⑤ 시간 사용법 ----------
+const BR_HOUR=['23~01시','01~03시','03~05시','05~07시','07~09시','09~11시','11~13시','13~15시','15~17시','17~19시','19~21시','21~23시'];
+// 오늘 흔들리는 자리 → 위험 유형
+const RISKKIND=t=>{const s=String(t);
+ if(/충/.test(s))return '엇갈림'; if(/합/.test(s))return '휩쓸림';
+ if(s==='역마')return '분산'; if(s==='도화')return '노출'; if(s==='화개')return '고립'; return ''};
+const RISK={
+ 엇갈림:{saju:'말과 일정이 어긋나기 쉬운 자리가 열려요.',
+  EJ:'바로잡으려고 먼저 정리해 말하다 상대가 지적으로 받아들이기 쉬워요.',
+  EP:'분위기를 풀려고 말을 늘리다 요점이 흐려지기 쉬워요.',
+  IJ:'속으로 정리하는 사이 상대는 답을 기다리게 되기 쉬워요.',
+  IP:'불편한 얘기를 뒤로 미루다 시점을 놓치기 쉬워요.',
+  N:'서로 다르게 이해한 채 넘어가기 쉬워요.',
+  guard:'중요한 건 말한 뒤 한 줄로 다시 적어 보내기'},
+ 휩쓸림:{saju:'사람과 일이 맞물려 빠르게 진행되는 자리가 열려요.',
+  EJ:'흐름이 좋아 범위를 늘려 잡기 쉬워요.',
+  EP:'분위기가 좋아 그 자리에서 약속해버리기 쉬워요.',
+  IJ:'거절할 타이밍을 놓쳐 떠안기 쉬워요.',
+  IP:'끌려가듯 따라가다 내 일정이 밀리기 쉬워요.',
+  N:'좋은 흐름에 기대 결정이 빨라지기 쉬워요.',
+  guard:'그 자리에서 확답 대신 "내일 답드릴게요" 한 번'},
+ 분산:{saju:'이동과 변화가 많아지는 자리가 열려요.',
+  EJ:'일정을 촘촘히 채우다 이동 시간을 빼먹기 쉬워요.',
+  EP:'여기저기 움직이다 시작한 일이 남기 쉬워요.',
+  IJ:'계획이 틀어지면 회복하는 데 시간이 더 들기 쉬워요.',
+  IP:'움직임이 늘면 집중하던 흐름이 끊기기 쉬워요.',
+  N:'움직임이 늘어 하나에 머무는 시간이 줄기 쉬워요.',
+  guard:'오늘 반드시 끝낼 한 가지만 먼저 정하기'},
+ 노출:{saju:'사람들의 눈에 띄기 쉬운 자리가 열려요.',
+  EJ:'주도하다 보면 혼자 말이 길어지기 쉬워요.',
+  EP:'반응이 좋아 하지 않아도 될 말까지 꺼내기 쉬워요.',
+  IJ:'주목이 부담돼 필요한 말도 줄이기 쉬워요.',
+  IP:'관심이 몰리면 자리를 피하고 싶어지기 쉬워요.',
+  N:'평소보다 말과 행동이 크게 전달되기 쉬워요.',
+  guard:'남 얘기는 꺼내지 않기'},
+ 고립:{saju:'혼자 파고드는 시간이 효율이 좋은 자리가 열려요.',
+  EJ:'혼자 처리하다 공유가 늦어지기 쉬워요.',
+  EP:'집중이 길어지면 연락 확인이 늦기 쉬워요.',
+  IJ:'완성할 때까지 아무 말도 안 하게 되기 쉬워요.',
+  IP:'혼자가 편해 필요한 연락까지 미루기 쉬워요.',
+  N:'혼자 있는 시간이 길어져 공유가 늦기 쉬워요.',
+  guard:'진행 상황 한 줄만 먼저 알리기'}};
+// 오늘 십성 → 먼저 다가가면 좋은 사람
+const MATCH={
+ 비견:['비슷한 상황에 있는 사람','길게 설명하지 않아도 지금 내 처지를 아는 사람이 편해요.'],
+ 겁재:['같은 분야에서 뛰고 있는 사람','비교가 되기도 하지만 방법을 물어보기엔 가장 빠른 상대예요.'],
+ 식신:['내 이야기를 끝까지 들어주는 사람','결론을 재촉하지 않는 사람과 있을 때 생각이 정리돼요.'],
+ 상관:['솔직하게 반응해주는 사람','좋게만 말하지 않는 사람에게서 다음 방향이 나와요.'],
+ 편재:['여러 사람을 알고 있는 사람','근황만 나눠도 뜻밖의 연결이 생기는 상대예요.'],
+ 정재:['숫자와 실무에 밝은 사람','조건을 같이 확인해주는 사람이 있으면 놓치는 게 줄어요.'],
+ 편관:['원하는 걸 분명하게 말해주는 사람','돌려 말하기보다 상황을 구체적으로 알려주는 사람이 편해요.'],
+ 정관:['약속을 정확히 지키는 사람','진행 상황을 먼저 알려두면 서로 편해지는 상대예요.'],
+ 편인:['다른 방식으로 보는 사람','막혔을 때 관점을 바꿔주는 사람이 도움이 돼요.'],
+ 정인:['나보다 먼저 겪어본 사람','조언을 구하면 오늘 안에 정리되는 상대예요.']};
+const MATCHHOW={EJ:'용건부터 꺼내되 상대 상황을 한 번 묻고 시작해보세요.',
+ EP:'가볍게 말을 꺼낸 뒤, 본론은 한 문장으로 정리해 전해보세요.',
+ IJ:'묻고 싶은 것을 미리 적어두면 대화가 짧고 정확해져요.',
+ IP:'만나서 말하기보다 메시지로 먼저 운을 떼보세요.',
+ N:'묻고 싶은 것을 한 문장으로 정리한 뒤 연락해보세요.'};
+const TIMEUSE={EJ:'사람을 만나 결론을 내기 좋은 시간이에요.',
+ EP:'연락하고 제안하기 좋은 시간이에요.',
+ IJ:'방해받지 않고 중요한 일을 처리하기 좋은 시간이에요.',
+ IP:'미뤄둔 일에 손대기 좋은 시간이에요.',
+ N:'중요한 일을 이 시간에 배치해보세요.'};
+// 0~100 공통 점수 — 앱 전체에서 같은 뜻으로 쓴다
+const LEVEL=v=>v<40?'낮은 편':v<60?'보통':v<80?'좋은 편':'매우 좋은 편';
+function todayMistake(t){const kind=t.tags.map(RISKKIND).find(Boolean);if(!kind)return null;
+ const r=RISK[kind];return {saju:r.saju,my:r[mbtiKey()]||r.N,guard:r.guard}}
+const HIGHTIP={money:'돈 관련 판단이나 정리를 하기 좋은 날이에요.',
+ achieve:'미뤄둔 일을 끝내기 좋은 날이에요.',
+ relation:'먼저 연락하거나 사람을 만나기 좋은 날이에요.',
+ change:'새로운 일이나 방향을 움직여보기 좋은 날이에요.',
+ condition:'체력을 쓰는 일을 배치하기 좋은 날이에요.'};
+function domName(d){return d==='condition'?'컨디션':DOMK[d]+'운'}
+function weekPoint(week){
+ const b=week.slice().sort((x,y)=>y.scores[y.top]-x.scores[x.top])[0];
+ const when=b===week[0]?'오늘':WD[b.p.wd]+'요일';
+ return `${when}은 ${domName(b.top)} ${b.scores[b.top]}점으로 높아요. ${HIGHTIP[b.top]}`}
+// ③ 행동 제안 — 점수와 영역 이름을 다시 말하지 않고 상황과 행동만 쓴다
+const LOWACT={money:['결정은 한 번 늦춰보세요','오늘은 서두른 결정에서 놓치는 부분이 생기기 쉬워요. 큰 지출이나 새 계약은 한 번 더 살펴보세요.'],
+ achieve:['하던 일을 마무리해보세요','오늘은 새로 벌인 일이 생각보다 더디게 움직이기 쉬워요. 손에 쥔 것부터 끝내보세요.'],
+ relation:['한 번 더 들어보세요','오늘은 말이 오가는 사이에 뜻이 조금씩 어긋나기 쉬워요. 바로 답하기보다 되묻고 확인해보세요.'],
+ change:['지금 자리를 지켜보세요','오늘은 방향을 바꾸면 되돌리는 데 더 품이 들기 쉬워요. 새 길을 찾기보다 하던 방식을 이어가보세요.'],
+ condition:['여유를 남겨두세요','오늘은 일정이 몰리면 체력이 먼저 바닥나기 쉬워요. 중간에 쉬는 시간을 끼워두세요.']};
+const HIGHACT={money:['오늘 안에 정리해보세요','오늘은 숫자를 들여다보면 흐름이 잘 잡히는 날이에요. 미뤄둔 계산이나 정리가 있다면 손대보세요.'],
+ achieve:['미뤄둔 일을 하나 끝내보세요','오늘은 집중이 한곳에 오래 머무는 날이에요. 새로 벌이기보다 끝내는 데 써보세요.'],
+ relation:['먼저 연락해보세요','오늘은 사람과의 대화가 잘 풀리는 날이에요. 미뤄둔 연락이 있다면 먼저 말을 꺼내보세요.'],
+ change:['새로운 것을 시작해보세요','오늘은 움직인 만큼 길이 열리는 날이에요. 미뤄둔 시도가 있다면 오늘 첫걸음을 떼보세요.'],
+ condition:['체력 쓰는 일을 배치해보세요','오늘은 몸이 가볍게 따라오는 날이에요. 미뤄둔 활동을 몰아서 해보세요.']};
+// 다섯 영역이 고르게 보통인 날 — 오늘 일진의 성격으로 행동을 고른다
+const MIDACT={
+ bi:['오늘 할 일을 하나만 정해보세요','크게 벌이거나 줄이기보다 지금 하던 리듬을 그대로 이어가기 좋은 날이에요.'],
+ sik:['만들던 것을 한 번 꺼내보세요','완성하지 않아도 괜찮아요. 중간까지 온 것을 눈에 보이게 두면 다음이 이어져요.'],
+ jae:['이번 달 쓴 돈을 10분만 들여다보세요','크게 움직이기보다 지금까지의 흐름을 한번 정리하기 좋은 날이에요.'],
+ gwan:['약속과 마감을 한 번 확인해보세요','새로 맡기보다 이미 걸어둔 것들을 점검하기 좋은 날이에요.'],
+ in:['20분만 읽거나 걸어보세요','결론을 내기보다 머릿속을 정리하는 데 쓰기 좋은 날이에요.']};
+function todayAct(t,g){const lo=t.scores[t.low],hi=t.scores[t.top];
+ if(lo<40){const a=LOWACT[t.low];return {title:a[0],why:a[1]}}
+ if(hi>=60){const a=HIGHACT[t.top];return {title:a[0],why:a[1]}}
+ const a=MIDACT[GRP[g]];return {title:a[0],why:a[1]}}
+function todayMatch(t){const m=MATCH[t.god];return {who:m[0],why:m[1],how:MATCHHOW[mbtiKey()]||MATCHHOW.N}}
+// 활동 시간대(07~21시 시작)에 해당하는 지지: 진사오미신유술
+const ACTIVE_BR=[4,5,6,7,8,9,10];
+const brDist=(a,b)=>{const d=Math.abs(a-b);return Math.min(d,12-d)};
+function todayTime(t,n){const b=t.idx%12,h=HAP6[b];
+ let pick=h,why='오늘 일진과 맞물리는 시간대예요.';
+ if(!ACTIVE_BR.includes(h)){
+   // 육합 시간이 새벽이면, 나를 밀어주는 오행(인성·비겁)의 시간 중 활동 시간대에서 고른다
+   const e=stemEl(n.dayStem), want=[(e+4)%5, e];
+   const cand=ACTIVE_BR.filter(x=>want.includes(BR_EL[x]));
+   pick=(cand.length?cand:ACTIVE_BR).sort((x,y)=>brDist(x,h)-brDist(y,h))[0];
+   why='오늘 내 기운을 밀어주는 시간대예요.';
+ }
+ return {label:BR_HOUR[pick],why,use:TIMEUSE[mbtiKey()]||TIMEUSE.N}}
+
 function viewToday(){const D=S.data,c=D.chart,n=c.natal,now=new Date(),t=dayInfo(c,now);
  const g=t.god,grp=GRP[g],isHelp=grp==='bi'||grp==='in';
  const flow=FLOW[g]+'. '+(BANDMOD[isHelp?'help':'use'][n.band]||'');
- const my=MYWAY[grp][mbtiKey()];const todo=TODO[g][t.idx%2];const item=todayItem(t,n);const tag=t.tags.map(x=>TAGLINE[x]).filter(Boolean)[0];
+ const my=MYWAY[grp][mbtiKey()];const item=todayItem(t,n);const tag=t.tags.map(x=>TAGLINE[x]).filter(Boolean)[0];
+ const mis=todayMistake(t),mat=todayMatch(t),tm=todayTime(t,n),act=todayAct(t,g);
  const week=[...Array(7)].map((_,k)=>dayInfo(c,new Date(now.getTime()+k*864e5)));
- const best=week.slice(1).sort((a,b)=>b.scores[b.top]-a.scores[a.top])[0],worst=week.slice(1).sort((a,b)=>a.scores.condition-b.scores.condition)[0];
+
  const nm=S.input.name?esc(S.input.name)+'님의':'나의';
  return `<section class="res">
  ${viewSwitch('today')}
@@ -732,15 +881,34 @@ function viewToday(){const D=S.data,c=D.chart,n=c.natal,now=new Date(),t=dayInfo
   <h2><span class="nm">${nm}</span> 오늘의 운 사용법</h2><p class="ilgan">${t.p.m}월 ${t.p.d}일 (${WD[t.p.wd]}) · <b>${t.pillar}일</b></p>
   <div class="badges"><span>${D.ilgan[0]}</span>${S.mbti?`<span class="mb">${S.mbti.type}</span>`:''}</div></div></header>
  <article class="card" id="card"><p class="no">TODAY</p>
-  <div class="todaytop" style="--c:${DOMC[t.top]}"><small>오늘 두드러지는 영역</small><p class="big">${DOMK[t.top]} ${t.scores[t.top]}</p></div>
-  <h4>🔮 오늘의 기운</h4><p>${esc(flow)}</p>${tag?`<p class="fine">${esc(tag)}</p>`:''}
-  <h4>🧬 ${S.mbti?esc(S.mbti.type)+'인 나':'나의 방식'}</h4><p>${esc(my)}</p>
-  <div class="combo"><small>✔ 오늘 할 일</small><p>${esc(todo)}</p></div>
-  <div class="item"><small>✨ 오늘의 아이템</small><p class="ib">${esc(item.name)}</p><p>${esc(item.why)}</p><p class="fine">없으면 비슷한 물건으로 충분해요.</p>${prodBox([CATPRE[n.weakEl]+((t.p.d%4)+1)],'비슷한 아이템 보기')}</div>
-  <div class="dom" style="margin-top:14px">${DOM.map(d=>`<div><span>${DOMK[d]}</span><div class="bar"><i style="width:${t.scores[d]}%;background:${DOMC[d]}"></i></div><small>${t.scores[d]}</small></div>`).join('')}</div>
-  <p class="fine">가장 조심할 영역 · ${DOMK[t.low]} ${t.scores[t.low]}</p>
-  <h4>이번 주 · 날마다 두드러지는 영역</h4><div class="wk">${week.map((w,k)=>`<div class="${k===0?'on':''}" style="--c:${DOMC[w.top]}"><small>${k===0?'오늘':WD[w.p.wd]}</small><b>${w.p.d}</b><i></i><em>${DOMK[w.top]}</em></div>`).join('')}</div>
-  <p class="fine">이번 주 기회가 큰 날 · <b>${best.p.m}/${best.p.d}(${WD[best.p.wd]}) ${DOMK[best.top]}</b> &nbsp;·&nbsp; 컨디션 챙길 날 · <b>${worst.p.m}/${worst.p.d}(${WD[worst.p.wd]})</b></p>
+  <p class="sec">🔮 오늘의 총운</p>
+  <div class="todaytop" style="--c:${DOMC[t.top]}"><p class="lead">${esc(flow)}</p>${tag?`<small class="hint">${esc(tag)}</small>`:''}</div>
+
+  <p class="sec">📊 오늘의 핵심 영역</p>
+  <div class="dom">${DOM.map(d=>`<div><span>${DOMK[d]}</span><div class="bar"><i style="width:${t.scores[d]}%;background:${DOMC[d]}"></i></div><small>${t.scores[d]} · ${LEVEL(t.scores[d])}</small></div>`).join('')}</div>
+
+  <p class="sec">💡 오늘 이렇게 해보세요</p>
+  <div class="combo"><p><b class="key">✓ ${esc(act.title)}</b>${esc(act.why)}</p></div>
+
+  <p class="sec">🧬 오늘의 나</p>
+  <div class="tri"><p><b class="key">${S.mbti?esc(S.mbti.type)+'인 나':'사주로 본 나의 방식'}</b>${esc(my)}</p>
+   ${mis?`<p><span class="lab">오늘 신경 쓸 점</span>${esc(mis.saju)} ${esc(mis.my)}</p>
+   <p class="q">✓ ${esc(mis.guard)}</p>`:''}</div>
+
+  <p class="sec">🤝 오늘 잘 맞는 사람</p>
+  <div class="tri"><p><b class="key">${esc(mat.who)}</b>${esc(mat.why)}</p>
+   <p><span class="lab">오늘의 사용법</span>${esc(mat.how)}</p></div>
+
+  <p class="sec">⏰ 오늘의 시간 사용법</p>
+  <div class="tri"><p><b class="key">${esc(tm.label)} · 흐름이 열리는 시간</b>${esc(tm.why)}</p>
+   <p><span class="lab">오늘의 사용법</span>${esc(tm.use)}</p></div>
+
+  <details class="weekbox"><summary>📅 이번 주 운 보기</summary>
+   <div class="wk">${week.map((w,k)=>`<div class="${k===0?'on':''}" style="--c:${DOMC[w.top]}"><small>${k===0?'오늘':WD[w.p.wd]}</small><b>${w.p.d}</b><i></i><em>${DOMK[w.top]}</em><u>${w.scores[w.top]}</u></div>`).join('')}</div>
+   <p class="fine"><b>이번 주 포인트</b> · ${weekPoint(week)}</p></details>
+
+  <p class="sec">✨ 오늘의 아이템</p>
+  <div class="item"><p class="ib">${esc(item.name)}</p><p>${esc(item.why)}</p><p class="fine">없으면 비슷한 물건으로 충분해요.</p>${prodBox([CATPRE[n.weakEl]+((t.p.d%4)+1)],'비슷한 아이템 보기')}</div>
   <p class="stamp">내 운 사용설명서 · ${VERSION}</p></article>
  <button class="primary" onclick="saveCard()">오늘 카드 저장</button>
  <button class="ghost" onclick="S.input=null;S.mbti=null;go('intro')">다른 사람 보기</button>
@@ -771,7 +939,7 @@ function wait(g){const a=S.ai[g];if(a?.error)return `<div class="note">${esc(a.e
 const ok=g=>S.ai[g]&&!S.ai[g].loading&&!S.ai[g].error;
 function centerTab(){const t=$('tabs');if(!t||t.scrollWidth<=t.clientWidth)return;const b=t.querySelector('button[aria-selected="true"]');if(b)t.scrollLeft=b.offsetLeft-(t.clientWidth-b.offsetWidth)/2}
 function viewSwitch(a){return `<div class="vswitch" role="tablist" aria-label="화면 전환">
-  <button role="tab" aria-selected="${a==='today'}" onclick="go('today')">☀️ 오늘</button>
+  <button role="tab" aria-selected="${a==='today'}" onclick="go('today')">☀️ 오늘의 운</button>
   <button role="tab" aria-selected="${a==='result'}" onclick="go('result')">📖 내 운 사용설명서</button></div>`}
 function viewResult(){const D=S.data,i=S.input,m=S.mbti;
   const need=[['P','A'],['A','P'],['A','B'],['B','M'],['M','B'],['B','M']][S.tab];setTimeout(()=>need.forEach(ensure),0);
@@ -850,8 +1018,9 @@ function card4(){const B=S.ai.B,n=S.data.chart.natal;const head=`<div class="typ
  <h4>성과가 막히는 패턴</h4><p>${esc(a.blocked)}</p>
  ${fields.length?`<h4>강점이 살아나는 환경</h4><div class="tags fields">${fields.map(f=>`<span>${esc(f)}</span>`).join('')}</div>`:''}`}
 function card5(){const B=S.ai.M,M=S.data.months;
- let h=`<p class="fine" style="margin-top:0">칸마다 <b>그달의 테마</b>와 평소보다 달라지는 영역을 보여줘요. ▲는 평소보다 활발, ▼는 평소보다 잠잠. 점수 50은 보통 사람의 평균 수준이에요. (절기 기준 월)</p><div class="mg">${M.map((m,k)=>{const v=m.scores[m.top];const x=ok('M')?(B.months||[]).find(q=>+q.i===k)||{}:{};
-  return `<button class="mt" style="--c:${DOMC[m.top]}" onclick="openM(${k})"><span>${m.label}</span><b>${esc(x.keyword||DOMK[m.top])}</b><small>${DOMK[m.top]} ${m.topDev>=0?"▲":"▼"}${Math.abs(m.topDev)}</small></button>`}).join('')}</div><div id="mdet"></div>`;
+ let h=`<p class="fine" style="margin-top:0">운세 점수는 <b>0~100점</b>이고, 높을수록 그 영역의 운이 좋은 편이에요. (절기 기준 월)</p><div class="mg">${M.map((m,k)=>{const v=m.scores[m.top];const x=ok('M')?(B.months||[]).find(q=>+q.i===k)||{}:{};
+  const kw=x.keyword||'';
+  return `<button class="mt" style="--c:${DOMC[m.top]}" onclick="openM(${k})"><span>${m.label}</span>${kw?`<b>${esc(kw)}</b>`:''}<small>${DOMK[m.top]} ${m.scores[m.top]} · ${LEVEL(m.scores[m.top])}</small></button>`}).join('')}</div><div id="mdet"></div>`;
  h+=relFlow();
  return ok('M')?h:h+wait('M')}
 function relFlow(){const M=S.data.months,B=S.ai.M;
@@ -861,10 +1030,10 @@ function relFlow(){const M=S.data.months,B=S.ai.M;
    if(x.keyword&&Math.abs(r.dev)>=4)return x.keyword;
    return r.dev>=0?'사람이 모이고 연락이 늘어나는 달':'대화를 천천히 고르게 되는 달'};
  return `<div class="relflow"><h4>❤️ 관계가 달라지는 달</h4>
-  <p class="fine">앞으로 12개월 중 사람·대화가 평소와 가장 달라지는 네 달이에요.</p>
-  <ul class="checks">${rows.map(r=>`<li><b>${r.m.label}</b> · ${esc(say(r))} <small style="color:var(--sub)">관계 ${r.dev>=0?'▲':'▼'}${Math.abs(r.dev)}</small></li>`).join('')}</ul></div>`}
+  <p class="fine">앞으로 12개월 중 관계운이 평소와 가장 크게 달라지는 네 달이에요.</p>
+  <ul class="checks">${rows.map(r=>`<li><b>${r.m.label}</b> · ${esc(say(r))} <small style="color:var(--sub)">관계 ${r.m.scores.relation}${r.dev>=0?' ↑':' ↓'}</small></li>`).join('')}</ul></div>`}
 window.openM=k=>{const m=S.data.months[k];const x=ok('M')?((S.ai.M.months||[]).find(q=>+q.i===k)||{}):{};
- $('mdet').innerHTML=`<div class="mdet"><h4 style="margin-top:0">${m.year}년 ${m.label} · ${esc(x.keyword||m.pillar)}</h4><p class="fine">막대 옆 숫자는 점수, 괄호는 나의 12개월 평균 대비</p>
+ $('mdet').innerHTML=`<div class="mdet"><h4 style="margin-top:0">${m.year}년 ${m.label} · ${esc(x.keyword||m.pillar)}</h4><p class="fine">괄호 안은 내 12개월 평균과의 차이예요.</p>
  <div class="dom">${Object.keys(DOMK).map(d=>`<div><span>${DOMK[d]}</span><div class="bar"><i style="width:${m.scores[d]}%;background:${DOMC[d]}"></i></div><small>${m.scores[d]} (${(v=>v>=0?'+'+v:v)(Math.round(m.scores[d]-m.avg[d]))})</small></div>`).join('')}</div>
  ${x.flow?`<p><span class="lab">🔮 사주로 본 이 달의 흐름</span>${esc(x.flow)}</p><p><span class="lab">🧬 MBTI로 본 나의 반응${S.mbti?" · "+esc(S.mbti.type):""}</span>${esc(x.myWay)}</p><p class="q">✔ ${esc(x.tip)}</p>`:''}
  ${basisHTML(m.tags,m.pillar+'월')}</div>`;$('mdet').scrollIntoView({behavior:'smooth',block:'nearest'})};
@@ -875,11 +1044,11 @@ function card6(){const B=S.ai.B,n=S.data.chart.natal;if(!ok('B'))return wait('B'
  <h4>⚠️ 조심할 시기 × 내 실수 패턴</h4>${(u.cautions||[]).map(c=>`<div class="pill bad"><b>${esc(c.when)}</b> <em>${esc(c.risk)}</em><p><span class="lab">이때 놓치기 쉬운 것</span>${esc(c.myMistake)}</p><p class="q">✔ ${esc(c.guard)}</p></div>`).join('')}`}
 // ---------- share & save ----------
 function shareHTML(){const D=S.data,A=ok('P')?S.ai.P.profile:{},m=S.mbti;
- const best=D.months.slice().sort((a,b)=>b.topDev-a.topDev)[0];
+ const best=D.months.slice().sort((a,b)=>b.scores[b.top]-a.scores[a.top])[0];
  return `<div class="share"><p class="sbrand">내 운 사용설명서</p><p class="sname">${S.input.name?esc(S.input.name)+'님의':'나의'} 운 사용설명서</p>
  <img src="${CHARS[D.key]}" alt=""><p class="silgan"><b>${D.ilgan[0]}</b>${m?' × <b>'+esc(m.type)+'</b>':''}</p>
  <p class="sone">${esc(A.oneLine||D.ilgan[1])}</p><div class="stags">${(A.sajuKeywords||[]).slice(0,3).map(k=>`<span>#${esc(k)}</span>`).join('')}</div>
- <p class="sbest">앞으로 12개월 중 가장 강한 달 · <b>${best.label} ${DOMK[best.top]}</b></p>
+ <p class="sbest">앞으로 12개월 중 가장 높은 달 · <b>${best.label} ${DOMK[best.top]} ${best.scores[best.top]}</b></p>
  <p class="sfoot">같은 운이라도, 나는 다르게 씁니다.</p></div>`}
 async function capture(el,filename){const msg=$('saveMsg');const say=t=>{if(msg)msg.textContent=t};
  if(!el){say('저장할 카드를 찾지 못했어요.');return}
