@@ -28,6 +28,7 @@ p{margin:0 0 6px} small{color:var(--sub)}
 .tagline{font-family:"Gowun Batang",serif;font-weight:700;font-size:clamp(23px,6.2vw,28px);letter-spacing:.08em;color:var(--ink);margin:0 0 16px}
 .intro h1{margin-top:2px}
 .intro .lede{margin-bottom:10px}
+.intro .back{margin:0 0 10px;font-size:14px;color:var(--sub)}
 .lede{color:var(--sub)} .fine{font-size:12px;color:var(--sub)}
 .bandhelp{margin-top:8px;font-size:12px;color:var(--sub)}
 .bandhelp>summary{cursor:pointer;list-style:none;display:inline-block;padding:4px 10px;border:1px solid var(--line,#ddd);border-radius:999px;font-size:11.5px}
@@ -417,8 +418,15 @@ function viewIntro(){return `<section class="intro">
   <h1>같은 운이라도,<br>나는 다르게 씁니다.</h1>
   <p class="lede">운의 흐름은 사주로,<br>그 흐름에 반응하는 나는 MBTI로 봅니다.</p>
   <div class="pair">${(()=>{const k=INTRO_KEY;return `<img src="${CHARS[k+'_m']}" alt="${ILGAN[KEYS.indexOf(k)][0]} 남성 캐릭터"><img src="${CHARS[k+'_f']}" alt="${ILGAN[KEYS.indexOf(k)][0]} 여성 캐릭터">`})()}</div>
-  <ul class="steps"><li><b>1</b>출생정보 입력</li><li><b>2</b>MBTI 선택 또는 1분 테스트</li><li><b>3</b>나의 운 사용설명서 6장</li></ul>
-  ${(()=>{const p=S.saved;return p?`<button class="primary" onclick="openSaved('today')">${p.input.name?esc(p.input.name)+'님의 ':''}오늘의 운 사용법</button><button class="ghost" onclick="openSaved('result')">내 운 사용설명서 다시 보기</button><button class="ghost" onclick="go('input')">새로 입력하기</button>`:`<button class="primary" onclick="go('input')">시작하기</button>`})()}
+  ${(()=>{const p=S.saved;
+    // 처음 온 사람과 이미 결과가 있는 사람은 눌러야 할 것이 다르다
+    if(!p)return `<ul class="steps"><li><b>1</b>출생정보 입력</li><li><b>2</b>MBTI 선택 또는 1분 테스트</li><li><b>3</b>나의 운 사용설명서 6장</li></ul>
+      <button class="primary" onclick="go('input')">내 운 사용설명서 시작하기</button>`;
+    const nm=p.input.name?esc(p.input.name)+'님, ':'';
+    return `<p class="back">${nm}다시 오셨네요.</p>
+      <button class="primary" onclick="openSaved('today')">오늘의 운 사용법 보기</button>
+      <button class="ghost" onclick="openSaved('result')">내 운 사용설명서 다시 보기</button>
+      <button class="ghost" onclick="go('input')">새로 입력하기</button>`})()}
   <p class="fine">사주 해석은 전통 명리 이론에 기반한 참고용 콘텐츠입니다.</p></section>`}
 // ---------- input ----------
 function viewInput(){const i=S.input||S.saved?.input||{};return `<section>
