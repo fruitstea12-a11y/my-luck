@@ -724,7 +724,7 @@ function viewToday(){const D=S.data,c=D.chart,n=c.natal,now=new Date(),t=dayInfo
  return `<section class="res">
  ${viewSwitch('today')}
  <header class="hero"><img class="char" src="${CHARS[D.key]}" alt=""><div><p class="brand">내 운 사용설명서</p>
-  <h2><span class="nm">${nm}</span>오늘의 운 사용법</h2><p class="ilgan">${t.p.m}월 ${t.p.d}일 (${WD[t.p.wd]}) · <b>${t.pillar}일</b></p>
+  <h2><span class="nm">${nm}</span> 오늘의 운 사용법</h2><p class="ilgan">${t.p.m}월 ${t.p.d}일 (${WD[t.p.wd]}) · <b>${t.pillar}일</b></p>
   <div class="badges"><span>${D.ilgan[0]}</span>${S.mbti?`<span class="mb">${S.mbti.type}</span>`:''}</div></div></header>
  <article class="card" id="card"><p class="no">TODAY</p>
   <div class="todaytop" style="--c:${DOMC[t.top]}"><small>오늘 두드러지는 영역</small><p class="big">${DOMK[t.top]} ${t.scores[t.top]}</p></div>
@@ -771,7 +771,7 @@ function viewSwitch(a){return `<div class="vswitch" role="tablist" aria-label="�
 function viewResult(){const D=S.data,i=S.input,m=S.mbti;
   const need=[['P','A'],['A','P'],['A','B'],['B','M'],['M','B'],['B','M']][S.tab];setTimeout(()=>need.forEach(ensure),0);
   setTimeout(centerTab,0);
-  const title=`<span class="nm">${i.name?esc(i.name)+'님의':'나의'}</span>운 사용설명서`;
+  const title=`<span class="nm">${i.name?esc(i.name)+'님의':'나의'}</span> 운 사용설명서`;
   return `<section class="res">
   ${viewSwitch('result')}
   <header class="hero">
@@ -799,7 +799,8 @@ function edgeNote(){const c=S.data.chart;if(!c.hasTime)return '';const t=c.trueS
  if(dist<=10)return `<p class="warnline">보정한 출생시간(${String(c.trueSolar.h).padStart(2,'0')}:${String(c.trueSolar.m).padStart(2,'0')})이 시진 경계에 가까워요. ${unk?'출생지':'출생지·시간'}에 따라 시주${Math.abs(t-1380)<=10||Math.abs(t+60-1440)<=10?'와 일주':''}가 달라질 수 있어요.</p>`;
  return unk?`<p class="fine">출생지를 몰라 한국 중부(동경 127.5°) 기준으로 계산했어요.</p>`:''}
 function elementBars(){const n=S.data.chart.natal;return `<div class="els">${EL.map((e,k)=>`<div class="el"><span style="color:${ELC[k]}">${e}</span><div class="bar"><i style="width:${n.elements[k]}%;background:${ELC[k]}"></i></div><small>${Math.round(n.elements[k])}%</small></div>`).join('')}</div>
- <p class="fine">일간 강도 ${n.strength} · ${gl(n.band)} · 가장 강한 기운 ${EL[n.strongEl]}, 가장 약한 기운 ${EL[n.weakEl]}</p>`}
+ <p class="fine">일간 강도 ${n.strength}/100 · ${gl(n.band)} · 가장 강한 기운 ${EL[n.strongEl]}, 가장 약한 기운 ${EL[n.weakEl]}</p>
+ <p class="fine">내 기운(일간)을 도와주는 오행이 사주 전체에서 차지하는 비중이에요. 40 미만이면 신약, 40~60이면 중화, 61 이상이면 신강이에요. 높고 낮음에 좋고 나쁨은 없고, 힘을 쓰는 방식이 다를 뿐이에요.</p>`}
 function card1(){const A=S.ai.P,m=S.mbti;if(!ok('P'))return elementBars()+wait('P');const p=A.profile||{};
  return `<p class="big">${esc(p.oneLine)}</p>
  <div class="two"><div class="col saju"><h4>🔮 사주로 본 타고난 나</h4><div class="tags">${(p.sajuKeywords||[]).map(k=>`<span>${esc(k)}</span>`).join('')}</div><p>${esc(p.sajuDesc)}</p></div>
