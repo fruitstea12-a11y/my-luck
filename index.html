@@ -386,6 +386,9 @@ const VERSION='rules-v0.4';
 const PROMPT_VERSION='prompt-v3.1'; // 프롬프트를 고치면 이 번호를 올려 옛 캐시 결과를 버린다
 const INTRO_KEY=KEYS[Math.floor(Math.random()*KEYS.length)]; // 첫 화면: 진입할 때마다 10개 일간 중 하나를 랜덤 선택해 남녀 한 쌍 표시
 let S={saved:null,step:'intro',input:null,mbti:null,chart:null,data:null,ai:{A:null,B:null},tab:0,qi:0,ans:[]};
+// 펼쳐둔 것·선택한 달은 화면을 다시 그려도 유지한다 (AI 응답이 하나씩 도착할 때마다 render 가 다시 돈다)
+S.ui={bandOpen:false,weekOpen:false,openMonth:null};
+window.uiToggle=(k,v)=>{S.ui[k]=v};
 let sample=null,dl=null;
 let DB=null,UID=null;
 const READY=(async()=>{const u=n=>window.claude?.use?.(n);
@@ -404,6 +407,8 @@ function render(){const v=$('view');
   else if(S.step==='mbtiResult')v.innerHTML=viewMbtiResult();
   else if(S.step==='result')v.innerHTML=viewResult();
   else if(S.step==='today')v.innerHTML=viewToday();
+  // 다시 그린 뒤 열려 있던 월 상세를 되살린다
+  if(S.step==='result'&&S.tab===4&&S.ui.openMonth!=null&&$('mdet'))openM(S.ui.openMonth,true);
 }
 // ---------- intro ----------
 function viewIntro(){return `<section class="intro">
@@ -531,7 +536,7 @@ function cacheKey(){return 'myluck:'+VERSION+':'+PROMPT_VERSION+':'+JSON.stringi
 async function start(){
   await READY;
   try{S.data=makeData()}catch(e){console.error(e);alert('계산 중 오류가 발생했습니다: '+e.message);return}
-  S.ai={P:null,A:null,B:null,M:null};S.tab=0;saveProfile();
+  S.ai={P:null,A:null,B:null,M:null};S.tab=0;S.ui={bandOpen:false,weekOpen:false,openMonth:null};saveProfile();
   const c=await loadResults();if(c)Object.assign(S.ai,c);
   go('result');
   if(!apiBase()&&!sample){const er={error:'이 화면에서는 AI 해석을 쓸 수 없어요. claude.ai에서 열어주세요.',tried:true};['P','A','B','M'].forEach(k=>S.ai[k]=S.ai[k]||er);render();return}
@@ -929,7 +934,7 @@ function viewToday(){const D=S.data,c=D.chart,n=c.natal,now=new Date(),t=dayInfo
   <div class="tri"><p><b class="key">${esc(tm.label)} · 흐름이 열리는 시간</b>${esc(tm.why)}</p>
    <p>${esc(tm.use)}</p></div>
 
-  <details class="weekbox"><summary>📅 이번 주 운 보기</summary>
+  <details class="weekbox"${S.ui.weekOpen?' open':''} ontoggle="uiToggle('weekOpen',this.open)"><summary>📅 이번 주 운 보기</summary>
    <div class="wk">${week.map((w,k)=>`<div class="${k===0?'on':''}" style="--c:${DOMC[w.top]}"><small>${k===0?'오늘':WD[w.p.wd]}</small><b>${w.p.d}</b><i></i><em>${DOMK[w.top]}</em><u>${w.scores[w.top]}</u></div>`).join('')}</div>
    <p class="fine"><b>이번 주 포인트</b> · ${weekPoint(week)}</p></details>
 
@@ -1001,7 +1006,7 @@ const EL_H=['木','火','土','金','水'];
 function elementBars(){const n=S.data.chart.natal;return `<div class="els">${EL.map((e,k)=>`<div class="el"><span style="color:${ELC[k]}">${e} <em>${EL_H[k]}</em></span><div class="bar"><i style="width:${n.elements[k]}%;background:${ELC[k]}"></i></div><small>${Math.round(n.elements[k])}%</small></div>`).join('')}</div>
  <p class="fine"><b>내 기운의 세기 ${n.strength}/100 · ${hj(n.band)}</b><br>${GLOSS[n.band]||''}</p>
  <p class="fine">가장 강한 기운 ${EL[n.strongEl]}, 가장 약한 기운 ${EL[n.weakEl]}</p>
- <details class="bandhelp"><summary>신강·중화·신약이 뭔가요?</summary>
+ <details class="bandhelp"${S.ui.bandOpen?' open':''} ontoggle="uiToggle('bandOpen',this.open)"><summary>신강·중화·신약이 뭔가요?</summary>
   <p class="fine">기운의 세기는 운세 점수와 다른 숫자예요. 좋고 나쁨이 아니라 내 기운의 균형과 방향을 보는 기준이에요.</p>
   <p class="fine">태어난 날의 기운을 '나'로 보고, 사주 전체에서 나와 같은 기운과 나를 도와주는 기운이 차지하는 비중을 점수로 환산했어요.</p>
   <p class="fine"><b>40 미만 · 신약(身弱)</b> — 내 힘보다 주변의 도움을 더 받는 편<br>
@@ -1111,11 +1116,11 @@ function watchMonths(){const M=S.data.months;
  return `<div class="relflow"><h4>👀 눈여겨볼 달</h4>
   <p class="fine">앞으로 12개월 중 특징이 뚜렷한 네 달이에요. 그달을 어떻게 쓰면 좋은지 정리했어요.</p>
   <ul class="watch">${pick.sort((a,b)=>a.k-b.k).map(r=>`<li><b class="key">${r.m.label}</b><p>${mUse(r.m.top,r.v)}</p><small>${DOMK[r.m.top]} ${r.v} · ${LEVEL(r.v)}${r.why==='turn'?' · 흐름이 바뀌는 달':''}</small></li>`).join('')}</ul></div>`}
-window.openM=k=>{document.querySelectorAll('.mg .mt').forEach((el,i)=>el.classList.toggle('on',i===k));const m=S.data.months[k];const x=ok('M')?((S.ai.M.months||[]).find(q=>+q.i===k)||{}):{};
+window.openM=(k,restore)=>{S.ui.openMonth=k;document.querySelectorAll('.mg .mt').forEach((el,i)=>el.classList.toggle('on',i===k));const m=S.data.months[k];const x=ok('M')?((S.ai.M.months||[]).find(q=>+q.i===k)||{}):{};
  $('mdet').innerHTML=`<div class="mdet"><h4 style="margin-top:0">${m.year}년 ${m.label} · ${esc(x.keyword||m.pillar)}</h4><p class="fine">괄호 안은 내 12개월 평균과의 차이예요. 사주의 달은 절기로 나뉘어서 양력 1일이 아니라 그달의 절기부터 시작해요.</p>
  <div class="dom">${Object.keys(DOMK).map(d=>`<div><span>${DOMK[d]}</span><div class="bar"><i style="width:${m.scores[d]}%;background:${DOMC[d]}"></i></div><small>${m.scores[d]} (${(v=>v>=0?'+'+v:v)(Math.round(m.scores[d]-m.avg[d]))})</small></div>`).join('')}</div>
  ${x.flow?`<p><span class="lab">🔮 사주로 본 이 달의 흐름</span>${esc(x.flow)}</p><p><span class="lab">🧬 MBTI로 본 나의 반응${S.mbti?" · "+esc(S.mbti.type):""}</span>${esc(x.myWay)}</p><p class="q">✔ ${esc(x.tip)}</p>`:''}
- ${basisHTML(m.tags,m.pillar+'월')}</div>`;$('mdet').scrollIntoView({behavior:'smooth',block:'nearest'})};
+ ${basisHTML(m.tags,m.pillar+'월')}</div>`;if(!restore)$('mdet').scrollIntoView({behavior:'smooth',block:'nearest'})};
 function card6(){const B=S.ai.B,n=S.data.chart.natal;if(!ok('B'))return wait('B');const u=B.usage||{};
  return `<div class="luck" style="--c:${ELC[n.weakEl]}"><small>보완하면 좋은 기운 · ${EL[n.weakEl]}</small><div class="tags">${(u.luckKeywords||[]).map(k=>`<span>${esc(k)}</span>`).join('')}</div></div>
  <h4>🍀 이렇게 해보세요</h4><p>${esc(u.action)}</p><h4>🏞 이런 환경이 좋아요</h4><p>${esc(u.place)}</p><h4>🎒 곁에 두면 좋은 것</h4><p>${esc(u.item)}</p>${prodBox([1,2,3,4].map(i=>CATPRE[n.weakEl]+i),'관련 아이템 보기')}
