@@ -1200,14 +1200,19 @@ async function capture(el,filename){const msg=$('saveMsg');const say=t=>{if(msg)
  if(!el){say('저장할 카드를 찾지 못했어요.');return}
  if(!window.html2canvas){say('이미지 도구를 불러오지 못했어요.');return}
  say('이미지 만드는 중…');
+ // html2canvas 는 <details> 를 닫아도 안쪽을 그려버려 글자가 겹친다. 캡처 동안만 통째로 숨긴다.
+ const hidden=[...el.querySelectorAll('details')].map(d=>({el:d,prev:d.style.display}));
+ hidden.forEach(h=>h.el.style.display='none');
  try{try{await document.fonts.ready}catch(_){}
+  await new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)));
   const bg=getComputedStyle(document.body).getPropertyValue('--paper').trim()||'#F4ECDF';
   let cv=null,err=null;
   for(const sc of [3,2,1]){try{cv=await html2canvas(el,{backgroundColor:bg,scale:sc,useCORS:true,logging:false});break}catch(e){err=e}}
   if(!cv)throw err||new Error('render');
   const blob=await new Promise((res,rej)=>cv.toBlob(b=>b?res(b):rej(new Error('blob')),'image/png'));
   await saveBlob(blob,filename,say)}
- catch(e){console.error('capture',e);say(e?.code==='declined'?'':'저장하지 못했어요'+(e?.code?' ('+e.code+')':e?.message?' ('+e.message+')':''))}}
+ catch(e){console.error('capture',e);say(e?.code==='declined'?'':'저장하지 못했어요'+(e?.code?' ('+e.code+')':e?.message?' ('+e.message+')':''))}
+ finally{hidden.forEach(h=>h.el.style.display=h.prev)}}
 
 // 저장 경로: 아티팩트(dl) → 공유 시트(아이폰) → 일반 다운로드
 async function saveBlob(blob,filename,say){
