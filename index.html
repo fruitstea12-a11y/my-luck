@@ -155,6 +155,10 @@ details summary{cursor:pointer;color:var(--sub);font-size:14px;padding:10px 0}
 .mg{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin:8px 0}
 .mt{display:flex;flex-direction:column;align-items:flex-start;padding:8px 10px;border-radius:12px;background:var(--paper);border:1px solid var(--line);box-shadow:inset 0 3px 0 var(--c);text-align:left;gap:0}
 .mt span{font-size:12px;color:var(--sub)}.mt b{font-size:14px}.mt small{font-size:11px;line-height:1.3;min-height:1.3em}
+.mt{cursor:pointer;transition:transform .08s,box-shadow .08s}
+.mt:hover{border-color:var(--c)}
+.mt:active{transform:scale(.97)}
+.mt.on{border-color:var(--c);box-shadow:inset 0 3px 0 var(--c),0 0 0 1px var(--c)}
 .mdet{background:var(--paper);border-radius:12px;padding:14px;margin-top:6px}
 .dom{display:flex;flex-direction:column;gap:6px;margin-bottom:10px}
 .dom div{display:grid;grid-template-columns:46px minmax(0,1fr) 78px;gap:8px;align-items:center;font-size:12px}
@@ -1044,7 +1048,7 @@ function card4(){const B=S.ai.B,n=S.data.chart.natal;const head=`<div class="typ
  <h4>성과가 막히는 패턴</h4><p>${esc(a.blocked)}</p>
  ${fields.length?`<h4>강점이 살아나는 환경</h4><div class="tags fields">${fields.map(f=>`<span>${esc(f)}</span>`).join('')}</div>`:''}`}
 function card5(){const B=S.ai.M,M=S.data.months;
- let h=`<p class="fine" style="margin-top:0">달마다 가장 두드러지는 영역을 보여줘요. 월을 누르면 다섯 영역의 점수를 모두 볼 수 있어요. (절기 기준 월)</p><div class="mg">${M.map((m,k)=>{const v=m.scores[m.top];const x=ok('M')?(B.months||[]).find(q=>+q.i===k)||{}:{};
+ let h=`<p class="fine" style="margin-top:0">달마다 가장 두드러지는 영역이에요. <b>아래 칸을 누르면</b> 그달의 다섯 영역 점수를 모두 볼 수 있어요.</p><div class="mg">${M.map((m,k)=>{const v=m.scores[m.top];const x=ok('M')?(B.months||[]).find(q=>+q.i===k)||{}:{};
   const kw=x.keyword||'';
   return `<button class="mt" style="--c:${DOMC[m.top]}" onclick="openM(${k})"><span>${m.label}</span>${kw?`<b>${esc(kw)}</b>`:''}<small>${DOMK[m.top]}</small></button>`}).join('')}</div><div id="mdet"></div>`;
  h+=watchMonths();
@@ -1105,8 +1109,8 @@ function watchMonths(){const M=S.data.months;
  return `<div class="relflow"><h4>👀 눈여겨볼 달</h4>
   <p class="fine">앞으로 12개월 중 특징이 뚜렷한 네 달이에요. 그달을 어떻게 쓰면 좋은지 정리했어요.</p>
   <ul class="watch">${pick.sort((a,b)=>a.k-b.k).map(r=>`<li><b class="key">${r.m.label}</b><p>${mUse(r.m.top,r.v)}</p><small>${DOMK[r.m.top]} ${r.v} · ${LEVEL(r.v)}${r.why==='turn'?' · 흐름이 바뀌는 달':''}</small></li>`).join('')}</ul></div>`}
-window.openM=k=>{const m=S.data.months[k];const x=ok('M')?((S.ai.M.months||[]).find(q=>+q.i===k)||{}):{};
- $('mdet').innerHTML=`<div class="mdet"><h4 style="margin-top:0">${m.year}년 ${m.label} · ${esc(x.keyword||m.pillar)}</h4><p class="fine">괄호 안은 내 12개월 평균과의 차이예요.</p>
+window.openM=k=>{document.querySelectorAll('.mg .mt').forEach((el,i)=>el.classList.toggle('on',i===k));const m=S.data.months[k];const x=ok('M')?((S.ai.M.months||[]).find(q=>+q.i===k)||{}):{};
+ $('mdet').innerHTML=`<div class="mdet"><h4 style="margin-top:0">${m.year}년 ${m.label} · ${esc(x.keyword||m.pillar)}</h4><p class="fine">괄호 안은 내 12개월 평균과의 차이예요. 사주의 달은 절기로 나뉘어서 양력 1일이 아니라 그달의 절기부터 시작해요.</p>
  <div class="dom">${Object.keys(DOMK).map(d=>`<div><span>${DOMK[d]}</span><div class="bar"><i style="width:${m.scores[d]}%;background:${DOMC[d]}"></i></div><small>${m.scores[d]} (${(v=>v>=0?'+'+v:v)(Math.round(m.scores[d]-m.avg[d]))})</small></div>`).join('')}</div>
  ${x.flow?`<p><span class="lab">🔮 사주로 본 이 달의 흐름</span>${esc(x.flow)}</p><p><span class="lab">🧬 MBTI로 본 나의 반응${S.mbti?" · "+esc(S.mbti.type):""}</span>${esc(x.myWay)}</p><p class="q">✔ ${esc(x.tip)}</p>`:''}
  ${basisHTML(m.tags,m.pillar+'월')}</div>`;$('mdet').scrollIntoView({behavior:'smooth',block:'nearest'})};
