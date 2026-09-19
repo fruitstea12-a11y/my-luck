@@ -29,6 +29,11 @@ p{margin:0 0 6px} small{color:var(--sub)}
 .intro h1{margin-top:2px}
 .intro .lede{margin-bottom:10px}
 .lede{color:var(--sub)} .fine{font-size:12px;color:var(--sub)}
+.bandhelp{margin-top:8px;font-size:12px;color:var(--sub)}
+.bandhelp>summary{cursor:pointer;list-style:none;display:inline-block;padding:4px 10px;border:1px solid var(--line,#ddd);border-radius:999px;font-size:11.5px}
+.bandhelp>summary::-webkit-details-marker{display:none}
+.bandhelp[open]>summary{margin-bottom:6px}
+.bandhelp .fine{margin:4px 0}
 .intro .fine{font-size:13px;line-height:1.6;color:var(--sub);max-width:30em;margin:6px auto 0} .err{color:var(--accent);min-height:1.4em;font-size:14px}
 .stepno{font-size:12px;color:var(--sub);letter-spacing:.06em;margin:0}
 button{font:inherit;color:var(--ink);background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 14px;cursor:pointer}
@@ -541,7 +546,7 @@ function payload(g){
 }
 
 const GLOSS={'비견':'나와 같은 힘, 자기 주관','겁재':'경쟁과 지출','식신':'꾸준히 만들어내는 힘','상관':'표현하고 드러내는 힘','편재':'크게 움직이는 돈과 기회','정재':'꾸준히 쌓이는 돈','편관':'압박과 도전','정관':'책임과 평가','편인':'생각과 방향 전환','정인':'배움과 도움',
- '신약':'내 힘이 약한 편 — 도와주는 기운이 붙을 때 살아나는 구조','신강':'내 힘이 강한 편 — 에너지를 밖으로 쓸 때 풀리는 구조','중화':'힘이 균형 잡힌 편',
+ '신약':'내 힘보다 주변의 도움을 더 받는 편 — 도와주는 기운이 붙을 때 살아나는 구조','신강':'내 힘이 강한 편 — 에너지를 밖으로 쓸 때 풀리는 구조','중화':'내 힘과 주변 기운이 균형을 이루는 편',
  '대운':'10년 단위로 바뀌는 큰 흐름','세운':'한 해의 흐름','대운 교체':'10년 흐름이 바뀌는 시점','충':'부딪혀 흔들리는 자리','합':'묶여서 힘이 모이는 자리',
  '일지 충':'가까운 관계·생활이 흔들리는 자리','월지 충':'일과 일정이 흔들리는 자리','연지 충':'바깥 환경이 흔들리는 자리','시지 충':'계획이 밀리는 자리',
  '일지 합':'가까운 관계에 힘이 붙는 자리','월지 합':'일과 사람이 맞물리는 자리','연지 합':'오랜 인연이 움직이는 자리','시지 합':'준비한 일에 힘이 붙는 자리',
@@ -799,8 +804,15 @@ function edgeNote(){const c=S.data.chart;if(!c.hasTime)return '';const t=c.trueS
  if(dist<=10)return `<p class="warnline">보정한 출생시간(${String(c.trueSolar.h).padStart(2,'0')}:${String(c.trueSolar.m).padStart(2,'0')})이 시진 경계에 가까워요. ${unk?'출생지':'출생지·시간'}에 따라 시주${Math.abs(t-1380)<=10||Math.abs(t+60-1440)<=10?'와 일주':''}가 달라질 수 있어요.</p>`;
  return unk?`<p class="fine">출생지를 몰라 한국 중부(동경 127.5°) 기준으로 계산했어요.</p>`:''}
 function elementBars(){const n=S.data.chart.natal;return `<div class="els">${EL.map((e,k)=>`<div class="el"><span style="color:${ELC[k]}">${e}</span><div class="bar"><i style="width:${n.elements[k]}%;background:${ELC[k]}"></i></div><small>${Math.round(n.elements[k])}%</small></div>`).join('')}</div>
- <p class="fine">일간 강도 ${n.strength}/100 · ${gl(n.band)} · 가장 강한 기운 ${EL[n.strongEl]}, 가장 약한 기운 ${EL[n.weakEl]}</p>
- <p class="fine">내 기운(일간)을 도와주는 오행이 사주 전체에서 차지하는 비중이에요. 40 미만이면 신약, 40~60이면 중화, 61 이상이면 신강이에요. 높고 낮음에 좋고 나쁨은 없고, 힘을 쓰는 방식이 다를 뿐이에요.</p>`}
+ <p class="fine"><b>내 기운의 세기 ${n.strength}/100 · ${n.band}</b><br>${GLOSS[n.band]||''}</p>
+ <p class="fine">가장 강한 기운 ${EL[n.strongEl]}, 가장 약한 기운 ${EL[n.weakEl]}</p>
+ <details class="bandhelp"><summary>신강·중화·신약이 뭔가요?</summary>
+  <p class="fine">태어난 날의 기운을 '나'로 보고, 사주 전체에서 그 기운을 밀어주는 오행이 얼마나 되는지를 100점으로 나타낸 값이에요.</p>
+  <p class="fine"><b>40 미만 · 신약</b> — 내 힘보다 주변의 도움을 더 받는 편<br>
+  <b>40~60 · 중화</b> — 내 힘과 주변 기운이 균형을 이루는 편<br>
+  <b>61 이상 · 신강</b> — 내 힘이 강한 편</p>
+  <p class="fine">점수가 높다고 좋은 것도, 낮다고 나쁜 것도 아니에요. 내 에너지를 쓰는 방식이 다를 뿐이에요.</p>
+ </details>`}
 function card1(){const A=S.ai.P,m=S.mbti;if(!ok('P'))return elementBars()+wait('P');const p=A.profile||{};
  return `<p class="big">${esc(p.oneLine)}</p>
  <div class="two"><div class="col saju"><h4>🔮 사주로 본 타고난 나</h4><div class="tags">${(p.sajuKeywords||[]).map(k=>`<span>${esc(k)}</span>`).join('')}</div><p>${esc(p.sajuDesc)}</p></div>
