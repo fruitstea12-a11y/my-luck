@@ -202,6 +202,16 @@ details summary{cursor:pointer;color:var(--sub);font-size:14px;padding:10px 0}
 .mt{display:flex;flex-direction:column;align-items:flex-start;padding:8px 10px;border-radius:12px;background:var(--paper);border:1px solid var(--line);box-shadow:inset 0 3px 0 var(--c);text-align:left;gap:0}
 .mt span{font-size:12px;color:var(--sub)}.mt b{font-size:14px}.mt small{font-size:11px;line-height:1.3;min-height:1.3em}
 .mt{position:relative;cursor:pointer;transition:transform .08s,box-shadow .08s;padding-right:20px}
+/* html2canvas 는 inset box-shadow 를 사방으로 그린다. 저장할 때만 윗선으로 바꾼다 */
+.capturing .mt{box-shadow:none!important;border-top:3px solid var(--c)!important}
+.capturing .mt.on{box-shadow:none!important;border-color:var(--line)!important;border-top-color:var(--c)!important}
+.capturing .mt::after{display:none}
+.capturing .pill{box-shadow:none!important;border-left:3px solid var(--to)}
+.capturing .pill.turn{border-left-color:var(--sub)}
+.capturing .pill.bad{border-left-color:var(--accent)}
+.capturing .luck{box-shadow:none!important;border-left:3px solid var(--c)}
+.capturing .todaytop{box-shadow:none!important;border-left:3px solid var(--c)}
+.capturing .tabs button[aria-selected="true"]{box-shadow:none!important;border-color:var(--sub)}
 .mt::after{content:'\203A';position:absolute;right:9px;top:7px;font-size:15px;line-height:1;color:var(--sub);opacity:.55}
 .mt.on::after{content:'\2304';color:var(--c);opacity:1;top:5px}
 .mt:hover{border-color:var(--c)}
@@ -1203,7 +1213,9 @@ async function capture(el,filename){const msg=$('saveMsg');const say=t=>{if(msg)
  // html2canvas 는 <details> 를 닫아도 안쪽을 그려버려 글자가 겹친다. 캡처 동안만 통째로 숨긴다.
  const hidden=[...el.querySelectorAll('details')].map(d=>({el:d,prev:d.style.display}));
  hidden.forEach(h=>h.el.style.display='none');
- try{try{await document.fonts.ready}catch(_){}
+ el.classList.add('capturing');
+ try{// 폰트 로딩이 늦어도 2초 뒤에는 진행한다
+  try{await Promise.race([document.fonts.ready,new Promise(r=>setTimeout(r,2000))])}catch(_){}
   await new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)));
   const bg=getComputedStyle(document.body).getPropertyValue('--paper').trim()||'#F4ECDF';
   let cv=null,err=null;
@@ -1212,7 +1224,7 @@ async function capture(el,filename){const msg=$('saveMsg');const say=t=>{if(msg)
   const blob=await new Promise((res,rej)=>cv.toBlob(b=>b?res(b):rej(new Error('blob')),'image/png'));
   await saveBlob(blob,filename,say)}
  catch(e){console.error('capture',e);say(e?.code==='declined'?'':'저장하지 못했어요'+(e?.code?' ('+e.code+')':e?.message?' ('+e.message+')':''))}
- finally{hidden.forEach(h=>h.el.style.display=h.prev)}}
+ finally{hidden.forEach(h=>h.el.style.display=h.prev);el.classList.remove('capturing')}}
 
 // 저장 경로: 아티팩트(dl) → 공유 시트(아이폰) → 일반 다운로드
 async function saveBlob(blob,filename,say){
