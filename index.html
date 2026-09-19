@@ -529,7 +529,8 @@ async function start(){
   const c=await loadResults();if(c)Object.assign(S.ai,c);
   go('result');
   if(!apiBase()&&!sample){const er={error:'이 화면에서는 AI 해석을 쓸 수 없어요. claude.ai에서 열어주세요.',tried:true};['P','A','B','M'].forEach(k=>S.ai[k]=S.ai[k]||er);render();return}
-  ['P','A','B','M'].forEach(ensure)}
+  // 4장을 한꺼번에 던지면 API 쪽 분당 한도에 걸린다. 2장씩 나눠 보낸다.
+  ensure('P');ensure('A');setTimeout(()=>{ensure('B');ensure('M')},2500)}
 function ensure(g){const ready=!!apiBase()||!!sample;if(ready&&(!S.ai[g]||(S.ai[g].error&&!S.ai[g].tried)))runAI(g)}
 
 function brief(){const D=S.data,c=D.chart,n=c.natal;
@@ -1043,9 +1044,9 @@ function card4(){const B=S.ai.B,n=S.data.chart.natal;const head=`<div class="typ
  <h4>성과가 막히는 패턴</h4><p>${esc(a.blocked)}</p>
  ${fields.length?`<h4>강점이 살아나는 환경</h4><div class="tags fields">${fields.map(f=>`<span>${esc(f)}</span>`).join('')}</div>`:''}`}
 function card5(){const B=S.ai.M,M=S.data.months;
- let h=`<p class="fine" style="margin-top:0">운세 점수는 <b>0~100점</b>이고, 높을수록 그 영역의 운이 좋은 편이에요. (절기 기준 월)</p><div class="mg">${M.map((m,k)=>{const v=m.scores[m.top];const x=ok('M')?(B.months||[]).find(q=>+q.i===k)||{}:{};
+ let h=`<p class="fine" style="margin-top:0">달마다 가장 두드러지는 영역을 보여줘요. 월을 누르면 다섯 영역의 점수를 모두 볼 수 있어요. (절기 기준 월)</p><div class="mg">${M.map((m,k)=>{const v=m.scores[m.top];const x=ok('M')?(B.months||[]).find(q=>+q.i===k)||{}:{};
   const kw=x.keyword||'';
-  return `<button class="mt" style="--c:${DOMC[m.top]}" onclick="openM(${k})"><span>${m.label}</span>${kw?`<b>${esc(kw)}</b>`:''}<small>${DOMK[m.top]} ${m.scores[m.top]} · ${LEVEL(m.scores[m.top])}</small></button>`}).join('')}</div><div id="mdet"></div>`;
+  return `<button class="mt" style="--c:${DOMC[m.top]}" onclick="openM(${k})"><span>${m.label}</span>${kw?`<b>${esc(kw)}</b>`:''}<small>${DOMK[m.top]}</small></button>`}).join('')}</div><div id="mdet"></div>`;
  h+=watchMonths();
  return ok('M')?h:h+wait('M')}
 // 눈여겨볼 달 — 제목은 코드가 점수 구간에 맞춰 쓴다(문구가 점수보다 세지 않게)
