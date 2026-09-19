@@ -139,6 +139,7 @@ select:disabled{opacity:.45}
 .ilgan{margin:0 0 4px;font-size:13.5px}.ilgan b{font-family:"Gowun Batang",serif;font-size:17px}
 .badges{display:flex;flex-wrap:wrap;gap:6px}.badges span{font-size:12px;background:var(--chip);border-radius:999px;padding:2px 10px}.badges .mb{background:var(--ink);color:var(--paper)}
 .tabs{position:sticky;top:0;z-index:3;display:grid;grid-template-columns:repeat(3,1fr);gap:6px;padding:8px 0;background:var(--paper)}
+#card{scroll-margin-top:104px}
 .tabs button{font-size:12.5px;line-height:1.3;padding:7px 6px;border-radius:14px;background:var(--panel);color:var(--sub);border:1px solid var(--line);white-space:normal;word-break:keep-all;min-height:42px}
 @media (min-width:520px){.tabs button{font-size:13.5px;border-radius:999px}}
 .tabs button[aria-selected="true"]{background:var(--line);color:var(--ink);font-weight:600;box-shadow:inset 0 0 0 1px var(--sub)}
@@ -442,6 +443,10 @@ const READY=(async()=>{const u=n=>window.claude?.use?.(n);
   S.saved=await loadProfile();if(S.step==='intro')render();})();
 
 function go(step){S.step=step;render();window.scrollTo({top:0,behavior:'smooth'})}
+// 카드를 바꿀 때마다 그 카드의 처음부터 보이게 한다
+window.setTab=k=>{S.tab=k;render();
+  const c=document.getElementById('card');
+  if(c)c.scrollIntoView({block:'start',behavior:'instant'})};
 function render(){const v=$('view');
   if(S.step==='intro')v.innerHTML=viewIntro();
   else if(S.step==='input')v.innerHTML=viewInput(),bindInput();
@@ -1036,14 +1041,14 @@ function viewResult(){const D=S.data,i=S.input,m=S.mbti;
     <div class="badges"><span>${D.pillars.year}년 ${D.pillars.month}월 ${D.pillars.day}일${D.pillars.hour?' '+D.pillars.hour+'시':''}</span>${m?`<span class="mb">${m.type}${m.source==='test'?' 추정':''}</span>`:''}</div>
     ${edgeNote()}${!D.chart.hasTime?`<p class="fine">출생시간 없이 계산했어요. 시주 관련 해석은 제외됩니다.${D.chart.nearJeol?' 절기 경계일이라 월주가 달라질 수 있어요.':''}</p>`:''}</div>
   </header>
-  <nav class="tabs" role="tablist">${TABS.map((t,k)=>`<button role="tab" aria-selected="${k===S.tab}" onclick="S.tab=${k};render()">${k+1}. ${t}</button>`).join('')}</nav>
+  <nav class="tabs" role="tablist">${TABS.map((t,k)=>`<button role="tab" aria-selected="${k===S.tab}" onclick="setTab(${k})">${k+1}. ${t}</button>`).join('')}</nav>
   <article id="card" class="card"><p class="no">CARD ${S.tab+1} / 6</p><h3>${TABS[S.tab]}</h3>${[card1,card2,card3,card4,card5,card6][S.tab]()}
    <p class="stamp">내 운 사용설명서 · ${VERSION}</p></article>
   <div class="actions">
    <button class="primary" onclick="saveShare()">공유 카드 저장</button>
    <button onclick="saveCard()">이 카드 저장</button>
   </div>
-  <div class="pager"><button class="ghost" ${S.tab===0?'disabled':''} onclick="S.tab--;render()">← 이전</button><button class="ghost" ${S.tab===5?'disabled':''} onclick="S.tab++;render()">다음 →</button></div>
+  <div class="pager"><button class="ghost" ${S.tab===0?'disabled':''} onclick="setTab(S.tab-1)">← 이전</button><button class="ghost" ${S.tab===5?'disabled':''} onclick="setTab(S.tab+1)">다음 →</button></div>
   <button class="ghost" onclick="S.input=null;S.mbti=null;go('intro')">다른 사람 보기</button>
   <p id="saveMsg" class="fine" aria-live="polite"></p>
   <p class="fine">명리 이론 기반의 참고용 콘텐츠이며, 중요한 결정은 스스로의 판단으로 내려주세요.</p>
