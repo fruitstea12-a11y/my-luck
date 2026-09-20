@@ -314,6 +314,8 @@ details summary{cursor:pointer;color:var(--sub);font-size:14px;padding:10px 0}
 .rbars .bar i{position:absolute;left:0;top:0;bottom:0;display:block;border-radius:5px}
 .rbars small{text-align:right;color:var(--sub)}
 
+/* 지표 계산 방식 한 줄 — 점수가 임의로 만든 숫자가 아니라는 신호 */
+.method{margin-top:8px;padding-top:8px;border-top:1px solid var(--line);opacity:.85}
 .rmonth{margin:0 0 14px;padding:12px 14px;border-radius:12px;background:var(--panel);
  border-left:3px solid var(--accent)}
 .rmonth .mh{margin:0 0 8px;font-size:15px;line-height:1.5}
@@ -1644,7 +1646,7 @@ function card6(){const B=S.ai.B,n=S.data.chart.natal;if(!ok('B'))return wait('B'
 //  결제는 아직 붙지 않았다. relUnlocked() / relBuy() 두 곳만 바꾸면 된다.
 // ═══════════════════════════════════════════════════════════════
 
-const REL_PROMPT_VERSION='rel-prompt-v1.2';   // worker.js 와 같은 값이어야 한다
+const REL_PROMPT_VERSION='rel-prompt-v1.3';   // worker.js 와 같은 값이어야 한다
 const REL_PAID_KEY='myluck:rel:paid';
 
 // ── 가격 ────────────────────────────────────────────────────
@@ -1792,8 +1794,8 @@ function relTease(){const d=S.data.relD;
    <p class="fine">사람과 있는 자리도 환경이에요. 내 방식이 편하게 통하는 자리가 따로 있어요.</p>`}
 
 function relPromo(kind){
-  const t=kind==='card5'?'앞으로 12개월, 사람과의 거리는 언제 달라질까요?':relHook();
-  const s=kind==='card5'?'관계가 크게 움직이는 달과 그때의 사용법':'가까워지는 방식부터 내가 지치는 순간까지';
+  const t=kind==='card5'?'앞으로 12개월, 관계가 크게 움직이는 달은 언제일까요?':relHook();
+  const s=kind==='card5'?'그 달의 흐름과 그때 내가 할 수 있는 것':'가까워지는 방식부터 내가 지치는 순간까지';
   return `<button class="promo" onclick="relOpen()">
     <b>🤝 ${esc(t)}</b>
     <small>${s}</small>
@@ -1909,7 +1911,8 @@ const rb=k=>basisHTML((S.data.relD.basis||{})[k]);
 
 const rbarBody=()=>{const d=S.data.relD;
   return `<div class="rbars">${REL.map(k=>`<div><span>${RELK_KO[k]}</span><div class="bar"><i style="width:${d.scores[k]}%;background:var(--accent)"></i></div><small>${d.scores[k]}</small></div>`).join('')}</div>
-   <p class="fine">50이 평균이에요. 높고 낮음은 좋고 나쁨이 아니라 그 영역이 얼마나 활발한지를 뜻해요.</p>`};
+   <p class="fine">50이 평균이에요. 높고 낮음은 좋고 나쁨이 아니라 그 영역이 얼마나 활발한지를 뜻해요.</p>
+   <p class="fine method">관계 지표는 십성 가중치와 오행 비중을 바탕으로 계산하고, 실제 사주 2,000명 분포를 참고해 눈금을 조정했어요.</p>`};
 function relBars(open){
   if(open)return `<p class="sec">나의 관계 지표 7가지</p>${rbarBody()}`;   // 미리보기에서는 펼쳐둔다
   return `<details class="relbars"${S.ui.relBarOpen?' open':''} ontoggle="uiToggle('relBarOpen',this.open)">
