@@ -247,6 +247,94 @@ details summary{cursor:pointer;color:var(--sub);font-size:14px;padding:10px 0}
 .share .stags{display:flex;gap:6px;justify-content:center;flex-wrap:wrap}.share .stags span{background:#EBE0CE;border-radius:999px;padding:2px 10px;font-size:13px}
 .share .sbest{font-size:13px;margin:14px 0 0;color:#6E655C}.share .sbest b{color:#2B2622}
 .share .sfoot{margin-top:auto;font-size:12px;color:#6E655C}
+/* ── 🤝 관계 사용설명서 (rel-ui-v1.0) ───────────────────────── */
+.promo{display:flex;align-items:center;gap:11px;width:100%;text-align:left;margin:18px 0 4px;
+ padding:14px 15px;border:1px solid var(--line);border-radius:16px;background:var(--panel);
+ color:var(--ink);font:inherit;cursor:pointer}
+.promo .pico{font-size:22px;line-height:1}
+.promo .ptx{flex:1;min-width:0}
+.promo .ptx>b{display:block;font-size:14px;font-weight:700;line-height:1.5}
+.promo .ptx>small{display:block;font-size:11px;color:var(--sub);margin-top:3px;line-height:1.5}
+.promo .ptx small .pr{color:var(--accent);font-weight:700}
+.promo .ppr{flex:none;font-size:16px;color:var(--sub)}
+
+.rhead{margin:6px 0 16px;text-align:center}
+.rhead .brand{margin:0;font-size:13px;font-weight:700;color:var(--accent);letter-spacing:.02em}
+.rhead h2{margin:6px 0 0;font-size:19px;font-weight:700;line-height:1.5}
+
+.rtype{margin:2px 0 10px;font-size:19px;font-weight:700;line-height:1.5;text-align:center}
+.rlead{margin:0 0 6px;font-size:14px;line-height:1.7;text-align:center;color:var(--sub)}
+.rlocks{margin:18px 0 4px;padding:14px;border-radius:12px;background:var(--chip)}
+.rlocks p{margin:0 0 7px;font-size:13px;font-weight:600;line-height:1.5}
+.rlocks p:last-child{margin:0}
+.rlist{list-style:none;margin:6px 0 14px;padding:0}
+.rlist li{display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid var(--line);font-size:13px}
+.rlist li:last-child{border:0}
+.rlist li span{flex:none;width:20px;color:var(--sub)}
+.rlist li em{margin-left:auto;font-style:normal;opacity:.6}
+
+.rjump{display:flex;gap:6px;overflow-x:auto;margin:10px 0 4px;padding-bottom:4px;-webkit-overflow-scrolling:touch}
+.rjump::-webkit-scrollbar{display:none}
+.rjump button{flex:none;width:34px;height:34px;border:1px solid var(--line);border-radius:10px;
+ background:var(--panel);color:var(--ink);font-size:14px;cursor:pointer}
+
+.rprog{margin:6px 0 10px;padding:14px 15px;border:1px solid var(--line);border-radius:14px;background:var(--panel)}
+.rprog p{margin:0 0 9px;font-size:13px}
+.rprog p small{color:var(--sub);font-weight:400}
+.rprog .bar{height:6px;border-radius:3px;background:var(--chip);overflow:hidden;position:relative}
+.rprog .bar i{position:absolute;left:0;top:0;bottom:0;display:block;border-radius:3px;transition:width .4s}
+.rprog ul{list-style:none;margin:10px 0 0;padding:0}
+.rprog li{font-size:12px;color:var(--sub);padding:2px 0}
+.rprog li.on{color:var(--ink)}
+
+.rsec{margin-top:14px;scroll-margin-top:12px}
+.rsec .quote{margin:12px 0;padding:12px 14px;border-radius:12px;background:var(--chip);
+ font-size:15px;font-weight:700;line-height:1.6;text-align:center}
+.rsec .more{margin-top:10px}
+.rsec .more summary{font-size:12px;color:var(--sub);cursor:pointer}
+.rsec .more p{margin-top:9px}
+
+.relbars{margin-top:14px}
+.relbars summary{font-size:12px;color:var(--sub);cursor:pointer}
+.rbars{margin-top:10px}
+.rbars>div{display:grid;grid-template-columns:52px minmax(0,1fr) 30px;gap:8px;align-items:center;
+ font-size:12px;padding:3px 0}
+.rbars .bar{position:relative;height:9px;background:var(--chip);border-radius:5px;overflow:hidden;min-width:0}
+.rbars .bar i{position:absolute;left:0;top:0;bottom:0;display:block;border-radius:5px}
+.rbars small{text-align:right;color:var(--sub)}
+
+.rmonth{margin:0 0 14px;padding:12px 14px;border-radius:12px;background:var(--panel);
+ border-left:3px solid var(--accent)}
+.rmonth .mh{margin:0 0 8px;font-size:15px;line-height:1.5}
+.rmonth .mh em{font-style:normal;font-weight:700}
+.rmonth .mh b{color:var(--accent);margin-right:4px}
+.rmonth .use{margin:8px 0 0;padding-top:8px;border-top:1px solid var(--line);font-size:13px;font-weight:600}
+.rclose{margin:14px 0 0;font-size:14px;font-weight:700;line-height:1.6;text-align:center}
+
+.rbridge{display:flex;align-items:center;gap:10px;margin-top:16px;padding:13px 14px;
+ border:1px dashed var(--line);border-radius:12px}
+.rbridge b{font-size:13px}
+.rbridge span{margin-left:auto;font-size:12px;color:var(--sub);white-space:nowrap}
+
+.rshare{margin:6px 0 14px;font-size:15px;line-height:1.75}
+.rkeys{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px}
+.rkeys>div{padding:12px 8px;border-radius:12px;background:var(--chip);text-align:center}
+.rkeys .ki{display:block;font-size:22px;line-height:1.2}
+.rkeys small{display:block;font-size:10px;color:var(--sub);margin:5px 0 3px}
+.rkeys b{display:block;font-size:12px;font-weight:700;line-height:1.4}
+
+.relshare{height:auto;min-height:380px;padding:30px 24px 26px;justify-content:flex-start}
+.relshare .rtype{font-size:18px;margin-bottom:14px}
+.relshare .rshare{font-size:14.5px;line-height:1.8;margin:0 0 20px}
+.relshare .rkeys{width:100%;margin-bottom:0}
+.relshare .sfoot{margin-top:26px}
+/* 세 칸의 굵은 글자 줄을 맞춘다 — 라벨이 두 줄로 넘어가는 칸이 있다 */
+.rkeys>div{display:flex;flex-direction:column;justify-content:flex-start}
+.rkeys small{line-height:1.4;height:2.8em;display:flex;align-items:center;justify-content:center}
+/* html2canvas 는 inset box-shadow 를 그리지 못해 테두리가 번진다. 캡처 동안만 실제 border 로 바꾼다. */
+.capturing .rmonth{box-shadow:none!important;border-left:3px solid var(--accent)}
+.capturing .promo{box-shadow:none!important}
+@media (max-width:520px){ .rkeys{gap:6px} .rkeys b{font-size:11px} }
 </style>
 </head>
 <body><main class="wrap" id="view"></main>
@@ -364,6 +452,278 @@ function rawScore(chart,p){
 let CAL={"money":[2.609,3.732],"achieve":[8.006,3.079],"relation":[4.395,2.401],"change":[7.274,3.89],"condition":[0.594,2.545]};
 const normK=(k,v)=>Math.round(Math.max(10,Math.min(95,50+(v-CAL[k][0])/CAL[k][1]*15)));
 const norm=v=>Math.round(Math.max(10,Math.min(95,50+v*2.2)));
+// ═══════════════════════════════════════════════════════════════
+// 관계 사용설명서 7종 지표 (rel-index-v1.1)
+// index_no_images.html 의 rawScore/CAL 블록 아래에 그대로 붙여 넣으면 된다.
+//
+// 설계 결정 (ENGINE_ANSWERS 3·4 반영):
+//  - DOM 에 넣지 않는다. mix() 를 타면 대운·세운이 섞여 고정 성향이 흔들린다.
+//  - 원국 1회만 계산한다. natalRel(chart).
+//  - BASE 를 쓰지 않고 n.gods / n.elements 에서 직접 뽑는다.
+//    BASE 경로는 band·sat 보정이 붙어 있어 시간축 점수용이다.
+//    n.gods 는 analyzeNatal 이 이미 지장간 일수까지 가중해 만든 값이라 원국 성향에 맞다.
+//  - 정규화는 기존 normK 를 그대로 쓴다. 1σ=15점, 중앙 50, clamp 10~95.
+// ═══════════════════════════════════════════════════════════════
+
+const REL = ['expression','bond','steady','novelty','space','friction','yield'];
+const RELK = {expression:'표현',bond:'연결',steady:'안정',novelty:'새로움',
+              space:'공간',friction:'긴장',yield:'배려'};
+
+// 십성 가중치. 음수는 극(剋) 관계에서 왔다.
+// 인성이 식상을 극하므로 expression 에서 인성이 음수,
+// 상관이 정관을 극하므로 steady·yield 에서 상관이 음수.
+const RELG = {
+  비견:{bond:1.0, space:0.8},
+  겁재:{bond:0.8, steady:-0.3, novelty:0.4, space:-0.3, friction:0.6, yield:-0.5},
+  식신:{expression:1.0, bond:0.3, steady:0.2, space:-0.4, yield:0.8},
+  상관:{expression:1.2, steady:-0.6, novelty:1.0, friction:0.8, yield:-0.7},
+  편재:{novelty:1.2},
+  정재:{bond:0.6, steady:1.0, yield:0.4},
+  편관:{friction:1.0, yield:-0.2},
+  정관:{steady:1.2, novelty:-0.3, friction:-0.3, yield:1.0},
+  편인:{expression:-0.3, bond:-0.3, space:1.2},
+  정인:{expression:-0.4, steady:1.0, novelty:-0.4, space:0.4, friction:-0.3, yield:1.0}
+};
+// 오행 가중치 (0목1화2토3금4수)
+const RELE = [
+  {novelty:0.2},      // 목
+  {expression:0.5},   // 화
+  {bond:0.2, steady:0.3}, // 토
+  {friction:0.2},     // 금
+  {space:0.3}         // 수
+];
+
+// 점수 단계 가산
+const REL_DOHWA = {novelty:8};
+const REL_BRANCH = {'충':12, '형':8, '해':4, '파':4, '합':-8};   // friction 에만 적용
+
+// CAL — 실제 사주 2,000명으로 재적합 (2026-09)
+const REL_CAL = {
+  expression:[23.953,18.102], bond:[28.372,13.165], steady:[32.373,17.76],
+  novelty:[22.666,15.402],   space:[23.281,15.713], friction:[21.988,12.547],
+  yield:[18.02,16.358]
+};
+Object.assign(CAL, REL_CAL);   // 기존 normK 가 바로 쓸 수 있게 병합
+
+// ── 원국 → 원점수 ────────────────────────────────────────────
+// gods 는 합이 100 이 아니므로 % 로 환산해 쓴다.
+function relRaw(n){
+  const out={}; REL.forEach(k=>out[k]=0);
+  const tot=TG.reduce((a,t)=>a+(n.gods[t]||0),0)||1;
+  TG.forEach(t=>{
+    const pct=(n.gods[t]||0)/tot*100, w=RELG[t]; if(!w)return;
+    for(const k in w) out[k]+=w[k]*pct;
+  });
+  n.elements.forEach((pct,i)=>{ const w=RELE[i]; for(const k in w) out[k]+=w[k]*pct; });
+  return out;
+}
+
+// ── 원국 일지 관계 · 도화 ────────────────────────────────────
+function relBranchInfo(chart){
+  const P=chart.pillars, db=P.day.b, rel=[];
+  [['연지',P.year.b],['월지',P.month.b],['시지',P.hour?P.hour.b:null]].forEach(([,b])=>{
+    if(b==null)return;
+    if(CLASH(b)===db) rel.push('충');
+    if(HAP6[b]===db)  rel.push('합');
+  });
+  const sal=SAL[db], all=[P.year.b,P.month.b,P.day.b,P.hour?P.hour.b:null];
+  const dohwa=all.some(b=>b!=null&&b===sal[1]);
+  return {rel, dohwa};
+}
+
+// ── 원국 관계 지표 (엔트리 포인트) ───────────────────────────
+function natalRel(chart){
+  const raw=relRaw(chart.natal), {rel,dohwa}=relBranchInfo(chart), sc={};
+  REL.forEach(k=>{
+    let v=normK(k, raw[k]);
+    if(dohwa&&REL_DOHWA[k]) v+=REL_DOHWA[k];
+    if(k==='friction') rel.forEach(r=>v+=(REL_BRANCH[r]||0));
+    sc[k]=Math.round(Math.max(10,Math.min(95,v)));
+  });
+  return {scores:sc, raw, dayBranchRelations:rel, dohwa};
+}
+
+// ── 파생값 ───────────────────────────────────────────────────
+const relDir = v => v>=50 ? 'active' : 'quiet';
+
+// 해석용. friction 제외, |score-50| 큰 순. 낮은 쪽도 포함한다.
+function relTop(sc){
+  return REL.filter(k=>k!=='friction')
+            .sort((a,b)=>Math.abs(sc[b]-50)-Math.abs(sc[a]-50)||REL.indexOf(a)-REL.indexOf(b));
+}
+// 욕구용. score>=50 인 것만 높은 순. 낮은 지표를 욕구로 번역하면 뜻이 뒤집힌다.
+function relNeeds(sc,n=2){
+  const c=REL.filter(k=>k!=='friction').sort((a,b)=>sc[b]-sc[a]||REL.indexOf(a)-REL.indexOf(b));
+  const picked=c.filter(k=>sc[k]>=50).slice(0,n);
+  for(const k of c){ if(picked.length>=n)break; if(!picked.includes(k))picked.push(k) }
+  return picked;
+}
+const NEEDMAP={steady:'안정',novelty:'재미',bond:'함께',space:'자유',expression:'표현',yield:'배려'};
+
+// ── CAL 재적합 ───────────────────────────────────────────────
+// 7종은 DOM 에 없으므로 mix.raw 에 쌓이지 않는다. 여기서 따로 모은다.
+// 사용법: natalRel.raw = []  → 샘플 대량 생성 → refitRel(natalRel.raw)
+function refitRel(samples){
+  const out={};
+  REL.forEach(k=>{
+    const v=samples.map(s=>s[k]).filter(x=>typeof x==='number');
+    if(v.length<2)return;
+    const m=v.reduce((a,b)=>a+b,0)/v.length;
+    const sd=Math.sqrt(v.reduce((a,b)=>a+(b-m)**2,0)/v.length);
+    out[k]=[+m.toFixed(3), +sd.toFixed(3)];
+  });
+  return out;
+}
+
+// ═══════════════════════════════════════════════════════════════
+// 관계 사용설명서 · 파생값 (rel-derive-v1.0)
+// rel_patch.js(natalRel) 아래에 붙인다.
+//
+// 여기서 만드는 값은 전부 코드가 정한다. AI 는 읽기만 한다.
+//   typeName    — 관계에서 나는 어떤 사람인가 (12자)
+//   previewLine — 미리보기 2문장. AI 호출 0
+//   shareKeys   — 💌 카드의 아이콘 3개
+//   needs       — 관계에서 중요한 것 2개
+//   picks       — ⑧ 12개월 관계 흐름에 쓸 달 (무료 카드와 같은 값)
+// ═══════════════════════════════════════════════════════════════
+
+const REL_BASE = {
+  'expression|active':'마음을 먼저 꺼내는 사람', 'expression|quiet':'천천히 마음을 여는 사람',
+  'bond|active':'사람들 사이를 잇는 사람',       'bond|quiet':'소수와 깊게 지내는 사람',
+  'steady|active':'오래 곁에 남는 사람',         'steady|quiet':'틀보다 흐름을 따르는 사람',
+  'novelty|active':'새로운 인연에 열린 사람',    'novelty|quiet':'익숙한 사이를 지키는 사람',
+  'space|active':'나만의 자리를 지키는 사람',    'space|quiet':'함께 있을 때 편한 사람',
+  'yield|active':'먼저 맞춰주는 사람',           'yield|quiet':'내 기준이 분명한 사람'
+};
+const REL_COMBO = {
+  'expression|active+bond|active':'분위기를 먼저 여는 사람',
+  'expression|active+space|active':'표현과 거리를 함께 쓰는 사람',
+  'bond|active+steady|active':'관계를 오래 쌓아가는 사람',
+  'novelty|active+expression|active':'새로운 자리에서 빛나는 사람',
+  'space|active+steady|active':'조용히 관계를 지키는 사람',
+  'yield|active+bond|active':'곁에서 챙겨주는 사람',
+  'yield|quiet+space|active':'선을 분명히 긋는 사람',
+  'steady|active+novelty|quiet':'익숙함을 소중히 하는 사람'
+};
+const REL_LINE = {
+  'expression|active':'마음이 움직이면 표현도 비교적 빠르게 시작하는 편이에요.',
+  'expression|quiet':'마음을 바로 꺼내기보다 상황을 한 번 보고 표현하는 편이에요.',
+  'bond|active':'사람과 자연스럽게 어울리며 관계를 시작하는 편이에요.',
+  'bond|quiet':'넓게 알고 지내기보다 가까운 몇 사람에게 마음을 쓰는 편이에요.',
+  'steady|active':'한 번 맺은 관계를 꾸준히 이어가는 쪽에 가까워요.',
+  'steady|quiet':'정해진 방식보다 그때그때의 흐름에 맞추는 편이에요.',
+  'novelty|active':'새로운 사람과 만나는 자리에서 에너지가 올라오는 편이에요.',
+  'novelty|quiet':'새로운 자리보다 이미 편한 관계에 시간을 쓰는 편이에요.',
+  'space|active':'가까운 사이에서도 혼자만의 시간이 필요한 편이에요.',
+  'space|quiet':'혼자 있는 시간보다 누군가와 함께일 때 편안해지는 편이에요.',
+  'yield|active':'관계가 편해지도록 먼저 맞춰주는 쪽에 가까워요.',
+  'yield|quiet':'맞추기보다 내 기준을 먼저 이야기하는 편이에요.'
+};
+const REL_FLAT = {typeName:'관계에 균형을 두는 사람',
+  desc:'어느 한쪽으로 크게 기울지 않고, 상황에 따라 관계의 방식을 바꾸는 편이에요.'};
+
+// 💌 공유 카드 아이콘 (sharekeys-v1.0)
+const SHAREKEY = {
+  'bond|active':{i:'🤝',t:'함께하기'},            'bond|quiet':{i:'☕',t:'둘이서 만나기'},
+  'expression|active':{i:'💬',t:'편하게 말 걸기'}, 'expression|quiet':{i:'🌱',t:'천천히 다가오기'},
+  'novelty|active':{i:'✨',t:'새로운 것 같이 해보기'},'novelty|quiet':{i:'🔁',t:'익숙한 것 함께하기'},
+  'steady|active':{i:'📅',t:'약속 지키기'},        'steady|quiet':{i:'🍃',t:'가볍게 만나기'},
+  'feel_first':{i:'👂',t:'먼저 들어주기'},         'solve_first':{i:'🧩',t:'같이 방법 찾기'},
+  'space|active':{i:'🌙',t:'혼자 둘 시간 주기'},   'space|quiet':{i:'🫱',t:'옆에 있어주기'},
+  'space|active#b':{i:'🚪',t:'혼자만의 시간 존중하기'},'space|quiet#b':{i:'📶',t:'연락 자주 주고받기'},
+  'yield|active':{i:'⚖️',t:'내 몫도 챙겨주기'},    'yield|quiet':{i:'🗣️',t:'생각 다를 때 바로 말하기'},
+  'contact|often':{i:'📱',t:'자주 안부 묻기'},      'contact|light':{i:'⏰',t:'서두르지 않기'}
+};
+const SLOT_LABEL = {approach:'나와 가까워지는 방법', support:'내가 힘들 때', boundary:'지켜주면 좋은 것'};
+
+// 부족한 오행 → 관계에서 겪으면 도움이 되는 결
+// 상대를 고르는 기준이 아니다. 만나야 할 사람으로 쓰지 않는다.
+const EL_COMP = {
+  목:{key:'확장', trait:'새로운 방향을 열어보는 성향'},
+  화:{key:'표현', trait:'감정과 반응을 밝게 표현하는 성향'},
+  토:{key:'안정', trait:'관계를 차분하게 유지하는 성향'},
+  금:{key:'기준', trait:'생각과 기준을 분명하게 표현하는 성향'},
+  수:{key:'깊이', trait:'상황을 천천히 살피고 깊게 이해하는 성향'}
+};
+
+// MBTI 축 → 행동 태그. 코드가 기계적으로 만든다.
+const MBTI_TAG = {
+  E:['energy_social','contact_often'], I:['energy_inner','contact_light'],
+  S:['care_concrete'],                 N:['care_meaning'],
+  T:['solve_first','words_direct'],    F:['feel_first','words_soft'],
+  J:['pace_planned','conflict_settle'],P:['pace_flow','conflict_later']
+};
+const mbtiTags = t => t ? t.split('').flatMap(l => MBTI_TAG[l] || []) : [];
+
+// ── typeName · 미리보기 2문장 ────────────────────────────────
+function relTypeName(sc, top, dir){
+  const flat = REL.filter(k=>k!=='friction').every(k=>Math.abs(sc[k]-50)<5);
+  if(flat) return {typeName:REL_FLAT.typeName, lines:[REL_FLAT.desc], flat:true};
+  const k1=top[0]+'|'+dir[top[0]], k2=top[1]+'|'+dir[top[1]];
+  const combo=REL_COMBO[k1+'+'+k2];
+  const name=(combo && Math.abs(sc[top[1]]-50)>=10) ? combo : REL_BASE[k1];
+  const lines=[REL_LINE[k1], REL_LINE[k2]].filter(Boolean);
+  return {typeName:name, lines, flat:false};
+}
+
+// ── 💌 아이콘 3개 ────────────────────────────────────────────
+// 슬롯마다 후보를 |점수-50| 큰 순으로 보고 첫 번째를 쓴다.
+// 같은 지표에서 두 번 뽑지 않는다.
+function relShareKeys(sc, dir, mbti){
+  const used=new Set(), out=[];
+  const dev=k=>Math.abs(sc[k]-50);
+  const push=(slot,key)=>out.push({slot, label:SLOT_LABEL[slot], icon:SHAREKEY[key].i, text:SHAREKEY[key].t});
+
+  // ① 가까워지는 방법
+  const a=['bond','expression','novelty','steady'].sort((x,y)=>dev(y)-dev(x))[0];
+  if(dev(a)>=5){ push('approach', a+'|'+dir[a]); used.add(a) }
+  else push('approach','bond|active');
+
+  // ② 힘들 때 — MBTI 의 T/F 가 있으면 그것부터, 없으면 공간 지표
+  if(mbti) push('support', mbti[2]==='T' ? 'solve_first' : 'feel_first');
+  else if(!used.has('space') && dev('space')>=5){ push('support','space|'+dir.space); used.add('space') }
+  else push('support','feel_first');
+
+  // ③ 지켜주면 좋은 것
+  const b=['space','yield'].filter(k=>!used.has(k)).sort((x,y)=>dev(y)-dev(x))[0];
+  if(b && dev(b)>=5) push('boundary', b==='space' ? 'space|'+dir.space+'#b' : b+'|'+dir[b]);
+  else if(mbti) push('boundary','contact|'+(mbti[0]==='E'?'often':'light'));
+  else push('boundary','yield|active');
+  return out;
+}
+
+// ── ⑧ 에 쓸 달 (무료 카드 5 와 같은 값. 재선정 금지) ─────────
+// 관계 점수가 높은 달 2개 + 가장 낮은 달 1개.
+// 가장 낮은 달이 50 이상이면 관계가 조용해지는 달이 없다는 뜻이므로 2개만 쓴다.
+function relPicks(months){
+  const by=months.map((m,i)=>({idx:i, v:m.scores.relation})).sort((a,b)=>b.v-a.v);
+  const out=[{idx:by[0].idx, type:'high'},{idx:by[1].idx, type:'high'}];
+  const low=by[by.length-1];
+  if(low.v<50 && !out.some(o=>o.idx===low.idx)) out.push({idx:low.idx, type:'low'});
+  return out.sort((a,b)=>a.idx-b.idx);
+}
+
+// ── 엔트리 포인트 ────────────────────────────────────────────
+// natalRel 결과 + 원국 + MBTI + 12개월 → 관계 리포트가 쓰는 값 전부
+function relDerive(rel, chart, mbtiType, months){
+  const sc=rel.scores;
+  const dir={}; REL.forEach(k=>dir[k]=relDir(sc[k]));
+  const top=relTop(sc), needs=relNeeds(sc,2);
+  const tn=relTypeName(sc, top, dir);
+  const els=chart.natal.elements;
+  let wi=0; for(let i=1;i<5;i++) if(els[i]<els[wi]) wi=i;   // 동률이면 목화토금수 순
+  const weak=EL[wi];
+  return {
+    scores:sc, directions:dir, topIndices:top.slice(0,6),
+    needsIndices:needs, needs:needs.map(k=>NEEDMAP[k]),
+    typeName:tn.typeName, previewLines:tn.lines, flat:tn.flat,
+    shareKeys:relShareKeys(sc, dir, mbtiType),
+    weakestElement:weak, complementKey:EL_COMP[weak].key, complementTrait:EL_COMP[weak].trait,
+    dayBranchRelations:rel.dayBranchRelations, dohwa:rel.dohwa,
+    picks:relPicks(months), mbtiTags:mbtiTags(mbtiType)
+  };
+}
+
 function mix(parts){const o={money:0,achieve:0,relation:0,change:0,condition:0};parts.forEach(([r,w])=>DOM.forEach(k=>o[k]+=r.out[k]*w));if(mix.raw)mix.raw.push(o);const sc={};DOM.forEach(k=>sc[k]=normK(k,o[k]));return sc}
 function dwAt(chart,date){const age=(date-chart.utc)/(365.2425*864e5);let cur=null;for(const d of chart.daewoon)if(age>=d.ageStart)cur=d;return cur}
 function yearScores(chart,y0,y1){const res=[];let prev=null;
@@ -443,7 +803,7 @@ const PROMPT_VERSION='prompt-v3.1'; // 프롬프트를 고치면 이 번호를 �
 const INTRO_KEY=KEYS[Math.floor(Math.random()*KEYS.length)]; // 첫 화면: 진입할 때마다 10개 일간 중 하나를 랜덤 선택해 남녀 한 쌍 표시
 let S={saved:null,step:'intro',input:null,mbti:null,chart:null,data:null,ai:{A:null,B:null},tab:0,qi:0,ans:[]};
 // 펼쳐둔 것·선택한 달은 화면을 다시 그려도 유지한다 (AI 응답이 하나씩 도착할 때마다 render 가 다시 돈다)
-S.ui={bandOpen:false,weekOpen:false,openMonth:null};
+S.ui={bandOpen:false,weekOpen:false,openMonth:null,relBarOpen:false,relMoreOpen:false};
 window.uiToggle=(k,v)=>{S.ui[k]=v};
 let sample=null,dl=null;
 let DB=null,UID=null;
@@ -467,6 +827,8 @@ function render(){const v=$('view');
   else if(S.step==='mbtiResult')v.innerHTML=viewMbtiResult();
   else if(S.step==='result')v.innerHTML=viewResult();
   else if(S.step==='today')v.innerHTML=viewToday();
+  else if(S.step==='relIntro')v.innerHTML=viewRelIntro();
+  else if(S.step==='relReport')v.innerHTML=viewRelReport();
   // 다시 그린 뒤 열려 있던 월 상세를 되살린다
   if(S.step==='result'&&S.tab===4&&S.ui.openMonth!=null&&$('mdet'))openM(S.ui.openMonth,true);
 }
@@ -596,7 +958,9 @@ function makeData(){
   const bigMoney=years.filter(t=>t.year>=cy&&t.year<=cy+12).sort((a,b)=>b.scores.money-a.scores.money).slice(0,3).sort((a,b)=>a.year-b.year);
   const cautions=years.filter(t=>t.year>=cy&&t.year<=cy+10).map(t=>({t,risk:(100-t.scores.condition)+(t.scores.change>70?t.scores.change-70:0)})).sort((a,b)=>b.risk-a.risk).slice(0,2).map(x=>x.t).sort((a,b)=>a.year-b.year);
   const P=chart.pillars;
-  return {chart,age,cy,years,recent,decades,tps,months,bigMoney,cautions,
+  const rel=natalRel(chart);   // 관계 7종 — 원국 1회만 계산한다
+  const relD=relDerive(rel,chart,S.mbti?.type||null,months);   // 관계 리포트가 쓰는 파생값
+  return {chart,age,cy,years,recent,decades,tps,months,bigMoney,cautions,rel,relD,
     pillars:{year:pairName(P.year),month:pairName(P.month),day:pairName(P.day),hour:P.hour?pairName(P.hour):null},
     ilgan:ILGAN[P.day.s],key:KEYS[P.day.s]+'_'+i.gender}
 }
@@ -604,7 +968,7 @@ function cacheKey(){return 'myluck:'+VERSION+':'+PROMPT_VERSION+':'+JSON.stringi
 async function start(){
   await READY;
   try{S.data=makeData()}catch(e){console.error(e);alert('계산 중 오류가 발생했습니다: '+e.message);return}
-  S.ai={P:null,A:null,B:null,M:null};S.tab=0;S.ui={bandOpen:false,weekOpen:false,openMonth:null};saveProfile();
+  S.ai={P:null,A:null,B:null,M:null};S.rel.ai={R1:null,R2:null,R3:null};S.tab=0;S.ui={bandOpen:false,weekOpen:false,openMonth:null,relBarOpen:false,relMoreOpen:false};saveProfile();
   const c=await loadResults();if(c)Object.assign(S.ai,c);
   go('result');
   if(!apiBase()&&!sample){const er={error:'이 화면에서는 AI 해석을 쓸 수 없어요. claude.ai에서 열어주세요.',tried:true};['P','A','B','M'].forEach(k=>S.ai[k]=S.ai[k]||er);render();return}
@@ -1062,6 +1426,7 @@ function viewResult(){const D=S.data,i=S.input,m=S.mbti;
    <button onclick="saveCard()">이 카드 저장</button>
   </div>
   <div class="pager"><button class="ghost" ${S.tab===0?'disabled':''} onclick="setTab(S.tab-1)">← 이전</button><button class="ghost" ${S.tab===5?'disabled':''} onclick="setTab(S.tab+1)">다음 →</button></div>
+  ${S.tab===4?relPromo('card5'):S.tab===5?relPromo('end'):''}
   ${S.mbti?'':`<button class="ghost" onclick="go('mbtiAsk')">MBTI 추가해서 다시 보기</button>`}
   <button class="ghost" onclick="S.input=null;S.mbti=null;go('intro')">다른 사람 보기</button>
   <p id="saveMsg" class="fine" aria-live="polite"></p>
@@ -1199,6 +1564,224 @@ function card6(){const B=S.ai.B,n=S.data.chart.natal;if(!ok('B'))return wait('B'
  <p class="fine">앞으로 흐름이 크게 달라지는 시기예요. 그때의 흐름을 어떻게 활용하면 좋을지 정리했어요.</p>
  ${(u.cautions||[]).map(c=>`<div class="pill turn"><b>${esc(c.when)}</b> <em>${esc(c.risk)}</em><p>${esc(c.myMistake)}</p><p class="q">이때는 ${esc(c.guard)}</p></div>`).join('')}`}
 // ---------- share & save ----------
+// ═══════════════════════════════════════════════════════════════
+// 🤝 관계 사용설명서 · 화면 (rel-ui-v1.0)
+//
+//  S1 relIntro   미리보기 — AI 호출 0. 코드 템플릿만 쓴다.
+//  S5 relReport  리포트 — R1(①~⑦) R2(⑧) R3(💌) 3회 호출.
+//
+//  결제는 아직 붙지 않았다. relUnlocked() / relBuy() 두 곳만 바꾸면 된다.
+// ═══════════════════════════════════════════════════════════════
+
+const REL_PROMPT_VERSION='rel-prompt-v1.0';   // worker.js 와 같은 값이어야 한다
+const REL_PAID_KEY='myluck:rel:paid';
+
+S.rel={ai:{R1:null,R2:null,R3:null}};
+
+function relUnlocked(){try{return localStorage.getItem(REL_PAID_KEY)==='1'}catch(_){return false}}
+function relBuy(){
+  // TODO 결제 연동 — 영수증 검증 뒤에 잠금을 푼다. 지금은 체험으로 연다.
+  try{localStorage.setItem(REL_PAID_KEY,'1')}catch(_){}
+  relStart();
+}
+function relKey(){return 'myluck:rel:'+REL_PROMPT_VERSION+':'+JSON.stringify([S.input.date,S.input.time,S.input.noTime,S.input.lon,S.input.gender,S.input.ya,S.mbti?.type||''])}
+function relSave(){const d={};['R1','R2','R3'].forEach(k=>{const v=S.rel.ai[k];if(v&&!v.loading&&!v.error)d[k]=v});
+  try{localStorage.setItem(relKey(),JSON.stringify(d))}catch(_){}}
+function relLoad(){try{return JSON.parse(localStorage.getItem(relKey())||'null')}catch(_){return null}}
+
+// ── 데이터 묶음 ─────────────────────────────────────────────
+const RELK_KO={expression:'표현',bond:'연결',steady:'안정',novelty:'새로움',space:'공간',friction:'긴장',yield:'배려'};
+function relPayload(g){
+  const D=S.data,d=D.relD,m=S.mbti;
+  const axes=m?{EI:m.type[0],SN:m.type[1],TF:m.type[2],JP:m.type[3]}:null;
+  const user={나이:D.age, MBTI축:axes, MBTI태그:d.mbtiTags};
+  if(g==='R1')return {A_사용자:user, B_관계지표:{
+    사용범위:'①~⑦ 전체',
+    점수:Object.fromEntries(REL.map(k=>[RELK_KO[k],d.scores[k]])),
+    방향:Object.fromEntries(REL.map(k=>[RELK_KO[k],d.directions[k]])),
+    상위지표:d.topIndices.map(k=>RELK_KO[k]),
+    상위지표_읽는법:'평균 50에서 가장 많이 벗어난 순서다. 높다는 뜻이 아니다. 방향을 함께 보라.',
+    욕구:d.needs, 일지관계:d.dayBranchRelations,
+    근거_쓰는법:'일지관계와 약한오행은 근거일 뿐이다. 본문에 그 단어를 그대로 쓰지 말고 뜻만 생활 언어로 옮겨라.',
+    약한오행:d.weakestElement, complementTrait:d.complementTrait}};
+  if(g==='R2'){const yr=[...new Set(D.months.flatMap(x=>x.tags))].slice(0,4);
+    return {A_사용자:user, C_선정된_달:d.picks.map(p=>{const mm=D.months[p.idx];
+      return {사용범위:'이 달에서만 사용', idx:p.idx, 라벨:mm.label, 기간:fmtRange(mm), 간지:mm.pillar,
+              관계점수:mm.scores.relation, 방향:mm.scores.relation>=50?'active':'quiet',
+              월운태그:mm.tags, 선정이유:p.type}}),
+      D_연간태그:{태그:yr, 쓰는법:'간지와 월운태그는 근거일 뿐이다. 본문에 그 단어를 그대로 쓰지 말고 뜻만 생활 언어로 옮겨라.'}};
+  }
+  const a=S.rel.ai.R1||{};
+  return {A_생성결과:{사용범위:'이 카드에서만 사용. 다른 데이터 금지',
+    openingSpeed:a.openingSpeed||'', closenessTrigger:a.closenessTrigger||'', showing:a.showing||'',
+    touchWords:a.touchWords||'', support:a.support||'',
+    contact:a.contact||'', space:a.space||'', distance:a.distance||''}};
+}
+const fmtRange=m=>`${m.start.getUTCMonth()+1}/${m.start.getUTCDate()}~${m.end.getUTCMonth()+1}/${m.end.getUTCDate()}`;
+
+// ── 호출 ────────────────────────────────────────────────────
+async function relCall(g){
+  const base=apiBase();
+  if(!base)throw {code:'upstream'};
+  let r;try{r=await fetch(base+'/api/card',{method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({card:g,data:relPayload(g)})})}catch(_){throw {code:'network'}}
+  let j;try{j=await r.json()}catch(_){throw {code:'upstream'}}
+  if(!j.ok)throw {code:j.code||'upstream'};
+  return j.result;
+}
+async function relRun(g){
+  S.rel.ai[g]={loading:true};if(S.step==='relReport')render();
+  const RETRY=new Set(['network','upstream']);
+  for(let i=0;i<3;i++){                       // 자동 재시도 2회 — 결제는 유지된다
+    try{S.rel.ai[g]=await relCall(g);relSave();break}
+    catch(e){const code=e&&e.code;
+      if(i<2&&RETRY.has(code)){await new Promise(r=>setTimeout(r,1400+Math.random()*1200));continue}
+      S.rel.ai[g]={error:ERRMSG[code]||'리포트를 만들지 못했어요.',tried:true}}
+  }
+  if(S.step==='relReport')render();
+  if(g==='R1'&&!S.rel.ai.R1.error&&!S.rel.ai.R3)relRun('R3');   // 💌 는 ①~⑦ 결과로 쓴다
+}
+function relStart(){
+  const c=relLoad();S.rel.ai={R1:null,R2:null,R3:null};if(c)Object.assign(S.rel.ai,c);
+  go('relReport');
+  if(!S.rel.ai.R1)relRun('R1');
+  if(!S.rel.ai.R2)setTimeout(()=>{if(!S.rel.ai.R2)relRun('R2')},2500);
+  else if(S.rel.ai.R1&&!S.rel.ai.R3)relRun('R3');
+}
+const relOk=g=>S.rel.ai[g]&&!S.rel.ai[g].loading&&!S.rel.ai[g].error;
+window.relOpen=()=>{relUnlocked()?relStart():go('relIntro')};
+window.relBuy=relBuy;
+
+// ── 진입 배너 ───────────────────────────────────────────────
+function relPromo(kind){
+  const t=kind==='card5'?'이 시기에 나는 어떻게 가까워질까?':'나는 관계에서 어떤 사람일까?';
+  return `<button class="promo" onclick="relOpen()">
+    <span class="pico">🤝</span>
+    <span class="ptx"><b>${t}</b><small><b class="pr">3,900원</b> · 사주 × MBTI 관계 사용설명서</small></span>
+    <span class="ppr">→</span></button>`;
+}
+
+// ── S1 미리보기 ─────────────────────────────────────────────
+const REL_LOCKS=['나는 어디까지 맞춰주다 지칠까?','어떤 관계에서 에너지가 가장 많이 빠질까?',
+                 '내 마음은 상대에게 어떻게 전해질까?','앞으로 12개월, 관계는 언제 움직일까?'];
+const REL_SECS=[['①','관계에서 나는'],['②','가까워지는 방식'],['③','마음을 표현하는 나'],
+                ['④','관계에서 중요한 것'],['⑤','엇갈리기 쉬운 순간'],['⑥','나를 지키는 거리'],
+                ['⑦','잘 맞는 결 / 맞춰갈 결'],['⑧','앞으로 12개월 관계 흐름'],['💌','나를 대하는 법']];
+function viewRelIntro(){const d=S.data.relD;
+  return `<section class="res">
+  <header class="rhead"><p class="brand">🤝 관계 사용설명서</p>
+   <h2>사주 × MBTI로 보는<br>나의 관계 사용법</h2></header>
+  <article class="card">
+   <p class="no">미리보기</p>
+   <p class="rtype">「${esc(d.typeName)}」</p>
+   ${d.previewLines.map(l=>`<p class="rlead">${esc(l)}</p>`).join('')}
+   <div class="rlocks">${REL_LOCKS.map(l=>`<p>🔒 ${esc(l)}</p>`).join('')}</div>
+   <p class="sec">전체 8개 섹션 + 공유 카드</p>
+   <ul class="rlist">${REL_SECS.map(([n,t],i)=>`<li><span>${n}</span>${esc(t)}${i?'<em>🔒</em>':''}</li>`).join('')}</ul>
+   <p class="fine">특정 상대와의 관계는 궁합에서 볼 수 있어요.</p>
+  </article>
+  <button class="primary" onclick="relBuy()">3,900원으로 전체 보기 →</button>
+  <p class="fine" style="text-align:center">한 번 결제하면 계속 볼 수 있어요.<br>지금은 결제 연동 전이라 체험으로 열려요.</p>
+  <button class="ghost" onclick="go('result')">← 무료 결과로 돌아가기</button>
+  </section>`}
+
+// ── S5 리포트 ───────────────────────────────────────────────
+function relWait(g,label){const a=S.rel.ai[g];
+  if(a?.error)return `<div class="note">${esc(a.error)} <button class="mini" onclick="relRun('${g}')">다시 시도</button></div>`;
+  return `<div class="loading"><span class="dot"></span><span>${label}</span></div>`}
+window.relRun=relRun;
+
+function relProgress(){
+  const step=[['관계 지표를 계산했어요','관계 지표를 계산하는 중',true],
+              ['관계에서의 나를 정리했어요','관계에서의 나를 정리하는 중',relOk('R1')],
+              ['12개월 관계 흐름을 정리했어요','12개월 관계 흐름을 보는 중',relOk('R2')],
+              ['나를 대하는 법을 썼어요','나를 대하는 법을 쓰는 중',relOk('R3')]];
+  const done=step.filter(s=>s[2]).length;
+  if(done===4)return '';
+  return `<div class="rprog"><p><b>리포트를 만들고 있어요</b> <small>${done} / 4</small></p>
+   <div class="bar"><i style="width:${done/4*100}%;background:var(--accent)"></i></div>
+   <ul>${step.map(([a,b,v])=>`<li class="${v?'on':''}">${v?'✔ '+a:'⋯ '+b}</li>`).join('')}</ul></div>`}
+
+function viewRelReport(){const D=S.data,d=D.relD,i=S.input;
+  return `<section class="res">
+  <header class="rhead"><p class="brand">🤝 관계 사용설명서</p>
+   <h2>${i.name?esc(i.name)+'님' : '나'} · ${esc(D.ilgan[0])}${S.mbti?' · '+esc(S.mbti.type):''}</h2></header>
+  ${relProgress()}
+  <nav class="rjump">${REL_SECS.map(([n],k)=>`<button onclick="relGo(${k})">${n}</button>`).join('')}</nav>
+  ${relSec1()}${relSec2()}${relSec3()}${relSec4()}${relSec5()}${relSec6()}${relSec7()}${relSec8()}${relSecShare()}
+  <p class="fine">명리 이론과 자기보고 성향을 엮은 참고용 콘텐츠예요. 사람을 판정하는 기준으로 쓰지 말아주세요.</p>
+  <p class="fine">${REL_PROMPT_VERSION} · ${new Date().toLocaleDateString('ko-KR')} 생성</p>
+  <button class="ghost" onclick="go('result')">← 무료 결과로 돌아가기</button>
+  <p id="saveMsg" class="fine" aria-live="polite"></p>
+  <div id="relStage" aria-hidden="true"></div></section>`}
+window.relGo=k=>{const el=document.getElementById('rs'+k);if(el)el.scrollIntoView({block:'start',behavior:'smooth'})};
+
+const rsec=(k,body)=>`<article class="card rsec" id="rs${k}"><p class="no">${REL_SECS[k][0]} ${REL_SECS[k][1]}</p>${body}</article>`;
+const rp=(lab,v)=>v?`<p class="tri"><span class="lab">${lab}</span>${esc(v)}</p>`:'';
+
+function relBars(){const d=S.data.relD;
+  return `<details class="relbars"${S.ui.relBarOpen?' open':''} ontoggle="uiToggle('relBarOpen',this.open)">
+   <summary>관계 지표 7가지 보기</summary>
+   <div class="rbars">${REL.map(k=>`<div><span>${RELK_KO[k]}</span><div class="bar"><i style="width:${d.scores[k]}%;background:var(--accent)"></i></div><small>${d.scores[k]}</small></div>`).join('')}</div>
+   <p class="fine">50이 평균이에요. 높고 낮음은 좋고 나쁨이 아니라 그 영역이 얼마나 활발한지를 뜻해요.</p></details>`}
+
+function relSec1(){const a=S.rel.ai.R1,d=S.data.relD;
+  let h=`<p class="rtype">「${esc(d.typeName)}」</p>`;
+  h+= relOk('R1') ? rp('가장 먼저 움직이는 것',a.priority)+rp('기운이 향하는 곳',a.energy)
+                  : relWait('R1','관계에서의 나를 정리하는 중…');
+  return rsec(0,h+relBars())}
+function relSec2(){const a=S.rel.ai.R1;if(!relOk('R1'))return rsec(1,relWait('R1','정리하는 중…'));
+  return rsec(1,rp('첫인상',a.firstImpression)+rp('가까워지는 속도',a.openingSpeed)
+    +rp('가까워지는 계기',a.closenessTrigger)+rp('깊어지는 조건',a.comfort))}
+function relSec3(){const a=S.rel.ai.R1;if(!relOk('R1'))return rsec(2,relWait('R1','정리하는 중…'));
+  return rsec(2,`<p>${esc(a.showing)}</p>`+rp('상대가 알아채기 쉬운 것',a.easySign)+rp('잘 드러나지 않는 것',a.hiddenSign))}
+function relSec4(){const a=S.rel.ai.R1,d=S.data.relD;
+  const chips=`<div class="tags">${d.needs.map(n=>`<span>${esc(n)}</span>`).join('')}</div>`;
+  if(!relOk('R1'))return rsec(3,chips+relWait('R1','정리하는 중…'));
+  return rsec(3,chips+`<p class="quote">“${esc(String(a.touchWords).replace(/^[“"']|[”"']$/g,''))}”</p>`+rp('힘들 때 이렇게 해주면 편해요',a.support))}
+function relSec5(){const a=S.rel.ai.R1;if(!relOk('R1'))return rsec(4,relWait('R1','정리하는 중…'));
+  return rsec(4,rp('기운이 빠지는 상황',a.fatigue)+rp('서운함이 생기는 장면',a.trigger)+rp('부딪혔을 때 나는',a.reaction)
+   +`<details class="more"${S.ui.relMoreOpen?' open':''} ontoggle="uiToggle('relMoreOpen',this.open)"><summary>자세히 보기</summary>
+     ${rp('의도와 다르게 보이는 것',a.misread)}${rp('다시 편해지는 방법',a.fix)}</details>`)}
+function relSec6(){const a=S.rel.ai.R1;if(!relOk('R1'))return rsec(5,relWait('R1','정리하는 중…'));
+  return rsec(5,rp('편한 연락 리듬',a.contact)+rp('지키고 싶은 영역',a.space)
+   +rp('부탁을 받아주는 선',a.yieldLine)+rp('거리를 두는 방식',a.distance)+rp('기운을 채우는 방법',a.recharge))}
+function relSec7(){const a=S.rel.ai.R1,d=S.data.relD;
+  const bridge=`<div class="rbridge"><b>그 사람과 나는 어떨까?</b><span>💞 궁합 보기 · 준비 중</span></div>`;
+  if(!relOk('R1'))return rsec(6,relWait('R1','정리하는 중…'));
+  return rsec(6,rp('편하게 맞는 결',a.easyFit)
+   +`<p class="tri"><span class="lab">겪어두면 좋은 결 · ${esc(d.complementKey)}</span>${esc(a.complement)}</p>`
+   +rp('속도를 맞춰갈 결',a.effortFit)+bridge)}
+function relSec8(){const a=S.rel.ai.R2,D=S.data,d=D.relD;
+  if(!relOk('R2'))return rsec(7,relWait('R2','12개월 관계 흐름을 보는 중…'));
+  const picks=d.picks;
+  const body=(a.months||[]).map((m,i)=>{
+    // idx 를 0,1,2 로 새로 매겨 보내는 경우가 있다. 그러면 순서로 되받는다.
+    const pick=picks.find(p=>p.idx===m.idx)||picks[i];
+    const mm=pick?D.months[pick.idx]:null; if(!mm)return '';
+    const lab=mm.year===D.cy?mm.label:mm.year+'년 '+mm.label;   // 해가 바뀌는 달은 연도까지 보여준다
+    return `<div class="rmonth"><p class="mh"><b>${esc(lab)}</b> <em>${esc(m.title)}</em></p>
+     <p class="tri"><span class="lab">🔮 흐름</span>${esc(m.flow)}</p>
+     <p class="tri"><span class="lab">🧬 나의 반응</span>${esc(m.me)}</p>
+     <p class="use">${esc(m.usage)}</p></div>`}).join('');
+  return rsec(7,`<p class="fine" style="margin-top:0">앞으로 12개월 중 관계가 크게 움직이는 달이에요. 무료 카드 5와 같은 달을 씁니다.</p>`
+    +body+`<p class="rclose">${esc(a.closing)}</p>`)}
+function relSecShare(){const a=S.rel.ai.R3,d=S.data.relD;
+  if(!relOk('R3'))return rsec(8,relWait('R3','나를 대하는 법을 쓰는 중…'));
+  return rsec(8,`<p class="rshare">${esc(a.shareText)}</p>
+   <div class="rkeys">${d.shareKeys.map(k=>`<div><span class="ki">${k.icon}</span><small>${esc(k.label)}</small><b>${esc(k.text)}</b></div>`).join('')}</div>
+   <button class="primary" onclick="saveRelShare()">💌 카드 이미지로 저장</button>`)}
+
+// ── 💌 공유 카드 이미지 ─────────────────────────────────────
+function relShareHTML(){const a=S.rel.ai.R3||{},d=S.data.relD;
+  return `<div class="share relshare"><p class="sbrand">💌 나를 대하는 법</p>
+   <p class="rtype">「${esc(d.typeName)}」</p>
+   <p class="rshare">${esc(a.shareText||'')}</p>
+   <div class="rkeys">${d.shareKeys.map(k=>`<div><span class="ki">${k.icon}</span><small>${esc(k.label)}</small><b>${esc(k.text)}</b></div>`).join('')}</div>
+   <p class="sfoot">내 운 사용설명서 · 사주 × MBTI</p></div>`}
+window.saveRelShare=()=>{const st=$('relStage');st.innerHTML=relShareHTML();
+  capture(st.firstElementChild,`myluck-relation-${stamp()}.png`)};
+
 function shareHTML(){const D=S.data,A=ok('P')?S.ai.P.profile:{},m=S.mbti;
  const best=D.months.slice().sort((a,b)=>b.scores[b.top]-a.scores[a.top])[0];
  return `<div class="share"><p class="sbrand">내 운 사용설명서</p><p class="sname">${S.input.name?esc(S.input.name)+'님의':'나의'} 운 사용설명서</p>
