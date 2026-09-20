@@ -124,6 +124,7 @@ select:disabled{opacity:.45}
 .choice{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:18px 0 8px}
 .choice button{display:flex;flex-direction:column;gap:4px;padding:20px 12px;text-align:center}.choice b{font-size:16px}.choice span{font-size:12px;color:var(--sub)}
 .grid16{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:14px 0}.grid16 button{padding:14px 4px;font-weight:600}
+.grid16 button.on{background:var(--accent);color:var(--panel);border-color:var(--accent)}
 .prog{height:4px;background:var(--chip);border-radius:2px;margin:8px 0 18px;overflow:hidden}.prog i{display:block;height:100%;background:var(--ink);transition:width .3s}
 .scale{display:flex;flex-direction:column;gap:8px;margin:16px 0}
 .scale>button{text-align:left;padding:16px}.scale>button b{display:inline-grid;place-items:center;width:24px;height:24px;border-radius:50%;background:var(--chip);margin-right:10px;font-size:12px}
@@ -319,6 +320,13 @@ details summary{cursor:pointer;color:var(--sub);font-size:14px;padding:10px 0}
 .itemc{margin:9px 0 0;padding-top:9px;border-top:1px solid var(--line);font-size:13px}
 .itemc b{color:var(--accent)}
 .itemc small{display:block;font-size:11px;color:var(--sub);margin-top:2px}
+/* 마지막 확인 — 생년월일과 MBTI를 한 자리에서 본다 */
+.confirm{list-style:none;margin:16px 0 20px;padding:0;border:1px solid var(--line);border-radius:14px;background:var(--panel);overflow:hidden}
+.confirm li{display:flex;align-items:center;gap:10px;padding:13px 15px;border-bottom:1px solid var(--line)}
+.confirm li:last-child{border:0}
+.confirm li span{flex:none;width:62px;font-size:12px;color:var(--sub)}
+.confirm li b{flex:1;min-width:0;font-size:14.5px;font-weight:700}
+.confirm li .mini{flex:none}
 .rmonth{margin:0 0 14px;padding:12px 14px;border-radius:12px;background:var(--panel);
  border-left:3px solid var(--accent)}
 .rmonth .mh{margin:0 0 8px;font-size:15px;line-height:1.5}
@@ -901,6 +909,7 @@ function render(){const v=$('view');
   else if(S.step==='mbtiPick')v.innerHTML=viewMbtiPick();
   else if(S.step==='quiz')v.innerHTML=viewQuiz();
   else if(S.step==='mbtiResult')v.innerHTML=viewMbtiResult();
+  else if(S.step==='confirm')v.innerHTML=viewConfirm();
   else if(S.step==='result')v.innerHTML=viewResult();
   else if(S.step==='today')v.innerHTML=viewToday();
   else if(S.step==='relIntro')v.innerHTML=viewRelIntro();
@@ -981,14 +990,39 @@ function bindInput(){
 // ---------- mbti ----------
 function viewMbtiAsk(){return `<section><p class="stepno">STEP 2 / 2</p><h2>잠깐, 지금의 나도 함께 볼게요</h2>
   <p class="lede">사주는 앞으로의 흐름을, MBTI는 그 흐름에 반응하는 지금의 나를 보여줍니다.</p>
-  ${S.saved?.mbti?`<button class="primary" onclick="S.mbti=S.saved.mbti;start()">지난번 결과 ${esc(S.saved.mbti.type)}로 계속</button>`:''}
+  ${S.saved?.mbti?`<button class="primary" onclick="S.mbti=S.saved.mbti;go('confirm')">지난번 결과 ${esc(S.saved.mbti.type)}로 계속</button>`:''}
   <div class="choice"><button onclick="go('mbtiPick')"><b>MBTI 알아요</b><span>유형을 바로 선택</span></button>
   <button onclick="S.qi=0;S.ans=[];go('quiz')"><b>모르겠어요</b><span>12문항 · 약 1분</span></button></div>
   <p class="fine">몇 년 전에 검사한 결과라면 1분 테스트로 다시 확인하는 걸 추천해요.</p>
-  <button class="ghost" onclick="S.mbti=null;start()">MBTI 없이 보기</button>
+  <button class="ghost" onclick="S.mbti=null;go('confirm')">MBTI 없이 보기</button>
   <button class="ghost" onclick="go('input')">← 출생정보 다시 입력</button></section>`}
-function viewMbtiPick(){return `<section><h2>MBTI 선택</h2><div class="grid16">${TYPES.map(t=>`<button onclick="S.mbti={type:'${t}',pct:null,source:'self'};start()">${t}</button>`).join('')}</div>
-  <button class="ghost" onclick="go('mbtiAsk')">뒤로</button></section>`}
+// 누르자마자 결과로 넘어가면 오탭을 되돌릴 수 없다. AI 4장이 그냥 나간다.
+// 고른 뒤 확인 버튼을 한 번 더 누르게 한다.
+function viewMbtiPick(){const sel=S.pick||null;
+ return `<section><h2>MBTI 선택</h2>
+  <p class="fine">유형을 고른 뒤 아래 버튼을 눌러주세요.</p>
+  <div class="grid16">${TYPES.map(t=>`<button class="${sel===t?'on':''}" onclick="pickMbti('${t}')">${t}</button>`).join('')}</div>
+  <button class="primary" ${sel?'':'disabled'} onclick="S.mbti={type:S.pick,pct:null,source:'self'};go('confirm')">${sel?esc(sel)+'로 볼게요':'유형을 선택해주세요'}</button>
+  <button class="ghost" onclick="S.pick=null;go('mbtiAsk')">뒤로</button></section>`}
+window.pickMbti=t=>{S.pick=t;render()};
+// 생년월일과 MBTI를 한 번에 확인하는 자리. 여기서만 start() 가 불린다.
+// 오입력·오탭을 AI 호출 전에 되돌릴 수 있게 하려는 것이다.
+function viewConfirm(){const i=S.input,m=S.mbti;
+ if(!i)return viewIntro();
+ const d=String(i.date).split('-');
+ const row=(lab,val,fix)=>`<li><span>${lab}</span><b>${esc(val)}</b>${fix?`<button class="mini" onclick="${fix}">수정</button>`:''}</li>`;
+ return `<section><p class="stepno">마지막 확인</p><h2>이 정보로 볼게요</h2>
+  <ul class="confirm">
+   ${row('생년월일',`${d[0]}년 ${+d[1]}월 ${+d[2]}일`,"go('input')")}
+   ${row('출생시간',i.noTime?'모름':(i.time||'모름'),"go('input')")}
+   ${row('성별',i.gender==='female'?'여성':'남성',"go('input')")}
+   ${row('출생지',i.place||'모름',"go('input')")}
+   ${row('MBTI',m?m.type+(m.source==='test'?' · 테스트 추정':''):'없이 보기',"S.pick=S.mbti?.type||null;go('mbtiAsk')")}
+  </ul>
+  <button class="primary" onclick="start()">내 운 사용설명서 보러가기 →</button>
+  <p class="fine">이 정보로 해석을 만들어요. 결과 화면에서도 바꿀 수 있어요.</p>
+  <button class="ghost" onclick="go('mbtiAsk')">← 뒤로</button></section>`}
+
 function viewQuiz(){const q=QS[S.qi];return `<section class="quiz"><p class="stepno">MBTI 성향 테스트 · ${S.qi+1} / 12</p>
   <div class="prog"><i style="width:${S.qi/12*100}%"></i></div>
   <h2>${esc(q[2])}</h2>
@@ -1002,11 +1036,13 @@ function computeMbti(){const axes=[['E','I'],['S','N'],['T','F'],['J','P']];let 
   axes.forEach((ax,a)=>{const sum=S.ans.slice(a*3,a*3+3).reduce((x,y)=>x+y,0);const p=Math.round(50+sum/6*50);
     const L=p>=50?ax[0]:ax[1];type+=L;pct[ax[0]+ax[1]]={letter:L,pct:p>=50?p:100-p,edge:Math.abs(p-50)<=10}});
   S.mbti={type,pct,source:'test'}}
-function viewMbtiResult(){const m=S.mbti;return `<section><p class="stepno">MBTI 성향 테스트 결과</p>
+function viewMbtiResult(){const m=S.mbti;
+ if(!m||!m.pct)return viewConfirm();   // 축 비율 없이 이 화면에 오면 빈 화면이 된다
+ return `<section><p class="stepno">MBTI 성향 테스트 결과</p>
   <h2>${m.type} <small>로 추정돼요</small></h2>
   <div class="axes">${Object.entries(m.pct).map(([k,v])=>`<div class="ax"><span>${v.letter} ${v.pct}%</span><div class="bar"><i style="width:${v.pct}%"></i></div>${v.edge?`<em>${k[0]}/${k[1]} 경계형</em>`:''}</div>`).join('')}</div>
   <p class="fine">간이 문항으로 추정한 성향이며, 공식 MBTI 검사 결과와 다를 수 있습니다.</p>
-  <button class="primary" onclick="start()">나의 운 사용설명서 보기</button>
+  <button class="primary" onclick="go('confirm')">나의 운 사용설명서 보기</button>
   <button class="ghost" onclick="S.qi=0;S.ans=[];go('quiz')">다시 테스트</button></section>`}
 // ---------- compute ----------
 function makeData(){
@@ -1253,7 +1289,7 @@ const TODO={비견:['오늘 할 일을 스스로 정하고 한 가지는 끝까�
  편관:['가장 부담스러운 일부터 30분만 손대기','무리한 부탁은 정중하게 거절하기'],정관:['마감과 약속 시간 다시 확인하기','진행 상황을 먼저 공유하기'],
  편인:['큰 결정은 미루고 정보만 모으기','20분 산책하며 생각 정리하기'],정인:['책이나 강의 하나 20분 보기','도움받은 사람에게 고맙다고 말하기']};
 const TAGLINE={'일지 충':'가까운 사람과 말이 엇갈리기 쉬우니 한 번 더 확인하세요.','월지 충':'일정이 흔들리기 쉬우니 여유 시간을 두세요.','연지 충':'바깥 환경의 변화가 느껴질 수 있어요.','시지 충':'계획한 일이 뒤로 밀리기 쉬워요.',
- '일지 합':'가까운 사람과 손발이 잘 맞는 날이에요.','월지 합':'주변과 협력하기 좋은 날이에요.','연지 합':'오랜 인연에서 연락이 올 수 있어요.','시지 합':'준비해온 일에 힘이 붙어요.',역마:'이동과 외출이 운을 열어줘요.',도화:'사람들의 눈에 띄기 쉬운 날이에요.',화개:'혼자 집중하는 시간이 효율이 좋아요.'};
+ '일지 합':'가까운 사람과 손발이 잘 맞는 날이에요.','월지 합':'주변과 협력하기 좋은 날이에요.','연지 합':'오랜 인연에서 연락이 올 수 있어요.','시지 합':'준비해온 일에 힘이 붙어요.',역마:'이동과 외출이 운을 열어줘요.',도화:'사람들의 눈에 띄기 쉬운 날이에요.',화개:'혼자 집중하는 시간에 일이 잘 풀려요.'};
 const WD=['일','월','화','수','목','금','토'];
 function kstParts(d){const k=new Date(d.getTime()+9*36e5);return {y:k.getUTCFullYear(),m:k.getUTCMonth()+1,d:k.getUTCDate(),wd:k.getUTCDay()}}
 function dayInfo(chart,date){const p=kstParts(date);const idx=mod(jdn(p.y,p.m,p.d)-2415021+10,60);const dp={s:idx%10,b:idx%12};
@@ -1272,9 +1308,9 @@ const ITEMS={
  bi:[['볼펜','오늘 정한 것을 손으로 적어두면 마음이 덜 흔들려요.'],
      ['메모지','하려던 일 한 줄만 적어 잘 보이는 곳에 붙여두세요.'],
      ['텀블러','내 것 하나 챙겨 나가면 밖에서 새는 돈이 줄어요.']],
- sik:[['메모장','떠오른 생각을 바로 적어두면 오늘 안에 쓸 수 있어요.'],
+ sik:[['메모장','떠오른 생각을 바로 적어두면 그 생각을 오늘 안에 써먹어요.'],
       ['머그컵','한 잔 채워두고 한 가지 일에만 머물러보세요.'],
-      ['이어폰','귀에 들어오는 소리를 하나로 줄이면 끝까지 가요.']],
+      ['이어폰','귀에 들어오는 소리를 하나로 줄이면 하던 일이 덜 끊겨요.']],
  jae:[['작은 지갑','오늘 쓸 만큼만 담아 나가보세요.'],
       ['영수증 봉투','쓴 돈을 한곳에 모아두면 흐름이 보여요.'],
       ['가계부 노트','약속한 금액과 날짜를 그 자리에서 적어두세요.']],
@@ -1332,7 +1368,7 @@ const RISK={
   IJ:'계획이 틀어지면 회복하는 데 시간이 더 들기 쉬워요.',
   IP:'움직임이 늘면 집중하던 흐름이 끊기기 쉬워요.',
   N:'움직임이 늘어 하나에 머무는 시간이 줄기 쉬워요.',
-  guard:'오늘 반드시 끝낼 한 가지만 먼저 정하기'},
+  guard:'오늘 꼭 끝낼 한 가지만 먼저 정하기'},
  노출:{saju:'사람들의 눈에 띄기 쉬운 자리가 열려요.',
   EJ:'주도하다 보면 혼자 말이 길어지기 쉬워요.',
   EP:'반응이 좋아 하지 않아도 될 말까지 꺼내기 쉬워요.',
@@ -1340,7 +1376,7 @@ const RISK={
   IP:'관심이 몰리면 자리를 피하고 싶어지기 쉬워요.',
   N:'평소보다 말과 행동이 크게 전달되기 쉬워요.',
   guard:'남 얘기는 꺼내지 않기'},
- 고립:{saju:'혼자 파고드는 시간이 효율이 좋은 자리가 열려요.',
+ 고립:{saju:'혼자 파고들 때 일이 잘 풀리는 자리가 열려요.',
   EJ:'혼자 처리하다 공유가 늦어지기 쉬워요.',
   EP:'집중이 길어지면 연락 확인이 늦기 쉬워요.',
   IJ:'완성할 때까지 아무 말도 안 하게 되기 쉬워요.',
@@ -1388,7 +1424,7 @@ const LOWACT={money:['결정은 한 번 늦춰보세요','오늘은 서두른 �
  achieve:['하던 일을 마무리해보세요','오늘은 새로 벌인 일이 생각보다 더디게 움직이기 쉬워요. 손에 쥔 것부터 끝내보세요.'],
  relation:['한 번 더 들어보세요','오늘은 말이 오가는 사이에 뜻이 조금씩 어긋나기 쉬워요. 바로 답하기보다 되묻고 확인해보세요.'],
  change:['지금 자리를 지켜보세요','오늘은 방향을 바꾸면 되돌리는 데 더 품이 들기 쉬워요. 새 길을 찾기보다 하던 방식을 이어가보세요.'],
- condition:['여유를 남겨두세요','오늘은 일정이 몰리면 체력이 먼저 바닥나기 쉬워요. 중간에 쉬는 시간을 끼워두세요.']};
+ condition:['여유를 남겨두세요','오늘은 일정이 몰리면 체력이 먼저 떨어지기 쉬워요. 중간에 쉬는 시간을 끼워두세요.']};
 const HIGHACT={money:['오늘 안에 정리해보세요','오늘은 숫자를 들여다보면 흐름이 잘 잡히는 날이에요. 미뤄둔 계산이나 정리가 있다면 손대보세요.'],
  achieve:['미뤄둔 일을 하나 끝내보세요','오늘은 집중이 한곳에 오래 머무는 날이에요. 새로 벌이기보다 끝내는 데 써보세요.'],
  relation:['먼저 연락해보세요','오늘은 사람과의 대화가 잘 풀리는 날이에요. 미뤄둔 연락이 있다면 먼저 말을 꺼내보세요.'],
@@ -1466,7 +1502,7 @@ function viewToday(){const D=S.data,c=D.chart,n=c.natal,now=new Date(),t=dayInfo
    <p class="fine">없으면 비슷한 물건으로 충분해요.</p>${prodBox([CATPRE[n.weakEl]+((t.p.d%4)+1)],'비슷한 아이템 보기')}</div>
   <p class="stamp">내 운 사용설명서 · ${VERSION}</p></article>
  <button class="primary" onclick="saveCard()">오늘 카드 저장</button>
- ${S.mbti?'':`<button class="ghost" onclick="go('mbtiAsk')">MBTI 추가해서 다시 보기</button>`}
+ <button class="ghost" onclick="S.pick=S.mbti?.type||null;go('mbtiAsk')">${S.mbti?`MBTI 바꾸기 · 지금 ${esc(S.mbti.type)}`:'MBTI 추가해서 다시 보기'}</button>
  <button class="ghost" onclick="S.input=null;S.mbti=null;go('intro')">다른 사람 보기</button>
  <p id="saveMsg" class="fine" aria-live="polite"></p>
  <p class="fine">매일 0시(한국 시간) 기준으로 새 카드가 준비돼요. 명리 이론 기반의 참고용 콘텐츠입니다.</p></section>`}
@@ -1519,7 +1555,7 @@ function viewResult(){const D=S.data,i=S.input,m=S.mbti;
    <button onclick="saveCard()">이 카드 저장</button>
   </div>
   <div class="pager"><button class="ghost" ${S.tab===0?'disabled':''} onclick="setTab(S.tab-1)">← 이전</button><button class="ghost" ${S.tab===5?'disabled':''} onclick="setTab(S.tab+1)">다음 →</button></div>
-  ${S.mbti?'':`<button class="ghost" onclick="go('mbtiAsk')">MBTI 추가해서 다시 보기</button>`}
+  <button class="ghost" onclick="S.pick=S.mbti?.type||null;go('mbtiAsk')">${S.mbti?`MBTI 바꾸기 · 지금 ${esc(S.mbti.type)}`:'MBTI 추가해서 다시 보기'}</button>
   <button class="ghost" onclick="S.input=null;S.mbti=null;go('intro')">다른 사람 보기</button>
   <p id="saveMsg" class="fine" aria-live="polite"></p>
   <p class="fine">명리 이론 기반의 참고용 콘텐츠이며, 중요한 결정은 스스로의 판단으로 내려주세요.</p>
