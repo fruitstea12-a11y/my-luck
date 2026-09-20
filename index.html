@@ -316,6 +316,9 @@ details summary{cursor:pointer;color:var(--sub);font-size:14px;padding:10px 0}
 
 /* 지표 계산 방식 한 줄 — 점수가 임의로 만든 숫자가 아니라는 신호 */
 .method{margin-top:8px;padding-top:8px;border-top:1px solid var(--line);opacity:.85}
+.itemc{margin:9px 0 0;padding-top:9px;border-top:1px solid var(--line);font-size:13px}
+.itemc b{color:var(--accent)}
+.itemc small{display:block;font-size:11px;color:var(--sub);margin-top:2px}
 .rmonth{margin:0 0 14px;padding:12px 14px;border-radius:12px;background:var(--panel);
  border-left:3px solid var(--accent)}
 .rmonth .mh{margin:0 0 8px;font-size:15px;line-height:1.5}
@@ -1262,17 +1265,29 @@ function dayInfo(chart,date){const p=kstParts(date);const idx=mod(jdn(p.y,p.m,p.
  return {p,pillar:pairName(dp),scores:sc,top,low,god:tenGod(chart.natal.dayStem,dp.s),tags:rd.tags,idx}}
 
 // ---------- 오늘의 아이템 (AI 호출 없음) ----------
+// 물건 이름 뒤에 색을 붙이면 '흰색 모자' 같은 살 수 없는 물건이 만들어진다.
+// 색은 부족한 오행을 보완하는 값이라 따로 보여준다.
+// 문장은 그 물건을 실제로 쓰는 장면과 이어져야 한다. 억지 인과를 만들지 않는다.
 const ITEMS={
- bi:[['볼펜','오늘 정한 것을 손으로 적어두면 흔들리지 않아요.'],['키링','자주 쓰는 물건 하나를 눈에 띄게 두세요.'],['모자','시선을 정리하면 페이스도 지켜져요.']],
- sik:[['메모장','떠오른 생각을 바로 적어두면 오늘 안에 쓰여요.'],['머그컵','한 잔 채워두고 한 가지 일에 머물러보세요.'],['에코백','오늘 만들 것만 담아 가볍게 움직여보세요.']],
- jae:[['영수증 보관 파일','쓴 돈을 한곳에 모아두면 흐름이 보여요.'],['작은 지갑','오늘 쓸 만큼만 담아 나가보세요.'],['메모장','약속한 금액과 날짜를 바로 적어두세요.']],
- gwan:[['손목시계','마감과 약속 시간을 눈으로 확인해보세요.'],['클리어파일','오늘 처리할 것만 앞으로 빼두세요.'],['볼펜','확인한 항목에 표시하며 넘어가보세요.']],
- in:[['책','20분만 읽어도 머릿속이 정리돼요.'],['이어폰','조용한 소리 하나로 생각을 고를 수 있어요.'],['작은 식물','눈 쉬는 자리를 하나 만들어보세요.']]};
+ bi:[['볼펜','오늘 정한 것을 손으로 적어두면 마음이 덜 흔들려요.'],
+     ['메모지','하려던 일 한 줄만 적어 잘 보이는 곳에 붙여두세요.'],
+     ['텀블러','내 것 하나 챙겨 나가면 밖에서 새는 돈이 줄어요.']],
+ sik:[['메모장','떠오른 생각을 바로 적어두면 오늘 안에 쓸 수 있어요.'],
+      ['머그컵','한 잔 채워두고 한 가지 일에만 머물러보세요.'],
+      ['이어폰','귀에 들어오는 소리를 하나로 줄이면 끝까지 가요.']],
+ jae:[['작은 지갑','오늘 쓸 만큼만 담아 나가보세요.'],
+      ['영수증 봉투','쓴 돈을 한곳에 모아두면 흐름이 보여요.'],
+      ['가계부 노트','약속한 금액과 날짜를 그 자리에서 적어두세요.']],
+ gwan:[['손목시계','마감과 약속 시간을 눈으로 한 번 더 확인해보세요.'],
+       ['클리어파일','오늘 처리할 것만 앞으로 빼두세요.'],
+       ['포스트잇','끝낸 일은 떼어내며 남은 것만 보세요.']],
+ in:[['책','20분만 읽어도 머릿속이 정리돼요.'],
+     ['무릎담요','몸이 따뜻해지면 생각도 천천히 가라앉아요.'],
+     ['작은 식물','눈이 쉬어가는 자리를 하나 만들어보세요.']]};
 const ITEMC={0:'초록색',1:'붉은색',2:'노란색',3:'흰색',4:'남색'};
 function todayItem(t,n){const grp=GRP[t.god],list=ITEMS[grp]||ITEMS.bi;
  const k=(t.p.d+t.p.m+t.idx)%list.length;const it=list[k];
- const col=ITEMC[(t.p.d+n.weakEl)%5];
- return {name:col+' '+it[0],why:it[1]}}
+ return {name:it[0], why:it[1], color:ITEMC[(t.p.d+n.weakEl)%5]}}
 
 // ---------- 쿠팡 파트너스 상품 슬롯 (products.js가 있을 때만 노출) ----------
 const CATPRE=['W','F','T','G','S'];              // 목 화 토 금 수
@@ -1446,7 +1461,9 @@ function viewToday(){const D=S.data,c=D.chart,n=c.natal,now=new Date(),t=dayInfo
    <p class="fine"><b>이번 주 포인트</b> · ${weekPoint(week)}</p></details>
 
   <p class="sec">✨ 오늘의 아이템</p>
-  <div class="item"><p class="ib">${esc(item.name)}</p><p>${esc(item.why)}</p><p class="fine">없으면 비슷한 물건으로 충분해요.</p>${prodBox([CATPRE[n.weakEl]+((t.p.d%4)+1)],'비슷한 아이템 보기')}</div>
+  <div class="item"><p class="ib">${esc(item.name)}</p><p>${esc(item.why)}</p>
+   <p class="itemc">오늘의 색 · <b>${esc(item.color)}</b> <small>${EL[n.weakEl]} 기운을 보완하는 색이에요</small></p>
+   <p class="fine">없으면 비슷한 물건으로 충분해요.</p>${prodBox([CATPRE[n.weakEl]+((t.p.d%4)+1)],'비슷한 아이템 보기')}</div>
   <p class="stamp">내 운 사용설명서 · ${VERSION}</p></article>
  <button class="primary" onclick="saveCard()">오늘 카드 저장</button>
  ${S.mbti?'':`<button class="ghost" onclick="go('mbtiAsk')">MBTI 추가해서 다시 보기</button>`}
