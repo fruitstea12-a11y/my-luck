@@ -248,15 +248,13 @@ details summary{cursor:pointer;color:var(--sub);font-size:14px;padding:10px 0}
 .share .sbest{font-size:13px;margin:14px 0 0;color:#6E655C}.share .sbest b{color:#2B2622}
 .share .sfoot{margin-top:auto;font-size:12px;color:#6E655C}
 /* ── 🤝 관계 사용설명서 (rel-ui-v1.0) ───────────────────────── */
-.promo{display:flex;align-items:center;gap:11px;width:100%;text-align:left;margin:18px 0 4px;
- padding:14px 15px;border:1px solid var(--line);border-radius:16px;background:var(--panel);
+.promo{display:block;width:100%;text-align:left;margin:18px 0 4px;
+ padding:16px 17px;border:1px solid var(--line);border-radius:16px;background:var(--panel);
  color:var(--ink);font:inherit;cursor:pointer}
-.promo .pico{font-size:22px;line-height:1}
-.promo .ptx{flex:1;min-width:0}
-.promo .ptx>b{display:block;font-size:14px;font-weight:700;line-height:1.5}
-.promo .ptx>small{display:block;font-size:11px;color:var(--sub);margin-top:3px;line-height:1.5}
-.promo .ptx small .pr{color:var(--accent);font-weight:700}
-.promo .ppr{flex:none;font-size:16px;color:var(--sub)}
+.promo>b{display:block;font-size:15px;font-weight:700;line-height:1.55}
+.promo>small{display:block;font-size:12px;color:var(--sub);margin-top:5px;line-height:1.5}
+.promo>.ppr{display:block;margin-top:11px;padding-top:10px;border-top:1px solid var(--line);
+ font-size:12px;font-weight:700;color:var(--accent)}
 
 .rhead{margin:6px 0 16px;text-align:center}
 .rhead .brand{margin:0;font-size:13px;font-weight:700;color:var(--accent);letter-spacing:.02em}
@@ -1562,7 +1560,7 @@ function card6(){const B=S.ai.B,n=S.data.chart.natal;if(!ok('B'))return wait('B'
  <h4>🧬 MBTI 맞춤 실천법${S.mbti?' · '+esc(S.mbti.type):''}</h4><ul class="checks">${(u.mbtiPractice||[]).map(c=>`<li>${esc(c)}</li>`).join('')}</ul>
  <h4>📌 이 시기의 사용법</h4>
  <p class="fine">앞으로 흐름이 크게 달라지는 시기예요. 그때의 흐름을 어떻게 활용하면 좋을지 정리했어요.</p>
- ${(u.cautions||[]).map(c=>`<div class="pill turn"><b>${esc(c.when)}</b> <em>${esc(c.risk)}</em><p>${esc(c.myMistake)}</p><p class="q">이때는 ${esc(c.guard)}</p></div>`).join('')}`}
+ ${(u.cautions||[]).map(c=>`<div class="pill turn"><b>${esc(c.when)}</b> <em>${esc(c.risk)}</em><p>${esc(c.myMistake)}</p><p class="q">이때는 ${esc(c.guard)}</p></div>`).join('')}`+relTease()}
 // ---------- share & save ----------
 // ═══════════════════════════════════════════════════════════════
 // 🤝 관계 사용설명서 · 화면 (rel-ui-v1.0)
@@ -1653,12 +1651,41 @@ window.relOpen=()=>{relUnlocked()?relStart():go('relIntro')};
 window.relBuy=relBuy;
 
 // ── 진입 배너 ───────────────────────────────────────────────
+// ── 카드 6 → 관계 사용설명서 떡밥 ───────────────────────────
+// 문구는 AI가 아니라 관계 지표에서 코드가 뽑는다.
+// 유료 리포트 ① 이 쓰는 값과 같아서, 열어봤을 때 답이 어긋나지 않는다.
+const REL_HOOK = {
+  // 지표마다 질문의 방향과 의문사를 다르게 쓴다. 12개가 같은 틀로 읽히면 광고 문구가 된다.
+  // 높음/낮음을 한 문장으로 합치면 낮은 쪽에서 뜻이 뒤집히므로 12개를 따로 쓴다.
+  'expression|active':'표현이 빠른 나, 그 마음은 상대에게 어떻게 닿을까요?',
+  'expression|quiet' :'말로 꺼내지 않은 마음, 상대는 알아차릴까요?',
+  'bond|active'      :'사람들과 잘 어울리는 나, 가까워진 뒤에는 어떤 사람이 될까요?',
+  'bond|quiet'       :'몇 사람에게만 마음을 쓰는 나, 그 관계는 어떻게 깊어질까요?',
+  'steady|active'    :'한번 맺으면 오래 가는 나, 무엇으로 그 관계를 이어갈까요?',
+  'steady|quiet'     :'그때그때 흐름에 맞추는 나, 관계의 리듬은 어떻게 만들어질까요?',
+  'novelty|active'   :'낯선 자리에서 기운이 오르는 나, 어떤 사람에게 먼저 마음이 갈까요?',
+  'novelty|quiet'    :'익숙한 사이가 편한 나, 새로운 사람과는 어디서부터 시작할까요?',
+  'space|active'     :'혼자 있는 시간이 중요한 나, 가까운 사이에서 그 시간은 얼마나 필요할까요?',
+  'space|quiet'      :'함께 있을 때 편안한 나, 혼자 있는 시간은 언제 필요해질까요?',
+  'yield|active'     :'상대를 먼저 배려하는 나, 어디까지 맞춰주다 지칠까요?',
+  'yield|quiet'      :'내 기준이 분명한 나, 그 기준은 가까운 사이에서 어떻게 드러날까요?'
+};
+const relHook=()=>{const d=S.data.relD,k=d.topIndices[0];
+  return REL_HOOK[k+'|'+d.directions[k]]||'나는 관계에서 어떤 사람일까요?'};
+
+// 카드 6 마지막에 붙는 두 문장. 답을 주지 않고 관계라는 다음 영역만 열어둔다.
+function relTease(){const d=S.data.relD;
+  return `<h4>🤝 사람과 있을 때의 나</h4>
+   <p>${esc(d.previewLines[0]||'')}</p>
+   <p class="fine">이런 성향은 가까운 사람과 지낼 때도 비슷하게 나타나요.</p>`}
+
 function relPromo(kind){
-  const t=kind==='card5'?'이 시기에 나는 어떻게 가까워질까?':'나는 관계에서 어떤 사람일까?';
+  const t=kind==='card5'?'이 시기에 나는 어떻게 가까워질까요?':relHook();
+  const s=kind==='card5'?'달마다 달라지는 관계의 흐름까지':'가까워지는 방식부터 내가 지치는 순간까지';
   return `<button class="promo" onclick="relOpen()">
-    <span class="pico">🤝</span>
-    <span class="ptx"><b>${t}</b><small><b class="pr">3,900원</b> · 사주 × MBTI 관계 사용설명서</small></span>
-    <span class="ppr">→</span></button>`;
+    <b>🤝 ${esc(t)}</b>
+    <small>${s}</small>
+    <span class="ppr">3,900원 · 사주 × MBTI 관계 사용설명서 →</span></button>`;
 }
 
 // ── S1 미리보기 ─────────────────────────────────────────────
