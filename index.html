@@ -1088,7 +1088,9 @@ function payload(g){
     C_돈이_크게_움직이는_해: D.bigMoney.map(t=>({year:t.year,age:t.age,시제:tense(t.year),money:t.scores.money,change:t.scores.change,tenGods:t.gods}))
   };
   if(g==='B') return {
-    A_사용자데이터: brief(),
+    // 성별은 B 카드에만 넘긴다. 행운 요소에서 어색한 물건을 고르지 않게 하려는 것이다.
+    // brief() 를 고치면 P·A 캐시까지 무효화되므로 여기서만 얹는다.
+    A_사용자데이터: {...brief(), 성별: S.input.gender==='female'?'여성':'남성'},
     C_조심할_해: D.cautions.map(t=>({year:t.year,age:t.age,시제:tense(t.year),s:t.scores,tags:t.tags,g:t.gods})),
     B_성과유형: {'1순위':n.achieveType[0], '2순위':n.achieveType[1]},
     B_부족한_오행: EL[n.weakEl]
