@@ -548,14 +548,26 @@ Object.assign(CAL, REL_CAL);   // 기존 normK 가 바로 쓸 수 있게 병합
 // ── 원국 → 원점수 ────────────────────────────────────────────
 // gods 는 합이 100 이 아니므로 % 로 환산해 쓴다.
 function relRaw(n){
-  const out={}; REL.forEach(k=>out[k]=0);
+  const out={}, con={}; REL.forEach(k=>{out[k]=0;con[k]=[]});
   const tot=TG.reduce((a,t)=>a+(n.gods[t]||0),0)||1;
   TG.forEach(t=>{
     const pct=(n.gods[t]||0)/tot*100, w=RELG[t]; if(!w)return;
-    for(const k in w) out[k]+=w[k]*pct;
+    for(const k in w){ const v=w[k]*pct; out[k]+=v; con[k].push([t,v]) }
   });
   n.elements.forEach((pct,i)=>{ const w=RELE[i]; for(const k in w) out[k]+=w[k]*pct; });
+  // 지표마다 가장 크게 밀어올린 십성 순. 근거 줄에 쓴다.
+  REL.forEach(k=>con[k].sort((a,b)=>b[1]-a[1]));
+  relRaw.contrib=con;
   return out;
+}
+// 지표 하나의 근거 십성.
+// 높은 지표(active)는 밀어올린 십성, 낮은 지표(quiet)는 끌어내린 십성이 근거다.
+// 낮은데 밀어올린 십성을 근거로 내면 본문과 어긋난다.
+function relGods(k,n=2,dir='active'){
+  const c=(relRaw.contrib||{})[k]||[];
+  return dir==='quiet'
+    ? c.filter(x=>x[1]<-0.5).slice(-n).reverse().map(x=>x[0])   // 가장 많이 끌어내린 쪽
+    : c.filter(x=>x[1]>0.5).slice(0,n).map(x=>x[0]);
 }
 
 // ── 원국 일지 관계 · 도화 ────────────────────────────────────
@@ -760,7 +772,26 @@ function relDerive(rel, chart, mbtiType, months){
     shareKeys:relShareKeys(sc, dir, mbtiType),
     weakestElement:weak, complementKey:EL_COMP[weak].key, complementTrait:EL_COMP[weak].trait,
     dayBranchRelations:rel.dayBranchRelations, dohwa:rel.dohwa,
-    picks:relPicks(months), mbtiTags:mbtiTags(mbtiType)
+    picks:relPicks(months), mbtiTags:mbtiTags(mbtiType),
+    basis:relBasis(top, needs, rel, weak, dir)
+  };
+}
+
+// ── 섹션별 근거 ─────────────────────────────────────────────
+// 무료 카드에는 '근거 · 편인 · 일지 충' 줄이 있는데 유료 리포트에는 없었다.
+// 본문은 사주 용어를 쓰지 않으므로(D2), 근거는 이 줄이 대신 보여준다.
+// 전부 코드가 계산한다. AI 는 관여하지 않는다.
+function relBasis(top, needs, rel, weak, dir){
+  const g=(ks,n=2)=>[...new Set(ks.flatMap(k=>relGods(k,n,dir[k])))].slice(0,3);
+  const br=rel.dayBranchRelations.map(r=>'일지 '+r);
+  return {
+    0:g(top.slice(0,2)).concat(rel.dohwa?['도화']:[]),
+    1:g(['bond','novelty','space'],1),
+    2:g(['expression'],2),
+    3:g(needs,1),          // 욕구는 50 이상만 골라 온다. 늘 active 쪽이다.
+    4:g(['friction'],2).concat(br),
+    5:g(['space','yield'],1),
+    6:[weak+' 보완']
   };
 }
 
@@ -1613,22 +1644,41 @@ function card6(){const B=S.ai.B,n=S.data.chart.natal;if(!ok('B'))return wait('B'
 //  결제는 아직 붙지 않았다. relUnlocked() / relBuy() 두 곳만 바꾸면 된다.
 // ═══════════════════════════════════════════════════════════════
 
-const REL_PROMPT_VERSION='rel-prompt-v1.1';   // worker.js 와 같은 값이어야 한다
+const REL_PROMPT_VERSION='rel-prompt-v1.2';   // worker.js 와 같은 값이어야 한다
 const REL_PAID_KEY='myluck:rel:paid';
 
 // ── 가격 ────────────────────────────────────────────────────
 // 여기만 고치면 배너·미리보기·버튼이 전부 따라간다.
-//   list  : 정가. now 와 같거나 null 이면 할인 표시를 하지 않는다.
-//   now   : 실제로 받는 금액.
-//   badge : 할인 배지 문구. 빈 문자열이면 배지를 숨긴다.
-const REL_PRICE = { list: 3900, now: 990, badge: '출시 기념' };
+//
+//   now  : 실제로 받는 금액.
+//   soon : 앞으로 올릴 금액. 채우면 '○월부터 N원' 으로 안내한다. 안 쓰면 null.
+//   from : 인상 시점 문구(예: '10월'). soon 과 짝이다.
+//   was  : 취소선으로 보여줄 종전가.
+//
+// ⚠ was 를 채우기 전에 읽을 것.
+//   「부당한 표시·광고행위의 유형 및 기준 지정고시」상 종전거래가격은
+//   '최근 20일간 실제로 판매한 최저가' 를 뜻한다(대법원 2019두36001).
+//   그 가격에 실제로 판 적이 없으면 취소선 자체가 거짓 표시가 된다.
+//   싸게 시작하고 싶으면 was 가 아니라 soon 을 쓴다.
+//   과거형('원래 3,900원')은 실적이 필요하지만,
+//   미래형('10월부터 2,900원')은 계획 고지라 문제가 없다. 단, 실제로 올려야 한다.
+const REL_PRICE = { now: 2900, soon: null, from: '', was: null, badge: '' };
+
 const won = n => n.toLocaleString('ko-KR') + '원';
 const priceNow = () => won(REL_PRICE.now);
-// 배너·버튼에 쓰는 가격 표기. 할인 중이면 정가에 취소선을 긋는다.
+// 배너·버튼의 가격 표기
 function priceTag(){
-  const d = REL_PRICE.list && REL_PRICE.list > REL_PRICE.now;
-  return `<b class="pnow">${priceNow()}</b>${d?`<s class="plist">${won(REL_PRICE.list)}</s>`:''}`
-    + (d && REL_PRICE.badge ? `<em class="pbadge">${REL_PRICE.badge}</em>` : '');
+  const p = REL_PRICE;
+  let h = `<b class="pnow">${priceNow()}</b>`;
+  if (p.was && p.was > p.now) h += `<s class="plist">${won(p.was)}</s>`;
+  if (p.badge) h += `<em class="pbadge">${p.badge}</em>`;
+  return h;
+}
+// 가격 밑에 붙는 한 줄. 인상 예정이면 그것을 알린다.
+function priceNote(){
+  const p = REL_PRICE;
+  if (p.soon && p.soon > p.now) return `${p.from ? p.from + '부터' : '곧'} ${won(p.soon)}으로 올라가요.`;
+  return '';
 }
 
 S.rel={ai:{R1:null,R2:null,R3:null},agree:false};
@@ -1742,8 +1792,8 @@ function relTease(){const d=S.data.relD;
    <p class="fine">사람과 있는 자리도 환경이에요. 내 방식이 편하게 통하는 자리가 따로 있어요.</p>`}
 
 function relPromo(kind){
-  const t=kind==='card5'?'이 시기에 나는 어떻게 가까워질까요?':relHook();
-  const s=kind==='card5'?'달마다 달라지는 관계의 흐름까지':'가까워지는 방식부터 내가 지치는 순간까지';
+  const t=kind==='card5'?'앞으로 12개월, 사람과의 거리는 언제 달라질까요?':relHook();
+  const s=kind==='card5'?'관계가 크게 움직이는 달과 그때의 사용법':'가까워지는 방식부터 내가 지치는 순간까지';
   return `<button class="promo" onclick="relOpen()">
     <b>🤝 ${esc(t)}</b>
     <small>${s}</small>
@@ -1807,7 +1857,7 @@ function viewRelIntro(){const d=S.data.relD,i=S.input;
      onchange="relSetAgree(this.checked)"> 위 내용을 확인했고, 결제 후 바로 리포트 생성에 동의해요.</label>
   </div>
   <button class="primary" ${S.rel.agree?'':'disabled'} onclick="relBuy()">${priceNow()}으로 전체 보기 →</button>
-  <p class="fine" style="text-align:center">${REL_PRICE.list>REL_PRICE.now?`${REL_PRICE.badge} 할인 · 정가 ${won(REL_PRICE.list)}<br>`:''}한 번 결제하면 계속 볼 수 있어요.<br>지금은 결제 연동 전이라 체험으로 열려요.</p>
+  <p class="fine" style="text-align:center">${priceNote()?priceNote()+'<br>':''}한 번 결제하면 계속 볼 수 있어요.<br>지금은 결제 연동 전이라 체험으로 열려요.</p>
   <button class="ghost" onclick="go('result')">← 무료 결과로 돌아가기</button>
   </section>`}
 // 동의 여부는 화면을 다시 그려도 유지한다. 결제를 붙이면 이 값과 시각을 서버에 함께 남긴다.
@@ -1854,6 +1904,8 @@ window.relGo=k=>{const el=document.getElementById('rs'+k);if(el)el.scrollIntoVie
 
 const rsec=(k,body)=>`<article class="card rsec" id="rs${k}"><p class="no">${REL_SECS[k][0]} ${REL_SECS[k][1]}</p>${body}</article>`;
 const rp=(lab,v)=>v?`<p class="tri"><span class="lab">${lab}</span>${esc(v)}</p>`:'';
+// 섹션 근거 줄 — 무료 카드의 basisHTML 을 그대로 쓴다(한자 병기·용어 풀이 포함)
+const rb=k=>basisHTML((S.data.relD.basis||{})[k]);
 
 const rbarBody=()=>{const d=S.data.relD;
   return `<div class="rbars">${REL.map(k=>`<div><span>${RELK_KO[k]}</span><div class="bar"><i style="width:${d.scores[k]}%;background:var(--accent)"></i></div><small>${d.scores[k]}</small></div>`).join('')}</div>
@@ -1867,29 +1919,29 @@ function relSec1(){const a=S.rel.ai.R1,d=S.data.relD;
   let h=`<p class="rtype">「${esc(d.typeName)}」</p>`;
   h+= relOk('R1') ? rp('가장 먼저 움직이는 것',a.priority)+rp('기운이 향하는 곳',a.energy)
                   : relWait('R1','관계에서의 나를 정리하는 중…');
-  return rsec(0,h+relBars())}
+  return rsec(0,h+relBars(true)+rb(0))}
 function relSec2(){const a=S.rel.ai.R1;if(!relOk('R1'))return rsec(1,relWait('R1','정리하는 중…'));
   return rsec(1,rp('첫인상',a.firstImpression)+rp('가까워지는 속도',a.openingSpeed)
-    +rp('가까워지는 계기',a.closenessTrigger)+rp('깊어지는 조건',a.comfort))}
+    +rp('가까워지는 계기',a.closenessTrigger)+rp('깊어지는 조건',a.comfort)+rb(1))}
 function relSec3(){const a=S.rel.ai.R1;if(!relOk('R1'))return rsec(2,relWait('R1','정리하는 중…'));
-  return rsec(2,`<p>${esc(a.showing)}</p>`+rp('상대가 알아채기 쉬운 것',a.easySign)+rp('잘 드러나지 않는 것',a.hiddenSign))}
+  return rsec(2,`<p>${esc(a.showing)}</p>`+rp('상대가 알아채기 쉬운 것',a.easySign)+rp('잘 드러나지 않는 것',a.hiddenSign)+rb(2))}
 function relSec4(){const a=S.rel.ai.R1,d=S.data.relD;
   const chips=`<div class="tags">${d.needs.map(n=>`<span>${esc(n)}</span>`).join('')}</div>`;
   if(!relOk('R1'))return rsec(3,chips+relWait('R1','정리하는 중…'));
-  return rsec(3,chips+`<p class="quote">“${esc(String(a.touchWords).replace(/^[“"']|[”"']$/g,''))}”</p>`+rp('힘들 때 이렇게 해주면 편해요',a.support))}
+  return rsec(3,chips+`<p class="quote">“${esc(String(a.touchWords).replace(/^[“"']|[”"']$/g,''))}”</p>`+rp('힘들 때 이렇게 해주면 편해요',a.support)+rb(3))}
 function relSec5(){const a=S.rel.ai.R1;if(!relOk('R1'))return rsec(4,relWait('R1','정리하는 중…'));
   return rsec(4,rp('기운이 빠지는 상황',a.fatigue)+rp('서운함이 생기는 장면',a.trigger)+rp('부딪혔을 때 나는',a.reaction)
    +`<details class="more"${S.ui.relMoreOpen?' open':''} ontoggle="uiToggle('relMoreOpen',this.open)"><summary>자세히 보기</summary>
-     ${rp('의도와 다르게 보이는 것',a.misread)}${rp('다시 편해지는 방법',a.fix)}</details>`)}
+     ${rp('의도와 다르게 보이는 것',a.misread)}${rp('다시 편해지는 방법',a.fix)}</details>`+rb(4))}
 function relSec6(){const a=S.rel.ai.R1;if(!relOk('R1'))return rsec(5,relWait('R1','정리하는 중…'));
   return rsec(5,rp('편한 연락 리듬',a.contact)+rp('지키고 싶은 영역',a.space)
-   +rp('부탁을 받아주는 선',a.yieldLine)+rp('거리를 두는 방식',a.distance)+rp('기운을 채우는 방법',a.recharge))}
+   +rp('부탁을 받아주는 선',a.yieldLine)+rp('거리를 두는 방식',a.distance)+rp('기운을 채우는 방법',a.recharge)+rb(5))}
 function relSec7(){const a=S.rel.ai.R1,d=S.data.relD;
   const bridge=`<div class="rbridge"><b>그 사람과 나는 어떨까?</b><span>💞 궁합 보기 · 준비 중</span></div>`;
   if(!relOk('R1'))return rsec(6,relWait('R1','정리하는 중…'));
   return rsec(6,rp('편하게 맞는 결',a.easyFit)
    +`<p class="tri"><span class="lab">겪어두면 좋은 결 · ${esc(d.complementKey)}</span>${esc(a.complement)}</p>`
-   +rp('속도를 맞춰갈 결',a.effortFit)+bridge)}
+   +rp('속도를 맞춰갈 결',a.effortFit)+rb(6)+bridge)}
 function relSec8(){const a=S.rel.ai.R2,D=S.data,d=D.relD;
   if(!relOk('R2'))return rsec(7,relWait('R2','12개월 관계 흐름을 보는 중…'));
   const picks=d.picks;
@@ -1902,7 +1954,7 @@ function relSec8(){const a=S.rel.ai.R2,D=S.data,d=D.relD;
      <p class="tri"><span class="lab">🔮 흐름</span>${esc(m.flow)}</p>
      <p class="tri"><span class="lab">🧬 나의 반응</span>${esc(m.me)}</p>
      <p class="use">${esc(m.usage)}</p></div>`}).join('');
-  return rsec(7,`<p class="fine" style="margin-top:0">앞으로 12개월 중 관계가 크게 움직이는 달이에요. 무료 카드 5와 같은 달을 씁니다.</p>`
+  return rsec(7,`<p class="fine" style="margin-top:0">앞으로 12개월 중 관계가 크게 움직이는 달이에요. 무료 카드 5와 같은 달을 써요.</p>`
     +body+`<p class="rclose">${esc(a.closing)}</p>`)}
 function relSecShare(){const a=S.rel.ai.R3,d=S.data.relD;
   if(!relOk('R3'))return rsec(8,relWait('R3','나를 대하는 법을 쓰는 중…'));
