@@ -256,6 +256,13 @@ details summary{cursor:pointer;color:var(--sub);font-size:14px;padding:10px 0}
 .promo>.ppr{display:block;margin-top:11px;padding-top:10px;border-top:1px solid var(--line);
  font-size:12px;font-weight:700;color:var(--accent)}
 
+.promo>.ppr{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.promo .pnow{color:var(--accent);font-weight:700}
+.promo .plist{color:var(--sub);font-weight:400;text-decoration:line-through}
+.promo .pbadge{padding:1px 6px;border-radius:999px;background:var(--accent);
+ color:var(--panel);font-style:normal;font-size:10px;font-weight:700;letter-spacing:0}
+.promo .pdesc{color:var(--sub);font-weight:400}
+.promo .parrow{margin-left:auto;color:var(--accent)}
 .rhead{margin:6px 0 16px;text-align:center}
 .rhead .brand{margin:0;font-size:13px;font-weight:700;color:var(--accent);letter-spacing:.02em}
 .rhead h2{margin:6px 0 0;font-size:19px;font-weight:700;line-height:1.5}
@@ -266,10 +273,16 @@ details summary{cursor:pointer;color:var(--sub);font-size:14px;padding:10px 0}
 .rlocks p{margin:0 0 7px;font-size:13px;font-weight:600;line-height:1.5}
 .rlocks p:last-child{margin:0}
 .rlist{list-style:none;margin:6px 0 14px;padding:0}
-.rlist li{display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid var(--line);font-size:13px}
+.rlist li{display:flex;align-items:flex-start;gap:9px;padding:10px 0;border-bottom:1px solid var(--line);font-size:13px}
+.rlist li>div{flex:1;min-width:0}
+.rlist li>div b{display:block;font-size:13px;font-weight:700;line-height:1.5}
+.rlist li>div small{display:block;font-size:11px;color:var(--sub);line-height:1.5;margin-top:2px}
+.rlist li>span{flex:none;width:20px;color:var(--sub);padding-top:1px}
+.rlist li>em{flex:none;font-style:normal;font-size:11px;opacity:.6;padding-top:2px}
+.rlist li.free>em{color:var(--accent);opacity:1;font-weight:700}
+.freetag{font-style:normal;margin-left:6px;padding:1px 7px;border-radius:999px;background:var(--chip);
+ color:var(--accent);font-size:10px;font-weight:700;letter-spacing:0}
 .rlist li:last-child{border:0}
-.rlist li span{flex:none;width:20px;color:var(--sub)}
-.rlist li em{margin-left:auto;font-style:normal;opacity:.6}
 
 .rjump{display:flex;gap:6px;overflow-x:auto;margin:10px 0 4px;padding-bottom:4px;-webkit-overflow-scrolling:touch}
 .rjump::-webkit-scrollbar{display:none}
@@ -321,6 +334,35 @@ details summary{cursor:pointer;color:var(--sub);font-size:14px;padding:10px 0}
 .rkeys small{display:block;font-size:10px;color:var(--sub);margin:5px 0 3px}
 .rkeys b{display:block;font-size:12px;font-weight:700;line-height:1.4}
 
+.rterms{margin:16px 0 12px;padding:15px 16px;border:1px solid var(--line);border-radius:14px;background:var(--panel)}
+.rterms .th{margin:0 0 9px;font-size:12px;font-weight:700;color:var(--sub);letter-spacing:.02em}
+.rterms ul{list-style:none;margin:0;padding:0}
+.rterms li{position:relative;padding:0 0 7px 12px;font-size:12.5px;line-height:1.6}
+.rterms li::before{content:'';position:absolute;left:2px;top:9px;width:3px;height:3px;border-radius:50%;background:var(--sub)}
+.rterms li:last-child{padding-bottom:0}
+.rchk{display:flex;flex-direction:row;align-items:flex-start;gap:8px;margin-top:12px;padding-top:11px;color:var(--ink);
+ border-top:1px solid var(--line);font-size:12.5px;line-height:1.55;cursor:pointer}
+.rchk input{flex:none;width:17px;height:17px;margin:1px 0 0;accent-color:var(--accent)}
+.res .primary[disabled]{opacity:.42;cursor:not-allowed}
+/* 전체 저장용 머리말·꼬리말 — 화면에서는 숨기고 캡처할 때만 보인다 */
+.rcap,.rcapfoot{display:none}
+.capturing .rcap{display:block;text-align:center;padding:4px 0 14px;border-bottom:1px solid var(--line);margin-bottom:6px}
+.capturing .rcap .brand{margin:0;font-size:13px;font-weight:700;color:var(--accent)}
+.capturing .rcap p+p{margin:5px 0 0;font-size:12px;color:var(--sub)}
+.capturing .rcapfoot{display:block;text-align:center;margin-top:16px}
+/* 캡처 동안 펼쳐진 details 의 화살표는 지운다 */
+.capturing details>summary{list-style:none}
+.capturing details>summary::-webkit-details-marker{display:none}
+/* 저장한 이미지 안에 버튼이 남으면 안 된다.
+   capturing 은 #relBody 자신에 붙으므로 후손 선택자로 #relBody 를 앞세우면 안 맞는다.
+   무료 카드 5의 12칸 버튼(.mt)은 .rsec 안에 없어 영향을 받지 않는다. */
+.capturing .rsec .primary{display:none}
+/* 펼쳐진 상태라 '보기'라는 말이 어색하다. 캡처할 때만 제목으로 바꾼다 */
+.capturing .relbars>summary{font-size:0;margin-bottom:2px}
+.capturing .relbars>summary::after{content:'나의 관계 지표 7가지';font-size:12px;font-weight:700;
+ letter-spacing:.02em;color:var(--sub)}
+.capturing .more>summary{display:none}
+#relBody{margin:0}
 .relshare{height:auto;min-height:380px;padding:30px 24px 26px;justify-content:flex-start}
 .relshare .rtype{font-size:18px;margin-bottom:14px}
 .relshare .rshare{font-size:14.5px;line-height:1.8;margin:0 0 20px}
@@ -1571,15 +1613,34 @@ function card6(){const B=S.ai.B,n=S.data.chart.natal;if(!ok('B'))return wait('B'
 //  결제는 아직 붙지 않았다. relUnlocked() / relBuy() 두 곳만 바꾸면 된다.
 // ═══════════════════════════════════════════════════════════════
 
-const REL_PROMPT_VERSION='rel-prompt-v1.0';   // worker.js 와 같은 값이어야 한다
+const REL_PROMPT_VERSION='rel-prompt-v1.1';   // worker.js 와 같은 값이어야 한다
 const REL_PAID_KEY='myluck:rel:paid';
 
-S.rel={ai:{R1:null,R2:null,R3:null}};
+// ── 가격 ────────────────────────────────────────────────────
+// 여기만 고치면 배너·미리보기·버튼이 전부 따라간다.
+//   list  : 정가. now 와 같거나 null 이면 할인 표시를 하지 않는다.
+//   now   : 실제로 받는 금액.
+//   badge : 할인 배지 문구. 빈 문자열이면 배지를 숨긴다.
+const REL_PRICE = { list: 3900, now: 990, badge: '출시 기념' };
+const won = n => n.toLocaleString('ko-KR') + '원';
+const priceNow = () => won(REL_PRICE.now);
+// 배너·버튼에 쓰는 가격 표기. 할인 중이면 정가에 취소선을 긋는다.
+function priceTag(){
+  const d = REL_PRICE.list && REL_PRICE.list > REL_PRICE.now;
+  return `<b class="pnow">${priceNow()}</b>${d?`<s class="plist">${won(REL_PRICE.list)}</s>`:''}`
+    + (d && REL_PRICE.badge ? `<em class="pbadge">${REL_PRICE.badge}</em>` : '');
+}
+
+S.rel={ai:{R1:null,R2:null,R3:null},agree:false};
 
 function relUnlocked(){try{return localStorage.getItem(REL_PAID_KEY)==='1'}catch(_){return false}}
 function relBuy(){
+  if(!S.rel.agree)return;   // 고지 동의 없이는 결제로 넘어가지 않는다
   // TODO 결제 연동 — 영수증 검증 뒤에 잠금을 푼다. 지금은 체험으로 연다.
-  try{localStorage.setItem(REL_PAID_KEY,'1')}catch(_){}
+  //   영수증 검증 성공 시점에 { 동의여부, 동의시각, 생성시작시각 } 을 함께 저장할 것.
+  //   생성 시작 전 환불 요청은 전액 환불, 생성 뒤에는 청약철회 제한을 근거로 안내한다.
+  try{localStorage.setItem(REL_PAID_KEY,'1');
+      localStorage.setItem('myluck:rel:agreedAt',new Date().toISOString())}catch(_){}
   relStart();
 }
 function relKey(){return 'myluck:rel:'+REL_PROMPT_VERSION+':'+JSON.stringify([S.input.date,S.input.time,S.input.noTime,S.input.lon,S.input.gender,S.input.ya,S.mbti?.type||''])}
@@ -1686,7 +1747,7 @@ function relPromo(kind){
   return `<button class="promo" onclick="relOpen()">
     <b>🤝 ${esc(t)}</b>
     <small>${s}</small>
-    <span class="ppr">3,900원 · 사주 × MBTI 관계 사용설명서 →</span></button>`;
+    <span class="ppr">${priceTag()}<span class="pdesc">관계 사용설명서</span><span class="parrow">→</span></span></button>`;
 }
 
 // ── S1 미리보기 ─────────────────────────────────────────────
@@ -1695,23 +1756,63 @@ const REL_LOCKS=['나는 어디까지 맞춰주다 지칠까?','어떤 관계에
 const REL_SECS=[['①','관계에서 나는'],['②','가까워지는 방식'],['③','마음을 표현하는 나'],
                 ['④','관계에서 중요한 것'],['⑤','엇갈리기 쉬운 순간'],['⑥','나를 지키는 거리'],
                 ['⑦','잘 맞는 결 / 맞춰갈 결'],['⑧','앞으로 12개월 관계 흐름'],['💌','나를 대하는 법']];
-function viewRelIntro(){const d=S.data.relD;
+// 섹션 안에 무엇이 들어 있는지. 잠긴 목록만 보면 분량을 가늠할 수 없다.
+const REL_ITEMS=['유형 · 먼저 움직이는 것 · 기운의 방향',
+ '첫인상 · 가까워지는 속도 · 계기 · 깊어지는 조건',
+ '표현하는 방식 · 쉽게 드러나는 것 · 잘 안 보이는 것',
+ '중요한 것 2가지 · 듣고 싶은 말 · 힘들 때 필요한 반응',
+ '지치는 상황 · 서운한 장면 · 부딪혔을 때 · 오해 · 회복',
+ '연락 리듬 · 지키고 싶은 영역 · 맞춰주는 선 · 거리 두기 · 회복',
+ '편하게 맞는 결 · 겪어두면 좋은 결 · 맞춰갈 결',
+ '관계가 움직이는 3개월 × (흐름 · 나의 반응 · 사용법)',
+ '상대에게 건네는 문장 + 아이콘 3개'];
+// 섹션별 항목 수. 합계를 코드가 세므로 문구와 실제가 어긋나지 않는다.
+const REL_COUNT=[3,4,3,3,5,5,3,13,4];
+const REL_TOTAL=REL_COUNT.reduce((a,b)=>a+b,0);
+function viewRelIntro(){const d=S.data.relD,i=S.input;
+  const top=d.topIndices[0],dir=d.directions[top];
   return `<section class="res">
   <header class="rhead"><p class="brand">🤝 관계 사용설명서</p>
-   <h2>사주 × MBTI로 보는<br>나의 관계 사용법</h2></header>
-  <article class="card">
-   <p class="no">미리보기</p>
+   <h2>사주 × MBTI로 보는<br>나의 관계 사용법</h2>
+   <p class="fine">${i.name?esc(i.name)+'님':'나'} · ${esc(S.data.ilgan[0])}${S.mbti?' · '+esc(S.mbti.type):''}</p></header>
+
+  <article class="card rsec">
+   <p class="no">① 관계에서 나는 <em class="freetag">무료 공개</em></p>
    <p class="rtype">「${esc(d.typeName)}」</p>
    ${d.previewLines.map(l=>`<p class="rlead">${esc(l)}</p>`).join('')}
+   <p class="sec">관계에서 중요한 것</p>
+   <div class="tags">${d.needs.map(n=>`<span>${esc(n)}</span>`).join('')}</div>
+   ${relBars(true)}
+   <p class="fine">여기까지는 사주 원국에서 코드가 계산한 값이에요. 리포트는 이 지표를 바탕으로 ①의 나머지와 8개 섹션을 문장으로 풀어드려요.</p>
+  </article>
+
+  <article class="card">
+   <p class="no">리포트에서 이어서 보는 것</p>
    <div class="rlocks">${REL_LOCKS.map(l=>`<p>🔒 ${esc(l)}</p>`).join('')}</div>
-   <p class="sec">전체 8개 섹션 + 공유 카드</p>
-   <ul class="rlist">${REL_SECS.map(([n,t],i)=>`<li><span>${n}</span>${esc(t)}${i?'<em>🔒</em>':''}</li>`).join('')}</ul>
+   <p class="sec">전체 8개 섹션 + 공유 카드 · ${REL_TOTAL}개 항목</p>
+   <ul class="rlist">${REL_SECS.map(([n,t],k)=>`<li${k?'':' class="free"'}>
+     <span>${n}</span><div><b>${esc(t)}</b><small>${esc(REL_ITEMS[k])}</small></div><em>${k?'🔒':'열림'}</em></li>`).join('')}</ul>
    <p class="fine">특정 상대와의 관계는 궁합에서 볼 수 있어요.</p>
   </article>
-  <button class="primary" onclick="relBuy()">3,900원으로 전체 보기 →</button>
-  <p class="fine" style="text-align:center">한 번 결제하면 계속 볼 수 있어요.<br>지금은 결제 연동 전이라 체험으로 열려요.</p>
+
+  <div class="rterms">
+   <p class="th">결제 전에 확인해주세요</p>
+   <ul>
+    <li>결제하면 <b>바로 리포트를 만들기 시작해요.</b> 만들어진 뒤에는 청약철회가 제한돼요.</li>
+    <li>아직 만들기 전이라면 <b>전액 환불</b>돼요.</li>
+    <li>리포트를 만들지 못하면 <b>결제는 그대로 두고 다시 만들어드려요.</b> 추가 결제는 없어요.</li>
+    <li>위 미리보기로 ①을 먼저 확인하실 수 있어요.</li>
+   </ul>
+   <label class="rchk"><input type="checkbox" id="relAgree" ${S.rel.agree?'checked':''}
+     onchange="relSetAgree(this.checked)"> 위 내용을 확인했고, 결제 후 바로 리포트 생성에 동의해요.</label>
+  </div>
+  <button class="primary" ${S.rel.agree?'':'disabled'} onclick="relBuy()">${priceNow()}으로 전체 보기 →</button>
+  <p class="fine" style="text-align:center">${REL_PRICE.list>REL_PRICE.now?`${REL_PRICE.badge} 할인 · 정가 ${won(REL_PRICE.list)}<br>`:''}한 번 결제하면 계속 볼 수 있어요.<br>지금은 결제 연동 전이라 체험으로 열려요.</p>
   <button class="ghost" onclick="go('result')">← 무료 결과로 돌아가기</button>
   </section>`}
+// 동의 여부는 화면을 다시 그려도 유지한다. 결제를 붙이면 이 값과 시각을 서버에 함께 남긴다.
+window.relSetAgree=v=>{S.rel.agree=!!v;
+  const b=document.querySelector('.res .primary'); if(b)b.disabled=!v};
 
 // ── S5 리포트 ───────────────────────────────────────────────
 function relWait(g,label){const a=S.rel.ai[g];
@@ -1736,7 +1837,14 @@ function viewRelReport(){const D=S.data,d=D.relD,i=S.input;
    <h2>${i.name?esc(i.name)+'님' : '나'} · ${esc(D.ilgan[0])}${S.mbti?' · '+esc(S.mbti.type):''}</h2></header>
   ${relProgress()}
   <nav class="rjump">${REL_SECS.map(([n],k)=>`<button onclick="relGo(${k})">${n}</button>`).join('')}</nav>
-  ${relSec1()}${relSec2()}${relSec3()}${relSec4()}${relSec5()}${relSec6()}${relSec7()}${relSec8()}${relSecShare()}
+  <div id="relBody">
+   <div class="rcap"><p class="brand">🤝 관계 사용설명서</p>
+    <p>${i.name?esc(i.name)+'님':'나'} · ${esc(D.ilgan[0])}${S.mbti?' · '+esc(S.mbti.type):''} · ${new Date().toLocaleDateString('ko-KR')}</p></div>
+   ${relSec1()}${relSec2()}${relSec3()}${relSec4()}${relSec5()}${relSec6()}${relSec7()}${relSec8()}${relSecShare()}
+   <p class="fine rcapfoot">내 운 사용설명서 · 사주 × MBTI · ${REL_PROMPT_VERSION}</p>
+  </div>
+  ${relDone()?`<button class="primary" onclick="saveRelAll()">📄 리포트 전체를 이미지로 저장</button>
+   <p class="fine">접어둔 내용까지 담아 긴 이미지 한 장으로 받아요. 💌 카드만 따로 받으려면 위 버튼을 쓰세요.</p>`:''}
   <p class="fine">명리 이론과 자기보고 성향을 엮은 참고용 콘텐츠예요. 사람을 판정하는 기준으로 쓰지 말아주세요.</p>
   <p class="fine">${REL_PROMPT_VERSION} · ${new Date().toLocaleDateString('ko-KR')} 생성</p>
   <button class="ghost" onclick="go('result')">← 무료 결과로 돌아가기</button>
@@ -1747,11 +1855,13 @@ window.relGo=k=>{const el=document.getElementById('rs'+k);if(el)el.scrollIntoVie
 const rsec=(k,body)=>`<article class="card rsec" id="rs${k}"><p class="no">${REL_SECS[k][0]} ${REL_SECS[k][1]}</p>${body}</article>`;
 const rp=(lab,v)=>v?`<p class="tri"><span class="lab">${lab}</span>${esc(v)}</p>`:'';
 
-function relBars(){const d=S.data.relD;
+const rbarBody=()=>{const d=S.data.relD;
+  return `<div class="rbars">${REL.map(k=>`<div><span>${RELK_KO[k]}</span><div class="bar"><i style="width:${d.scores[k]}%;background:var(--accent)"></i></div><small>${d.scores[k]}</small></div>`).join('')}</div>
+   <p class="fine">50이 평균이에요. 높고 낮음은 좋고 나쁨이 아니라 그 영역이 얼마나 활발한지를 뜻해요.</p>`};
+function relBars(open){
+  if(open)return `<p class="sec">나의 관계 지표 7가지</p>${rbarBody()}`;   // 미리보기에서는 펼쳐둔다
   return `<details class="relbars"${S.ui.relBarOpen?' open':''} ontoggle="uiToggle('relBarOpen',this.open)">
-   <summary>관계 지표 7가지 보기</summary>
-   <div class="rbars">${REL.map(k=>`<div><span>${RELK_KO[k]}</span><div class="bar"><i style="width:${d.scores[k]}%;background:var(--accent)"></i></div><small>${d.scores[k]}</small></div>`).join('')}</div>
-   <p class="fine">50이 평균이에요. 높고 낮음은 좋고 나쁨이 아니라 그 영역이 얼마나 활발한지를 뜻해요.</p></details>`}
+   <summary>관계 지표 7가지 보기</summary>${rbarBody()}</details>`}
 
 function relSec1(){const a=S.rel.ai.R1,d=S.data.relD;
   let h=`<p class="rtype">「${esc(d.typeName)}」</p>`;
@@ -1809,6 +1919,9 @@ function relShareHTML(){const a=S.rel.ai.R3||{},d=S.data.relD;
    <p class="sfoot">내 운 사용설명서 · 사주 × MBTI</p></div>`}
 window.saveRelShare=()=>{const st=$('relStage');st.innerHTML=relShareHTML();
   capture(st.firstElementChild,`myluck-relation-${stamp()}.png`)};
+// 리포트 전체 — 접어둔 내용까지 펼쳐서 한 장으로 찍는다
+const relDone=()=>relOk('R1')&&relOk('R2')&&relOk('R3');
+window.saveRelAll=()=>capture($('relBody'),`myluck-relation-full-${stamp()}.png`,'open');
 
 function shareHTML(){const D=S.data,A=ok('P')?S.ai.P.profile:{},m=S.mbti;
  const best=D.months.slice().sort((a,b)=>b.scores[b.top]-a.scores[a.top])[0];
@@ -1817,25 +1930,39 @@ function shareHTML(){const D=S.data,A=ok('P')?S.ai.P.profile:{},m=S.mbti;
  <p class="sone">${esc(A.oneLine||D.ilgan[1])}</p><div class="stags">${(A.sajuKeywords||[]).slice(0,3).map(k=>`<span>#${esc(k)}</span>`).join('')}</div>
  <p class="sbest">앞으로 12개월 중 가장 높은 달 · <b>${best.label} ${DOMK[best.top]} ${best.scores[best.top]}</b></p>
  <p class="sfoot">같은 운이라도, 나는 다르게 씁니다.</p></div>`}
-async function capture(el,filename){const msg=$('saveMsg');const say=t=>{if(msg)msg.textContent=t};
+// mode: 'hide'(기본) 접힌 내용을 숨긴다 · 'open' 전부 펼쳐서 같이 찍는다(유료 리포트 전체 저장)
+async function capture(el,filename,mode){const msg=$('saveMsg');const say=t=>{if(msg)msg.textContent=t};
  if(!el){say('저장할 카드를 찾지 못했어요.');return}
  if(!window.html2canvas){say('이미지 도구를 불러오지 못했어요.');return}
  say('이미지 만드는 중…');
- // html2canvas 는 <details> 를 닫아도 안쪽을 그려버려 글자가 겹친다. 캡처 동안만 통째로 숨긴다.
- const hidden=[...el.querySelectorAll('details')].map(d=>({el:d,prev:d.style.display}));
- hidden.forEach(h=>h.el.style.display='none');
+ // html2canvas 는 <details> 를 닫아도 안쪽을 그려버려 글자가 겹친다.
+ // 기본은 통째로 숨기고, 전체 저장일 때는 펼쳐서 같이 찍는다(펼치면 겹치지 않는다).
+ const ds=[...el.querySelectorAll('details')];
+ const hidden=ds.map(d=>({el:d,prev:d.style.display,open:d.open}));
+ // html2canvas 는 문서를 iframe 으로 복제하는데, 거기엔 uiToggle 이 없어 ontoggle 이 터진다.
+ // 캡처 동안만 떼어낸다.
+ const tgl=ds.map(d=>({el:d,attr:d.getAttribute('ontoggle')}));
+ tgl.forEach(t=>t.el.removeAttribute('ontoggle'));
+ if(mode==='open')hidden.forEach(h=>h.el.open=true);
+ else hidden.forEach(h=>h.el.style.display='none');
  el.classList.add('capturing');
  try{// 폰트 로딩이 늦어도 2초 뒤에는 진행한다
   try{await Promise.race([document.fonts.ready,new Promise(r=>setTimeout(r,2000))])}catch(_){}
   await new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)));
   const bg=getComputedStyle(document.body).getPropertyValue('--paper').trim()||'#F4ECDF';
   let cv=null,err=null;
-  for(const sc of [3,2,1]){try{cv=await html2canvas(el,{backgroundColor:bg,scale:sc,useCORS:true,logging:false});break}catch(e){err=e}}
+  // 아주 긴 이미지를 3배로 뜨면 아이폰 사파리의 캔버스 한도(약 1,670만 화소)를 넘어
+  // 예외 없이 빈 그림이 나온다. 결과 화소 수가 한도 안에 드는 배율부터 시도한다.
+  const px=el.scrollWidth*el.scrollHeight, MAXPX=14e6;
+  const scales=[...new Set([3,2,1].filter(s=>px*s*s<=MAXPX).concat(1))];
+  for(const sc of scales){try{cv=await html2canvas(el,{backgroundColor:bg,scale:sc,useCORS:true,logging:false});break}catch(e){err=e}}
   if(!cv)throw err||new Error('render');
   const blob=await new Promise((res,rej)=>cv.toBlob(b=>b?res(b):rej(new Error('blob')),'image/png'));
   await saveBlob(blob,filename,say)}
  catch(e){console.error('capture',e);say(e?.code==='declined'?'':'저장하지 못했어요'+(e?.code?' ('+e.code+')':e?.message?' ('+e.message+')':''))}
- finally{hidden.forEach(h=>h.el.style.display=h.prev);el.classList.remove('capturing')}}
+ finally{hidden.forEach(h=>{h.el.style.display=h.prev;h.el.open=h.open});
+  tgl.forEach(t=>{if(t.attr!=null)t.el.setAttribute('ontoggle',t.attr)});
+  el.classList.remove('capturing')}}
 
 // 저장 경로: 아티팩트(dl) → 공유 시트(아이폰) → 일반 다운로드
 async function saveBlob(blob,filename,say){
