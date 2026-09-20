@@ -1021,7 +1021,7 @@ function viewConfirm(){const i=S.input,m=S.mbti;
   </ul>
   <button class="primary" onclick="start()">내 운 사용설명서 보러가기 →</button>
   <p class="fine">이 정보로 해석을 만들어요. 결과 화면에서도 바꿀 수 있어요.</p>
-  <button class="ghost" onclick="go('mbtiAsk')">← 뒤로</button></section>`}
+  <button class="ghost" onclick="${S.data?"go('result')":"go('mbtiAsk')"}">← 뒤로</button></section>`}
 
 function viewQuiz(){const q=QS[S.qi];return `<section class="quiz"><p class="stepno">MBTI 성향 테스트 · ${S.qi+1} / 12</p>
   <div class="prog"><i style="width:${S.qi/12*100}%"></i></div>
@@ -1502,7 +1502,7 @@ function viewToday(){const D=S.data,c=D.chart,n=c.natal,now=new Date(),t=dayInfo
    <p class="fine">없으면 비슷한 물건으로 충분해요.</p>${prodBox([CATPRE[n.weakEl]+((t.p.d%4)+1)],'비슷한 아이템 보기')}</div>
   <p class="stamp">내 운 사용설명서 · ${VERSION}</p></article>
  <button class="primary" onclick="saveCard()">오늘 카드 저장</button>
- <button class="ghost" onclick="S.pick=S.mbti?.type||null;go('mbtiAsk')">${S.mbti?`MBTI 바꾸기 · 지금 ${esc(S.mbti.type)}`:'MBTI 추가해서 다시 보기'}</button>
+ <button class="ghost" onclick="${S.mbti?"go('confirm')":"go('mbtiAsk')"}">${S.mbti?'입력 정보 수정':'MBTI 추가해서 다시 보기'}</button>
  <button class="ghost" onclick="S.input=null;S.mbti=null;go('intro')">다른 사람 보기</button>
  <p id="saveMsg" class="fine" aria-live="polite"></p>
  <p class="fine">매일 0시(한국 시간) 기준으로 새 카드가 준비돼요. 명리 이론 기반의 참고용 콘텐츠입니다.</p></section>`}
@@ -1555,7 +1555,7 @@ function viewResult(){const D=S.data,i=S.input,m=S.mbti;
    <button onclick="saveCard()">이 카드 저장</button>
   </div>
   <div class="pager"><button class="ghost" ${S.tab===0?'disabled':''} onclick="setTab(S.tab-1)">← 이전</button><button class="ghost" ${S.tab===5?'disabled':''} onclick="setTab(S.tab+1)">다음 →</button></div>
-  <button class="ghost" onclick="S.pick=S.mbti?.type||null;go('mbtiAsk')">${S.mbti?`MBTI 바꾸기 · 지금 ${esc(S.mbti.type)}`:'MBTI 추가해서 다시 보기'}</button>
+  <button class="ghost" onclick="${S.mbti?"go('confirm')":"go('mbtiAsk')"}">${S.mbti?'입력 정보 수정':'MBTI 추가해서 다시 보기'}</button>
   <button class="ghost" onclick="S.input=null;S.mbti=null;go('intro')">다른 사람 보기</button>
   <p id="saveMsg" class="fine" aria-live="polite"></p>
   <p class="fine">명리 이론 기반의 참고용 콘텐츠이며, 중요한 결정은 스스로의 판단으로 내려주세요.</p>
