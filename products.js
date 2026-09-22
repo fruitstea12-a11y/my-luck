@@ -32,7 +32,7 @@ window.LUCK_PRODUCTS = {
   T4: [ // 홈카페·요리 도구
   ],
   G1: [ // 메탈 필기구
-    { name: '나전칠기 자개 볼펜', url: 'https://link.coupang.com/a/hfPbbSSplA', img: 'https://img3a.coupangcdn.com/image/affiliate/banner/399255d7204250a0c889f801d1a14672@2x.jpg', active: true },
+    { name: '펜텔 스털링 메탈 볼펜', url: 'https://link.coupang.com/a/hfU5mWmZ9o', img: 'https://img4c.coupangcdn.com/image/affiliate/banner/49ab5d8faf6d565e5b76771da4128ddf@2x.jpg', active: true },
   ],
   G2: [ // 시계·타이머
     { name: '드레텍 공부 타이머', url: 'https://link.coupang.com/a/hfPfsqklk4', img: 'https://img3a.coupangcdn.com/image/affiliate/banner/385a5721766dc6dac67c0444a8abd902@2x.jpg', active: true },
@@ -82,7 +82,7 @@ window.LUCK_ITEM_PRODUCTS = {
   '가계부 노트': { name: '한눈에 가계부 미니 만년형', url: 'https://link.coupang.com/a/hfRKa9JWeq', img: 'https://img3a.coupangcdn.com/image/affiliate/banner/62b4eae6a9343dfb5b7d9cb4e39cc0ac@2x.jpg', active: true },
   '손목시계': [
     { name: '뱅글 팔찌 시계', url: 'https://link.coupang.com/a/hfRUrwcu3U', img: 'https://image13.coupangcdn.com/image/affiliate/banner/b707d554912f904db7753c80d7a28c8e@2x.jpg', gender: 'f', active: true },
-    { name: '칼리브 저소음 손목시계', url: 'https://link.coupang.com/a/hfRZNVytUa', img: 'https://image9.coupangcdn.com/image/affiliate/banner/65725a70e4e0b18c0eb25639982c94d7@2x.jpg', active: true },
+    { name: '카시오 저소음 아날로그 손목시계', url: 'https://link.coupang.com/a/hfVbstOu60', img: 'https://image13.coupangcdn.com/image/affiliate/banner/57893a78eae7626de4c12511470988e9@2x.jpg', active: true },
   ],
   '클리어파일': { name: '베이직 클리어파일 A4 4종', url: 'https://link.coupang.com/a/hfR5NAGWGa', img: 'https://image9.coupangcdn.com/image/affiliate/banner/6ae1e9a8234ea0a13b85ebb8fd3dce0e@2x.jpg', active: true },
   '포스트잇': { name: '3M 포스트잇 대용량팩', url: 'https://link.coupang.com/a/hfSqymDx48', img: 'https://image2.coupangcdn.com/image/affiliate/banner/fed7d97cdee88f078ea74ea58cda3f10@2x.jpg', active: true },

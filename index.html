@@ -40,8 +40,8 @@
 <link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/astronomy-engine@2.1.19/astronomy.browser.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-<script src="config.js?v=20260922d"></script>
-<script src="products.js?v=20260922d"></script>
+<script src="config.js?v=20260922e"></script>
+<script src="products.js?v=20260922e"></script>
 <style>
 :root{--paper:#F4ECDF;--panel:#FBF6EC;--ink:#2B2622;--sub:#6E655C;--line:#DCCFBC;--chip:#EBE0CE;
 --mok:#5E7F55;--hwa:#C8643B;--to:#B8893E;--geum:#7F7B76;--su:#3E5A7E;--accent:#9B3D2A}
@@ -1610,6 +1610,8 @@ function viewSwitch(a){return `<div class="vswitch" role="tablist" aria-label="�
   <button role="tab" aria-selected="${a==='result'}" onclick="go('result')">📖 내 운 사용설명서</button></div>`}
 function viewResult(){const D=S.data,i=S.input,m=S.mbti;
   const need=[['P','A'],['A','P'],['A','B'],['B','M'],['M','B'],['B','M']][S.tab];setTimeout(()=>need.forEach(ensure),0);
+  // 지금 카드가 먼저 출발하고, 나머지는 조금 뒤에 미리 만든다. 넘길 때 기다리지 않게.
+  setTimeout(()=>['P','A','B','M'].forEach(ensure),1200);
   setTimeout(centerTab,0);
   const title=`<span class="nm">${i.name?esc(i.name)+'님의':'나의'}</span> 운 사용설명서`;
   return `<section class="res">
