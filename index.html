@@ -368,6 +368,11 @@ details summary{cursor:pointer;color:var(--sub);font-size:14px;padding:10px 0}
 .rmonth .mh em{font-style:normal;font-weight:700}
 .rmonth .mh b{color:var(--accent);margin-right:4px}
 .rmonth .use{margin:8px 0 0;padding-top:8px;border-top:1px solid var(--line);font-size:13px;font-weight:600}
+.rperiod{margin:6px 0 10px;font-size:12px;color:var(--sub);font-weight:600}
+.rhead .rperiod{margin:6px 0 0;text-align:center}
+.rrenew{margin:4px 0 14px;padding:14px;border-radius:12px;background:var(--chip);text-align:center}
+.rrenew p{margin:0 0 10px;font-size:14px;line-height:1.6}
+.rrenew .primary{margin:0}
 .rclose{margin:14px 0 0;font-size:14px;font-weight:700;line-height:1.6;text-align:center}
 
 .rbridge{display:flex;align-items:center;gap:10px;margin-top:16px;padding:13px 14px;
@@ -1810,7 +1815,7 @@ function relBuy(){
   relStart();
 }
 function relKey(){return 'myluck:rel:'+REL_PROMPT_VERSION+':'+JSON.stringify([S.input.date,S.input.time,S.input.noTime,S.input.lon,S.input.gender,S.input.ya,S.mbti?.type||''])}
-function relSave(){const d={};['R1','R2','R3'].forEach(k=>{const v=S.rel.ai[k];if(v&&!v.loading&&!v.error)d[k]=v});
+function relSave(){const d={};['R1','R2','R3'].forEach(k=>{const v=S.rel.ai[k];if(v&&!v.loading&&!v.error)d[k]=v});if(S.rel.meta)d.meta=S.rel.meta;
   try{localStorage.setItem(relKey(),JSON.stringify(d))}catch(_){}}
 function relLoad(){try{return JSON.parse(localStorage.getItem(relKey())||'null')}catch(_){return null}}
 
@@ -1866,8 +1871,28 @@ async function relRun(g){
   if(S.step==='relReport')render();
   if(g==='R1'&&!S.rel.ai.R1.error&&!S.rel.ai.R3)relRun('R3');   // 💌 는 ①~⑦ 결과로 쓴다
 }
+function relMakeMeta(){const D=S.data,M=D.months,f=M[0],t=M[M.length-1];
+  return {made:new Date().toISOString().slice(0,10),
+    from:{y:f.year,m:f.label},to:{y:t.year,m:t.label},end:+new Date(t.end),
+    picks:D.relD.picks.map(p=>({idx:p.idx,type:p.type,year:M[p.idx].year,label:M[p.idx].label}))}}
+// ⑧ 만 12개월 단위로 새로 본다. ①~⑦ 과 💌 은 그대로 둔다.
+const REL_RENEW_PRICE=1900;   // 갱신판 ⑧: 12개월 한 줄 + 핵심 3개월 상세 (2026-09 결정)
+const REL_RENEW_OPEN=!!(window.LUCK_CONFIG&&window.LUCK_CONFIG.REL_RENEW_OPEN);
+function relRenewBox(){return `<div class="rrenew"><p><b>이 관계 흐름의 기간이 끝났어요.</b><br>새로운 12개월의 관계 흐름을 확인해보세요.</p>
+  <button class="primary" ${REL_RENEW_OPEN?'onclick="relRenew()"':'disabled'}>${REL_RENEW_OPEN?'새 12개월 관계 흐름 보기 · '+won(REL_RENEW_PRICE)+' →':'새 12개월 관계 흐름 · 준비 중'}</button></div>`}
+window.relRenew=function(){if(!REL_RENEW_OPEN)return;
+  // TODO 결제 연동 — 갱신 결제 영수증 검증 뒤에 실행한다.
+  const old=S.rel.meta||{};const hist=(old.history||[]).concat(S.rel.ai.R2?[{from:old.from,to:old.to,R2:S.rel.ai.R2}]:[]);
+  S.rel.meta=Object.assign(relMakeMeta(),{history:hist.slice(-3)});
+  S.rel.ai.R2=null;relSave();render();relRun('R2')};
+function relPeriod(){const m=S.rel.meta;return m?`${m.from.y}년 ${m.from.m} ~ ${m.to.y}년 ${m.to.m}`:''}
+function relExpired(){const m=S.rel.meta;return !!(m&&m.end&&Date.now()>m.end)}
 function relStart(){
-  const c=relLoad();S.rel.ai={R1:null,R2:null,R3:null};if(c)Object.assign(S.rel.ai,c);
+  const c=relLoad();S.rel.ai={R1:null,R2:null,R3:null};
+  // 리포트 기간은 처음 연 날 고정한다. 달이 바뀌어도 ⑧ 의 달 이름이 어긋나지 않게 한다.
+  S.rel.meta=(c&&c.meta)||relMakeMeta();
+  if(c){const x=Object.assign({},c);delete x.meta;Object.assign(S.rel.ai,x)}
+  if(!(c&&c.meta))relSave();
   go('relReport');
   if(!S.rel.ai.R1)relRun('R1');
   if(!S.rel.ai.R2)setTimeout(()=>{if(!S.rel.ai.R2)relRun('R2')},2500);
@@ -1967,6 +1992,7 @@ function viewRelIntro(){const d=S.data.relD,i=S.input;
     <li>결제하면 <b>바로 리포트를 만들기 시작해요.</b> 만들어진 뒤에는 청약철회가 제한돼요.</li>
     <li>아직 만들기 전이라면 <b>전액 환불</b>돼요.</li>
     <li>리포트를 만들지 못하면 <b>결제는 그대로 두고 다시 만들어드려요.</b> 추가 결제는 없어요.</li>
+    <li>①~⑦과 💌 카드는 <b>언제든 다시 볼 수 있어요.</b> ⑧ 관계 흐름은 리포트를 처음 만든 달부터 <b>12개월</b> 동안 제공돼요.</li>
     <li>위 미리보기로 ①을 먼저 확인하실 수 있어요.</li>
     <li>자세한 내용은 <a href="policy.html#refund" target="_blank" rel="noopener">환불정책</a>에서 확인하실 수 있어요.</li>
    </ul>
@@ -1979,6 +2005,7 @@ function viewRelIntro(){const d=S.data.relD,i=S.input;
    <p class="th">오픈 준비 중이에요</p>
    <ul>
     <li>관계 사용설명서는 <b>결제 준비가 끝나는 대로</b> 열려요. 가격은 ${priceNow()}이에요.</li>
+    <li>①~⑦과 💌 카드는 언제든 다시 볼 수 있고, ⑧ 관계 흐름은 리포트를 처음 만든 달부터 12개월 동안 제공돼요.</li>
     <li>위 ①은 지금도 무료로 보실 수 있어요.</li>
     <li>오늘의 운과 나의 운 사용설명서 6장은 계속 무료예요.</li>
    </ul>
@@ -2015,7 +2042,7 @@ function viewRelReport(){const D=S.data,d=D.relD,i=S.input;
   <nav class="rjump">${REL_SECS.map(([n],k)=>`<button onclick="relGo(${k})">${n}</button>`).join('')}</nav>
   <div id="relBody">
    <div class="rcap"><p class="brand">🤝 관계 사용설명서</p>
-    <p>${i.name?esc(i.name)+'님':'나'} · ${esc(D.ilgan[0])}${S.mbti?' · '+esc(S.mbti.type):''} · ${new Date().toLocaleDateString('ko-KR')}</p></div>
+    <p>${i.name?esc(i.name)+'님':'나'} · ${esc(D.ilgan[0])}${S.mbti?' · '+esc(S.mbti.type):''} · ${esc((S.rel.meta&&S.rel.meta.made)||new Date().toISOString().slice(0,10))}</p></div>
    ${relSec1()}${relSec2()}${relSec3()}${relSec4()}${relSec5()}${relSec6()}${relSec7()}${relSec8()}${relSecShare()}
    <p class="fine rcapfoot">내 운 사용설명서 · 사주 × MBTI · ${REL_PROMPT_VERSION}</p>
   </div>
@@ -2071,17 +2098,17 @@ function relSec7(){const a=S.rel.ai.R1,d=S.data.relD;
    +rp('속도를 맞춰갈 결',a.effortFit)+rb(6)+bridge)}
 function relSec8(){const a=S.rel.ai.R2,D=S.data,d=D.relD;
   if(!relOk('R2'))return rsec(7,relWait('R2','12개월 관계 흐름을 보는 중…'));
-  const picks=d.picks;
+  const meta=S.rel.meta, picks=(meta&&meta.picks)||d.picks.map(p=>({idx:p.idx,year:D.months[p.idx].year,label:D.months[p.idx].label}));
+  const fy=meta?meta.from.y:D.cy;
   const body=(a.months||[]).map((m,i)=>{
     // idx 를 0,1,2 로 새로 매겨 보내는 경우가 있다. 그러면 순서로 되받는다.
-    const pick=picks.find(p=>p.idx===m.idx)||picks[i];
-    const mm=pick?D.months[pick.idx]:null; if(!mm)return '';
-    const lab=mm.year===D.cy?mm.label:mm.year+'년 '+mm.label;   // 해가 바뀌는 달은 연도까지 보여준다
+    const pick=picks.find(p=>p.idx===m.idx)||picks[i]; if(!pick)return '';
+    const lab=pick.year===fy?pick.label:pick.year+'년 '+pick.label;   // 해가 바뀌는 달은 연도까지 보여준다
     return `<div class="rmonth"><p class="mh"><b>${esc(lab)}</b> <em>${esc(m.title)}</em></p>
      <p class="tri"><span class="lab">🔮 흐름</span>${esc(m.flow)}</p>
      <p class="tri"><span class="lab">🧬 나의 반응</span>${esc(m.me)}</p>
      <p class="use">${esc(m.usage)}</p></div>`}).join('');
-  return rsec(7,`<p class="fine" style="margin-top:0">앞으로 12개월 중 관계가 크게 움직이는 달이에요. 무료 카드 5와 같은 달을 써요.</p>`
+  return rsec(7,`<p class="rperiod">📅 관계 흐름 기간 · ${esc(relPeriod())}</p>${relExpired()?relRenewBox():''}<p class="fine" style="margin-top:0">이 기간 중 관계가 크게 움직이는 달이에요.</p>`
     +body+`<p class="rclose">${esc(a.closing)}</p>`)}
 function relSecShare(){const a=S.rel.ai.R3,d=S.data.relD;
   if(!relOk('R3'))return rsec(8,relWait('R3','나를 대하는 법을 쓰는 중…'));
