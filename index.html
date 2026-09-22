@@ -40,8 +40,8 @@
 <link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/astronomy-engine@2.1.19/astronomy.browser.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-<script src="config.js?v=20260922b"></script>
-<script src="products.js?v=20260922b"></script>
+<script src="config.js?v=20260922c"></script>
+<script src="products.js?v=20260922c"></script>
 <style>
 :root{--paper:#F4ECDF;--panel:#FBF6EC;--ink:#2B2622;--sub:#6E655C;--line:#DCCFBC;--chip:#EBE0CE;
 --mok:#5E7F55;--hwa:#C8643B;--to:#B8893E;--geum:#7F7B76;--su:#3E5A7E;--accent:#9B3D2A}
@@ -207,6 +207,9 @@ select:disabled{opacity:.45}
 .shop a{display:flex;justify-content:space-between;align-items:center;gap:10px;text-decoration:none;color:var(--ink);background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:8px 12px;font-size:13px}
 .shop a em{font-style:normal;font-size:11px;color:var(--sub)}
 .shop .fine{margin-top:8px;font-size:10.5px;line-height:1.5}
+.shop a img{flex:none;width:52px;height:52px;border-radius:8px;object-fit:cover;object-position:50% 27%;background:#fff}
+.shop a .pt{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+.shop a .pt b{font-weight:600;line-height:1.4}
 .item{margin-top:12px;background:var(--chip);border-radius:12px;padding:12px 14px}
 .item small{color:var(--sub);font-size:12px}
 .item .ib{margin:0 0 4px;font-family:"Gowun Batang",serif;font-size:18px}
@@ -1382,7 +1385,7 @@ const CATPRE=['W','F','T','G','S'];              // 목 화 토 금 수
 const CATNAME={W1:'식물·그린 소품',W2:'원목 데스크 소품',W3:'산책·스트레칭 용품',W4:'성장 기록 노트',
  F1:'따뜻한 조명·무드등',F2:'향·캔들워머',F3:'레드 포인트 소품',F4:'표현·발표 도구',
  T1:'도자기·세라믹 머그',T2:'플래너·다이어리',T3:'편안한 패브릭',T4:'홈카페·요리 도구',
- G1:'메탈 필기구',G2:'시계·타이머',G3:'정리함·케이블 정리',G4:'실버 액세서리',
+ G1:'고급 필기구',G2:'시계·타이머',G3:'정리함·케이블 정리',G4:'실버 액세서리',
  S1:'텀블러·보틀',S2:'가습기·물 소품',S3:'여행 파우치·이동 소품',S4:'네이비 문구·플래너'};
 function prodList(cat){const P=window.LUCK_PRODUCTS&&window.LUCK_PRODUCTS[cat];
  return Array.isArray(P)?P.filter(x=>x&&x.active&&x.url):[]}
@@ -1390,7 +1393,7 @@ function prodBox(cats,title){const rows=[];
  cats.forEach(c=>prodList(c).slice(0,2).forEach(p=>rows.push([c,p])));
  if(!rows.length)return '';
  return `<div class="shop"><small>🛒 ${esc(title)}</small>
-  <ul>${rows.slice(0,3).map(([c,p])=>`<li><a href="${esc(p.url)}" target="_blank" rel="nofollow sponsored noopener"><b>${esc(p.name)}</b><em>${esc(CATNAME[c]||'')}</em></a></li>`).join('')}</ul>
+  <ul>${rows.slice(0,3).map(([c,p])=>`<li><a href="${esc(p.url)}" target="_blank" rel="nofollow sponsored noopener">${p.img?`<img src="${esc(p.img)}" alt="" loading="lazy" referrerpolicy="unsafe-url" onerror="this.remove()">`:''}<span class="pt"><b>${esc(p.name)}</b><em>${esc(CATNAME[c]||'')}</em></span></a></li>`).join('')}</ul>
   <p class="fine">이 영역에는 쿠팡 파트너스 링크가 포함되어 있으며, 구매가 일어나면 일정액의 수수료를 제공받습니다. 운을 바꾸는 물건이 아니라 오늘 흐름과 어울리는 생활 아이템이에요.</p></div>`}
 function mbtiKey(){const t=S.mbti?.type;return t?t[0]+t[3]:'N'}
 // ---------- ③ 오늘 하기 쉬운 실수 / ④ 잘 맞는 사람 / ⑤ 시간 사용법 ----------
