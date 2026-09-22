@@ -2,7 +2,9 @@
 window.LUCK_CONFIG = {
   API_BASE: 'https://my-luck-api.fruitstea12.workers.dev',
   // 관계 사용설명서 결제 오픈. PG 연동이 끝나면 true 로 바꾼다. false 면 '오픈 준비 중'으로 보인다.
-  REL_SALE_OPEN: false
+  REL_SALE_OPEN: false,
+  // ⑧ 관계 흐름 12개월 갱신 상품. 결제를 붙이면 true.
+  REL_RENEW_OPEN: false
 };
 
 // ── 사업자 정보 ─────────────────────────────────────────────

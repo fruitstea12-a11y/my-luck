@@ -40,8 +40,8 @@
 <link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/astronomy-engine@2.1.19/astronomy.browser.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-<script src="config.js?v=20260922c"></script>
-<script src="products.js?v=20260922c"></script>
+<script src="config.js?v=20260922d"></script>
+<script src="products.js?v=20260922d"></script>
 <style>
 :root{--paper:#F4ECDF;--panel:#FBF6EC;--ink:#2B2622;--sub:#6E655C;--line:#DCCFBC;--chip:#EBE0CE;
 --mok:#5E7F55;--hwa:#C8643B;--to:#B8893E;--geum:#7F7B76;--su:#3E5A7E;--accent:#9B3D2A}
@@ -1372,7 +1372,7 @@ const ITEMS={
       ['머그컵','한 잔 채워두고 한 가지 일에만 머물러보세요.'],
       ['이어폰','귀에 들어오는 소리를 하나로 줄이면 하던 일이 덜 끊겨요.']],
  jae:[['작은 지갑','오늘 쓸 만큼만 담아 나가보세요.'],
-      ['영수증 봉투','쓴 돈을 한곳에 모아두면 흐름이 보여요.'],
+      ['영수증 파우치','영수증을 한 파우치에 모아두면 돈을 쓴 내역이 한눈에 보여요.'],
       ['가계부 노트','약속한 금액과 날짜를 그 자리에서 적어두세요.']],
  gwan:[['손목시계','마감과 약속 시간을 눈으로 한 번 더 확인해보세요.'],
        ['클리어파일','오늘 처리할 것만 앞으로 빼두세요.'],
@@ -1395,10 +1395,25 @@ const CATNAME={W1:'식물·그린 소품',W2:'원목 데스크 소품',W3:'산�
 function prodList(cat){const P=window.LUCK_PRODUCTS&&window.LUCK_PRODUCTS[cat];
  return Array.isArray(P)?P.filter(x=>x&&x.active&&x.url):[]}
 function prodBox(cats,title){const rows=[];
- cats.forEach(c=>prodList(c).slice(0,2).forEach(p=>rows.push([c,p])));
+ cats.forEach(c=>prodList(c).slice(0,2).forEach(p=>rows.push([CATNAME[c]||'',p])));
+ return shopBox(rows,title)}
+// 오늘의 아이템 이름에 맞춘 상품. products.js 의 LUCK_ITEM_PRODUCTS 에서 찾는다.
+//   값이 카테고리 코드(예: 'G1')면 그 카테고리 첫 상품을 쓴다.
+function itemProds(name){const M=window.LUCK_ITEM_PRODUCTS||{};let v=M[name];
+ if(typeof v==='string')v=prodList(v).slice(0,1);
+ const g=S.input&&S.input.gender;
+ return (Array.isArray(v)?v:v?[v]:[]).filter(x=>x&&x.url&&x.active!==false&&(!x.gender||!g||x.gender===g))}
+// 후보가 여러 개면 날짜마다 순서를 섞는다. 같은 날에는 화면을 다시 그려도 그대로다.
+function dayShuffle(arr,salt){const d=new Date(Date.now()+9*3600e3).toISOString().slice(0,10);
+ let h=2166136261;for(const ch of d+'|'+salt){h^=ch.charCodeAt(0);h=Math.imul(h,16777619)>>>0}
+ const a=arr.slice();for(let i=a.length-1;i>0;i--){h=Math.imul(h^(h>>>15),2246822507)>>>0;const j=h%(i+1);[a[i],a[j]]=[a[j],a[i]]}
+ return a}
+function itemBox(name,fallback){const P=dayShuffle(itemProds(name),name);
+ return P.length?shopBox(P.slice(0,2).map(p=>['오늘의 아이템 · '+name,p]),'오늘의 아이템 보기'):fallback}
+function shopBox(rows,title){
  if(!rows.length)return '';
  return `<div class="shop"><small>🛒 ${esc(title)}</small>
-  <ul>${rows.slice(0,3).map(([c,p])=>`<li><a href="${esc(p.url)}" target="_blank" rel="nofollow sponsored noopener">${p.img?`<img src="${esc(p.img)}" alt="" loading="lazy" referrerpolicy="unsafe-url" onerror="this.remove()">`:''}<span class="pt"><b>${esc(p.name)}</b><em>${esc(CATNAME[c]||'')}</em></span></a></li>`).join('')}</ul>
+  <ul>${rows.slice(0,3).map(([lab,p])=>`<li><a href="${esc(p.url)}" target="_blank" rel="nofollow sponsored noopener">${p.img?`<img src="${esc(p.img)}" alt="" loading="lazy" referrerpolicy="unsafe-url" onerror="this.remove()">`:''}<span class="pt"><b>${esc(p.name)}</b><em>${esc(lab)}</em></span></a></li>`).join('')}</ul>
   <p class="fine">이 영역에는 쿠팡 파트너스 링크가 포함되어 있으며, 구매가 일어나면 일정액의 수수료를 제공받습니다. 운을 바꾸는 물건이 아니라 오늘 흐름과 어울리는 생활 아이템이에요.</p></div>`}
 function mbtiKey(){const t=S.mbti?.type;return t?t[0]+t[3]:'N'}
 // ---------- ③ 오늘 하기 쉬운 실수 / ④ 잘 맞는 사람 / ⑤ 시간 사용법 ----------
@@ -1559,7 +1574,7 @@ function viewToday(){const D=S.data,c=D.chart,n=c.natal,now=new Date(),t=dayInfo
   <p class="sec">✨ 오늘의 아이템</p>
   <div class="item"><p class="ib">${esc(item.name)}</p><p>${esc(item.why)}</p>
    <p class="itemc">오늘의 색 · <b>${esc(item.color)}</b> <small>${EL[n.weakEl]} 기운을 보완하는 색이에요</small></p>
-   <p class="fine">없으면 비슷한 물건으로 충분해요.</p>${prodBox([CATPRE[n.weakEl]+((t.p.d%4)+1)],'비슷한 아이템 보기')}</div>
+   <p class="fine">없으면 비슷한 물건으로 충분해요.</p>${itemBox(item.name,prodBox([CATPRE[n.weakEl]+((t.p.d%4)+1)],'비슷한 아이템 보기'))}</div>
   <p class="stamp">내 운 사용설명서 · ${VERSION}</p></article>
  <button class="primary" onclick="saveCard()">오늘 카드 저장</button>
  <button class="ghost" onclick="${S.mbti?"go('confirm')":"go('mbtiAsk')"}">${S.mbti?'입력 정보 수정':'MBTI 추가해서 다시 보기'}</button>
