@@ -436,7 +436,7 @@ details summary{cursor:pointer;color:var(--sub);font-size:14px;padding:10px 0}
 </footer>
 <script>(function(){var B=window.LUCK_BUSINESS||{},e=function(t){return String(t).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})};
 var L=[['상호',B.name],['대표',B.owner],['사업자등록번호',B.bizNo],['통신판매업신고',B.mailNo],['주소',B.address],['전화',B.phone],['이메일',B.email]].filter(function(x){return x[1]});
-var el=document.getElementById('bizinfo');if(el)el.innerHTML=L.map(function(x){return e(x[0])+' '+e(x[1])}).join(' · ')+(L.length?'<br>':'')+'© 내 운 사용설명서';})();</script>
+if(B.kakao){var nv=document.querySelector('#sitefoot nav');if(nv){var k=document.createElement('a');k.href=B.kakao;k.target='_blank';k.rel='noopener';k.textContent='카카오톡 문의';nv.appendChild(k);}}var el=document.getElementById('bizinfo');if(el)el.innerHTML=L.map(function(x){return e(x[0])+' '+e(x[1])}).join(' · ')+(L.length?'<br>':'')+'© 내 운 사용설명서';})();</script>
 <script>
 // 캐릭터는 chars/ 폴더의 webp 파일로 둔다.
 // base64 로 품고 있으면 첫 화면에 쓰지도 않을 20장까지 전부 내려받게 된다(gzip 후에도 539KB).
@@ -1781,6 +1781,7 @@ function priceTag(){
   let h = `<b class="pnow">${priceNow()}</b>`;
   if (p.was && p.was > p.now) h += `<s class="plist">${won(p.was)}</s>`;
   if (p.badge) h += `<em class="pbadge">${p.badge}</em>`;
+  if (!REL_SALE_OPEN) h += `<em class="pbadge">오픈 준비 중</em>`;
   return h;
 }
 // 가격 밑에 붙는 한 줄. 인상 예정이면 그것을 알린다.
@@ -1791,9 +1792,12 @@ function priceNote(){
 }
 
 S.rel={ai:{R1:null,R2:null,R3:null},agree:false};
+// 결제 오픈 여부. config.js 의 LUCK_CONFIG.REL_SALE_OPEN 이 true 일 때만 결제 버튼이 열린다.
+const REL_SALE_OPEN=!!(window.LUCK_CONFIG&&window.LUCK_CONFIG.REL_SALE_OPEN);
 
 function relUnlocked(){try{return localStorage.getItem(REL_PAID_KEY)==='1'}catch(_){return false}}
 function relBuy(){
+  if(!REL_SALE_OPEN)return;
   if(!S.rel.agree)return;   // 고지 동의 없이는 결제로 넘어가지 않는다
   // TODO 결제 연동 — 영수증 검증 뒤에 잠금을 푼다. 지금은 체험으로 연다.
   //   영수증 검증 성공 시점에 { 동의여부, 동의시각, 생성시작시각 } 을 함께 저장할 것.
@@ -1954,7 +1958,7 @@ function viewRelIntro(){const d=S.data.relD,i=S.input;
    <p class="fine">특정 상대와의 관계는 궁합에서 볼 수 있어요.</p>
   </article>
 
-  <div class="rterms">
+  ${REL_SALE_OPEN?`  <div class="rterms">
    <p class="th">결제 전에 확인해주세요</p>
    <ul>
     <li>결제하면 <b>바로 리포트를 만들기 시작해요.</b> 만들어진 뒤에는 청약철회가 제한돼요.</li>
@@ -1963,11 +1967,20 @@ function viewRelIntro(){const d=S.data.relD,i=S.input;
     <li>위 미리보기로 ①을 먼저 확인하실 수 있어요.</li>
     <li>자세한 내용은 <a href="policy.html#refund" target="_blank" rel="noopener">환불정책</a>에서 확인하실 수 있어요.</li>
    </ul>
-   <label class="rchk"><input type="checkbox" id="relAgree" ${S.rel.agree?'checked':''}
+   <label class="rchk"><input type="checkbox" id="relAgree" \${S.rel.agree?'checked':''}
      onchange="relSetAgree(this.checked)"> 위 내용을 확인했고, 결제 후 바로 리포트 생성에 동의해요.</label>
   </div>
-  <button class="primary" ${S.rel.agree?'':'disabled'} onclick="relBuy()">${priceNow()}으로 전체 보기 →</button>
-  <p class="fine" style="text-align:center">${priceNote()?priceNote()+'<br>':''}한 번 결제하면 계속 볼 수 있어요.<br>지금은 결제 연동 전이라 체험으로 열려요.</p>
+  <button class="primary" \${S.rel.agree?'':'disabled'} onclick="relBuy()">\${priceNow()}으로 전체 보기 →</button>
+  <p class="fine" style="text-align:center">\${priceNote()?priceNote()+'<br>':''}한 번 결제하면 계속 볼 수 있어요.<br>지금은 결제 연동 전이라 체험으로 열려요.</p>
+`:`<div class="rterms">
+   <p class="th">오픈 준비 중이에요</p>
+   <ul>
+    <li>관계 사용설명서는 <b>결제 준비가 끝나는 대로</b> 열려요. 가격은 ${priceNow()}이에요.</li>
+    <li>위 ①은 지금도 무료로 보실 수 있어요.</li>
+    <li>오늘의 운과 나의 운 사용설명서 6장은 계속 무료예요.</li>
+   </ul>
+  </div>
+  <button class="primary" disabled>오픈 준비 중</button>`}
   <button class="ghost" onclick="go('result')">← 무료 결과로 돌아가기</button>
   </section>`}
 // 동의 여부는 화면을 다시 그려도 유지한다. 결제를 붙이면 이 값과 시각을 서버에 함께 남긴다.

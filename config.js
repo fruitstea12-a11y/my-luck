@@ -1,6 +1,8 @@
 // Cloudflare Worker 주소. 끝에 / 없이.
 window.LUCK_CONFIG = {
-  API_BASE: 'https://my-luck-api.fruitstea12.workers.dev'
+  API_BASE: 'https://my-luck-api.fruitstea12.workers.dev',
+  // 관계 사용설명서 결제 오픈. PG 연동이 끝나면 true 로 바꾼다. false 면 '오픈 준비 중'으로 보인다.
+  REL_SALE_OPEN: false
 };
 
 // ── 사업자 정보 ─────────────────────────────────────────────
@@ -14,7 +16,8 @@ window.LUCK_BUSINESS = {
   mailNo:   '',   // 통신판매업 신고번호. 간이과세자로 면제면 '신고 면제(간이과세자)'
   address:  '',   // 사업장 주소
   phone:    '',   // 전화
-  email:    '',   // 문의 이메일
+  email:    'help@mywoon.kr',   // 문의 이메일
+  kakao:    'https://pf.kakao.com/_MMBaX/chat',   // 카카오톡 채널 1:1 채팅 주소
   privacyOfficer: '',   // 개인정보 보호책임자 (보통 대표자)
   hosting:  'GitHub, Inc. (GitHub Pages)',   // 호스팅 서비스 제공자
   effective:'2026년 10월 1일'                // 정책 시행일

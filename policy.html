@@ -155,7 +155,7 @@ th{background:var(--chip);font-weight:600;white-space:nowrap}
  <p>서비스는 광고·추적 쿠키를 쓰지 않습니다. 입력값과 결과를 다시 보여주기 위해 브라우저 저장소(localStorage)를 씁니다.</p>
 
  <h3>9. 개인정보 보호책임자</h3>
- <p>성명: <span data-b="privacyOfficer" data-f="(사업자등록 후 기재)"></span> · 문의: <span data-b="email" data-f="(사업자등록 후 기재)"></span></p>
+ <p>성명: <span data-b="privacyOfficer" data-f="(사업자등록 후 기재)"></span> · 문의: <span class="contact"></span></p>
  <p class="fine">개인정보 침해 신고·상담: 개인정보침해신고센터 (국번 없이 118), 개인정보분쟁조정위원회 (1833-6972)</p>
 
  <p class="fine">이 처리방침은 <span data-b="effective" data-f="게시일"></span>부터 적용됩니다. 내용이 바뀌면 시행 7일 전에 이 페이지에 알립니다.</p>
@@ -185,10 +185,10 @@ th{background:var(--chip);font-weight:600;white-space:nowrap}
 
  <h3>환불 방법</h3>
  <ol>
-  <li>아래 이메일로 결제일, 결제 금액, 환불 사유를 보내주세요.</li>
+  <li>아래 이메일 또는 카카오톡 채널로 결제일, 결제 금액, 환불 사유를 보내주세요.</li>
   <li>확인 후 3영업일 안에 결제한 수단으로 환불합니다. 카드 취소가 실제 반영되는 시점은 카드사에 따라 다릅니다.</li>
  </ol>
- <p>문의: <span data-b="email" data-f="(사업자등록 후 기재)"></span></p>
+ <p>문의: <span class="contact"></span></p>
 </section>
 
  <p class="fine" style="margin-top:28px">이 문서는 공정거래위원회 표준약관과 개인정보보호위원회 작성지침을 참고한 초안입니다.</p>
@@ -201,6 +201,13 @@ th{background:var(--chip);font-weight:600;white-space:nowrap}
   document.querySelectorAll('[data-b]').forEach(function(el){
     var v = B[el.getAttribute('data-b')];
     el.textContent = v ? v : el.getAttribute('data-f');
+  });
+  // 문의처 — 이메일과 카카오톡 채널 중 채워진 것만
+  document.querySelectorAll('.contact').forEach(function(el){
+    var parts=[];
+    if(B.email) parts.push(B.email.replace(/[&<>]/g,''));
+    if(B.kakao) parts.push('<a href="'+B.kakao.replace(/"/g,'')+'" target="_blank" rel="noopener">카카오톡 채널 @mywoon</a>');
+    el.innerHTML = parts.length ? parts.join(' · ') : '(사업자등록 후 기재)';
   });
   // 상단 사업자 정보 — 채워진 칸만 보여준다
   var rows = [['상호','name'],['대표자','owner'],['사업자등록번호','bizNo'],['통신판매업 신고','mailNo'],
