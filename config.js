@@ -16,7 +16,7 @@ window.LUCK_BUSINESS = {
   owner:    '윤미령',   // 대표자
   bizNo:    '160-34-01645',   // 사업자등록번호
   mailNo:   '신고 면제(간이과세자)',   // 통신판매업 신고번호
-  address:  '서울특별시 노원구 덕릉로 595, 102동 1602호(중계동, 신안아파트)',   // 사업장 주소
+  address:  '서울특별시 노원구 덕릉로 595, 102동 1602호',   // 사업장 주소
   phone:    '0502-1935-0777',   // 전화
   email:    'help@mywoon.kr',   // 문의 이메일
   kakao:    'https://pf.kakao.com/_MMBaX/chat',   // 카카오톡 채널 1:1 채팅 주소
