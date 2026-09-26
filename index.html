@@ -1871,7 +1871,10 @@ async function payMount(){
       PAY.w.renderPaymentMethods({selector:'#payMethods',variantKey:'DEFAULT'}),
       PAY.w.renderAgreement({selector:'#payAgree',variantKey:'AGREEMENT'})]);
     PAY.ready=true;
-  }catch(e){console.error('pay mount',e);PAY.el=null;paySetMsg('결제창을 불러오지 못했어요. 새로고침 후 다시 시도해주세요.')}
+  }catch(e){console.error('pay mount',e);PAY.el=null;
+    // 원인을 알 수 있게 토스 오류 코드를 함께 보여준다 (예: NOT_FOUND_VARIANT_KEY)
+    const why=e&&(e.code||e.message)?' ['+String(e.code||'')+(e.code&&e.message?' · ':'')+String(e.message||'').slice(0,80)+']':'';
+    paySetMsg('결제창을 불러오지 못했어요. 새로고침 후 다시 시도해주세요.'+why)}
   payBtn();
 }
 function payBtn(){const b=document.getElementById('relBuyBtn');if(b)b.disabled=!(S.rel.agree&&PAY.ready&&!PAY.busy);
