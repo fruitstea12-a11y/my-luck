@@ -41,8 +41,8 @@
 <link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/astronomy-engine@2.1.19/astronomy.browser.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-<script src="config.js?v=20260922e"></script>
-<script src="products.js?v=20260922e"></script>
+<script src="config.js?v=20260926a"></script>
+<script src="products.js?v=20260926a"></script>
 <style>
 :root{--paper:#F4ECDF;--panel:#FBF6EC;--ink:#2B2622;--sub:#6E655C;--line:#DCCFBC;--chip:#EBE0CE;
 --mok:#5E7F55;--hwa:#C8643B;--to:#B8893E;--geum:#7F7B76;--su:#3E5A7E;--accent:#9B3D2A}
@@ -436,6 +436,10 @@ details summary{cursor:pointer;color:var(--sub);font-size:14px;padding:10px 0}
 .sitefoot a.b{font-weight:700;color:var(--ink)}
 .sitefoot p{margin:0}
 .rterms a{color:var(--accent)}
+/* 결제위젯 — 토스가 그리는 흰 카드가 배경과 붙지 않게 여백만 준다 */
+.paybox{margin:12px -4px 0;min-height:40px}
+.paymsg{min-height:1.2em;margin:6px 0 0;font-size:13px;color:var(--accent);text-align:center}
+.paytest{text-align:center}
 </style>
 </head>
 <body><main class="wrap" id="view">
@@ -982,6 +986,10 @@ function render(){const v=$('view');
   else if(S.step==='relReport')v.innerHTML=viewRelReport();
   // 다시 그린 뒤 열려 있던 월 상세를 되살린다
   if(S.step==='result'&&S.tab===4&&S.ui.openMonth!=null&&$('mdet'))openM(S.ui.openMonth,true);
+  // 관계 사용설명서 결제 화면이면 결제위젯을 붙인다
+  if(S.step==='relIntro'&&REL_SALE_OPEN)payMount();
+  // 결제창에서 돌아온 뒤 무료 결과로 가면 빠진 카드를 채운다
+  if(S.step==='result'&&S.needEnsure){S.needEnsure=false;['P','A','B','M'].forEach(ensure)}
 }
 // ---------- intro ----------
 function viewIntro(){return `<section class="intro">
@@ -1314,7 +1322,10 @@ const ERRMSG={not_granted:'Claude 사용 허용이 필요해요.',origin:'접속
  rate_limited:'오늘 요청이 많았어요. 잠시 후 다시 시도해주세요.',
  upstream:'해석 서버에 연결하지 못했어요. 잠시 후 다시 시도해주세요.',
  validation:'해석을 다듬는 데 실패했어요. 다시 시도해주세요.',
- network:'연결이 불안정해요. 다시 시도해주세요.'};
+ network:'연결이 불안정해요. 다시 시도해주세요.',
+ unpaid:'결제 확인이 필요해요. 문제가 계속되면 문의해주세요.',
+ refunded:'환불된 주문이에요.',
+ order_limit:'이 주문으로 만들 수 있는 횟수를 모두 썼어요. 문의해주세요.'};
 const apiBase=()=>{const b=(window.LUCK_CONFIG||{}).API_BASE;return (b&&!/YOUR-SUBDOMAIN/.test(b))?b:null};
 async function callCard(g){
   const base=apiBase();
@@ -1827,19 +1838,99 @@ function priceNote(){
 
 S.rel={ai:{R1:null,R2:null,R3:null},agree:false};
 // 결제 오픈 여부. config.js 의 LUCK_CONFIG.REL_SALE_OPEN 이 true 일 때만 결제 버튼이 열린다.
-const REL_SALE_OPEN=!!(window.LUCK_CONFIG&&window.LUCK_CONFIG.REL_SALE_OPEN);
+// 오픈 전 테스트: 주소 뒤에 ?paytest=1 을 붙여 들어오면 이 탭에서만 결제 화면이 열린다(테스트 키일 때만).
+const PAY_TEST=(()=>{try{const q=new URLSearchParams(location.search).get('paytest');
+  if(q==='1')sessionStorage.setItem('myluck:paytest','1');if(q==='0')sessionStorage.removeItem('myluck:paytest');
+  return sessionStorage.getItem('myluck:paytest')==='1'&&/^test_/.test((window.LUCK_CONFIG||{}).TOSS_CLIENT_KEY||'')}catch(_){return false}})();
+const REL_SALE_OPEN=!!(window.LUCK_CONFIG&&window.LUCK_CONFIG.REL_SALE_OPEN)||PAY_TEST;
+const REL_ORDER_KEY='myluck:rel:order';   // 결제 승인된 주문번호. 리포트를 부를 때 서버가 이 번호로 결제를 확인한다
 
-function relUnlocked(){try{return localStorage.getItem(REL_PAID_KEY)==='1'}catch(_){return false}}
-function relBuy(){
-  if(!REL_SALE_OPEN)return;
-  if(!S.rel.agree)return;   // 고지 동의 없이는 결제로 넘어가지 않는다
-  // TODO 결제 연동 — 영수증 검증 뒤에 잠금을 푼다. 지금은 체험으로 연다.
-  //   영수증 검증 성공 시점에 { 동의여부, 동의시각, 생성시작시각 } 을 함께 저장할 것.
-  //   생성 시작 전 환불 요청은 전액 환불, 생성 뒤에는 청약철회 제한을 근거로 안내한다.
-  try{localStorage.setItem(REL_PAID_KEY,'1');
-      localStorage.setItem('myluck:rel:agreedAt',new Date().toISOString())}catch(_){}
-  relStart();
+function relOrderId(){try{return localStorage.getItem(REL_ORDER_KEY)||''}catch(_){return ''}}
+function relUnlocked(){return !!relOrderId()}
+
+// ── 결제 (토스페이먼츠 결제위젯) ─────────────────────────────
+//   relBuy → Worker /api/pay/prepare (주문번호·금액은 서버가 정한다) → 결제위젯 결제창
+//   → 돌아오면(?pay=ok) payReturn → /api/pay/confirm (서버가 토스 승인) → 주문번호 저장 → 리포트 생성
+const PAY={w:null,methods:null,agree:null,el:null,ready:false,busy:false,msg:''};
+const payKey=()=>(window.LUCK_CONFIG||{}).TOSS_CLIENT_KEY||'';
+function paySdk(){if(window.TossPayments)return Promise.resolve();
+  return new Promise((ok,no)=>{const s=document.createElement('script');s.src='https://js.tosspayments.com/v2/standard';
+    s.onload=ok;s.onerror=()=>no(new Error('sdk'));document.head.appendChild(s)})}
+async function payMount(){
+  const el=document.getElementById('payMethods');
+  if(!el||!payKey()||el===PAY.el)return;
+  PAY.el=el;PAY.ready=false;payBtn();
+  try{
+    await paySdk();
+    if(!PAY.w){PAY.w=TossPayments(payKey()).widgets({customerKey:TossPayments.ANONYMOUS});
+      await PAY.w.setAmount({currency:'KRW',value:REL_PRICE.now})}
+    try{PAY.methods&&await PAY.methods.destroy()}catch(_){}
+    try{PAY.agree&&await PAY.agree.destroy()}catch(_){}
+    if(document.getElementById('payMethods')!==el)return;   // 그 사이 화면이 바뀌었다
+    [PAY.methods,PAY.agree]=await Promise.all([
+      PAY.w.renderPaymentMethods({selector:'#payMethods',variantKey:'DEFAULT'}),
+      PAY.w.renderAgreement({selector:'#payAgree',variantKey:'AGREEMENT'})]);
+    PAY.ready=true;
+  }catch(e){console.error('pay mount',e);PAY.el=null;paySetMsg('결제창을 불러오지 못했어요. 새로고침 후 다시 시도해주세요.')}
+  payBtn();
 }
+function payBtn(){const b=document.getElementById('relBuyBtn');if(b)b.disabled=!(S.rel.agree&&PAY.ready&&!PAY.busy);
+  if(b&&PAY.busy)b.textContent='결제창으로 이동 중…'}
+function paySetMsg(t){PAY.msg=t||'';const m=document.getElementById('payMsg');if(m)m.textContent=PAY.msg}
+async function relBuy(){
+  if(!REL_SALE_OPEN||PAY.busy)return;
+  if(!S.rel.agree)return;   // 고지 동의 없이는 결제로 넘어가지 않는다
+  if(!PAY.ready)return paySetMsg('결제창을 준비하는 중이에요. 잠시 후 다시 눌러주세요.');
+  const base=apiBase();if(!base)return paySetMsg('결제 서버에 연결하지 못했어요.');
+  PAY.busy=true;payBtn();paySetMsg('');
+  const agreedAt=new Date().toISOString();
+  try{
+    const r=await fetch(base+'/api/pay/prepare',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({product:'rel',agreedAt})});
+    const j=await r.json();
+    if(!j.ok)throw new Error(j.code||'prepare');
+    if(j.amount!==REL_PRICE.now)throw new Error('amount');
+    try{localStorage.setItem('myluck:rel:pending',JSON.stringify({orderId:j.orderId,agreedAt}))}catch(_){}
+    const back=location.origin+location.pathname;
+    await PAY.w.requestPayment({orderId:j.orderId,orderName:j.orderName,
+      successUrl:back+'?pay=ok',failUrl:back+'?pay=fail'});
+  }catch(e){
+    // 사용자가 결제창을 닫은 경우도 여기로 온다
+    const code=e&&(e.code||e.message);
+    paySetMsg(code==='USER_CANCEL'||code==='PAY_PROCESS_CANCELED'?'결제를 취소했어요.':'결제를 시작하지 못했어요. 잠시 후 다시 시도해주세요.');
+  }
+  PAY.busy=false;payBtn();const b=document.getElementById('relBuyBtn');if(b)b.textContent=priceNow()+'으로 전체 보기 →';
+}
+// 결제창에서 돌아왔을 때
+const PAY_RETURN=(()=>{try{const q=new URLSearchParams(location.search);const p=q.get('pay');if(!p)return null;
+  const o={pay:p,paymentKey:q.get('paymentKey'),orderId:q.get('orderId'),amount:Number(q.get('amount')),code:q.get('code'),message:q.get('message')};
+  history.replaceState(null,'',location.pathname);return o}catch(_){return null}})();
+async function payReturn(){
+  const R=PAY_RETURN;if(!R)return;
+  await READY;
+  const p=S.saved;if(!p){alert('결제 정보를 확인할 사주 정보를 찾지 못했어요. 결제는 승인 전이라 청구되지 않아요.');return}
+  S.input=p.input;S.mbti=p.mbti;
+  try{S.data=makeData()}catch(e){return go('input')}
+  S.ai={P:null,A:null,B:null,M:null};const c=await loadResults();if(c)Object.assign(S.ai,c);S.needEnsure=true;
+  if(R.pay!=='ok'){S.rel.agree=false;PAY.msg=R.code==='PAY_PROCESS_CANCELED'?'결제를 취소했어요.':('결제가 완료되지 않았어요.'+(R.message?' ('+R.message+')':''));go('relIntro');return}
+  S.step='relIntro';PAY.busy=true;PAY.msg='결제를 확인하고 있어요…';render();
+  let j=null;
+  for(let i=0;i<3&&!j;i++){
+    try{const r=await fetch(apiBase()+'/api/pay/confirm',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({paymentKey:R.paymentKey,orderId:R.orderId,amount:R.amount})});j=await r.json()}
+    catch(_){await new Promise(r=>setTimeout(r,1500))}
+  }
+  PAY.busy=false;
+  if(j&&j.ok){
+    try{localStorage.setItem(REL_ORDER_KEY,R.orderId);localStorage.setItem(REL_PAID_KEY,'1');
+        const pd=JSON.parse(localStorage.getItem('myluck:rel:pending')||'{}');
+        localStorage.setItem('myluck:rel:agreedAt',pd.agreedAt||'');localStorage.removeItem('myluck:rel:pending')}catch(_){}
+    PAY.msg='';relStart();return}
+  PAY.msg=j&&j.code==='pay_failed'?('결제가 승인되지 않았어요. '+(j.message||'')):
+          '결제 확인이 늦어지고 있어요. 새로고침하지 말고 잠시 뒤 문의해주세요. 주문번호: '+R.orderId;
+  render();
+}
+payReturn();
 function relKey(){return 'myluck:rel:'+REL_PROMPT_VERSION+':'+JSON.stringify([S.input.date,S.input.time,S.input.noTime,S.input.lon,S.input.gender,S.input.ya,S.mbti?.type||''])}
 function relSave(){const d={};['R1','R2','R3'].forEach(k=>{const v=S.rel.ai[k];if(v&&!v.loading&&!v.error)d[k]=v});if(S.rel.meta)d.meta=S.rel.meta;
   try{localStorage.setItem(relKey(),JSON.stringify(d))}catch(_){}}
@@ -1880,7 +1971,7 @@ async function relCall(g){
   const base=apiBase();
   if(!base)throw {code:'upstream'};
   let r;try{r=await fetch(base+'/api/card',{method:'POST',headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({card:g,data:relPayload(g)})})}catch(_){throw {code:'network'}}
+    body:JSON.stringify({card:g,data:relPayload(g),orderId:relOrderId()})})}catch(_){throw {code:'network'}}
   let j;try{j=await r.json()}catch(_){throw {code:'upstream'}}
   if(!j.ok)throw {code:j.code||'upstream'};
   return j.result;
@@ -2022,11 +2113,14 @@ function viewRelIntro(){const d=S.data.relD,i=S.input;
     <li>위 미리보기로 ①을 먼저 확인하실 수 있어요.</li>
     <li>자세한 내용은 <a href="policy.html#refund" target="_blank" rel="noopener">환불정책</a>에서 확인하실 수 있어요.</li>
    </ul>
-   <label class="rchk"><input type="checkbox" id="relAgree" \${S.rel.agree?'checked':''}
+   <label class="rchk"><input type="checkbox" id="relAgree" ${S.rel.agree?'checked':''}
      onchange="relSetAgree(this.checked)"> 위 내용을 확인했고, 결제 후 바로 리포트 생성에 동의해요.</label>
   </div>
-  <button class="primary" \${S.rel.agree?'':'disabled'} onclick="relBuy()">\${priceNow()}으로 전체 보기 →</button>
-  <p class="fine" style="text-align:center">\${priceNote()?priceNote()+'<br>':''}한 번 결제하면 계속 볼 수 있어요.<br>지금은 결제 연동 전이라 체험으로 열려요.</p>
+  ${PAY_TEST&&!(window.LUCK_CONFIG||{}).REL_SALE_OPEN?'<p class="note paytest">🧪 테스트 결제 모드예요. 실제로 돈이 나가지 않아요.</p>':''}
+  <div class="paybox"><div id="payMethods"></div><div id="payAgree"></div></div>
+  <p id="payMsg" class="paymsg" aria-live="polite">${esc(PAY.msg)}</p>
+  <button class="primary" id="relBuyBtn" ${S.rel.agree&&PAY.ready&&!PAY.busy?'':'disabled'} onclick="relBuy()">${PAY.busy?'결제를 확인하고 있어요…':priceNow()+'으로 전체 보기 →'}</button>
+  <p class="fine" style="text-align:center">${priceNote()?priceNote()+'<br>':''}한 번 결제하면 이 기기에서 계속 볼 수 있어요.</p>
 `:`<div class="rterms">
    <p class="th">오픈 준비 중이에요</p>
    <ul>
@@ -2040,8 +2134,7 @@ function viewRelIntro(){const d=S.data.relD,i=S.input;
   <button class="ghost" onclick="go('result')">← 무료 결과로 돌아가기</button>
   </section>`}
 // 동의 여부는 화면을 다시 그려도 유지한다. 결제를 붙이면 이 값과 시각을 서버에 함께 남긴다.
-window.relSetAgree=v=>{S.rel.agree=!!v;
-  const b=document.querySelector('.res .primary'); if(b)b.disabled=!v};
+window.relSetAgree=v=>{S.rel.agree=!!v;payBtn()};
 
 // ── S5 리포트 ───────────────────────────────────────────────
 function relWait(g,label){const a=S.rel.ai[g];

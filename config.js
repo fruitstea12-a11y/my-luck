@@ -4,7 +4,11 @@ window.LUCK_CONFIG = {
   // 관계 사용설명서 결제 오픈. PG 연동이 끝나면 true 로 바꾼다. false 면 '오픈 준비 중'으로 보인다.
   REL_SALE_OPEN: false,
   // ⑧ 관계 흐름 12개월 갱신 상품. 결제를 붙이면 true.
-  REL_RENEW_OPEN: false
+  REL_RENEW_OPEN: false,
+  // 토스페이먼츠 결제위젯 클라이언트 키 (공개돼도 되는 키). 테스트: test_gck_…  실제: live_gck_…
+  // 시크릿 키(test_gsk_ / live_gsk_)는 절대 여기에 넣지 않는다. Cloudflare Worker 의 TOSS_SECRET_KEY 에만 둔다.
+  // 키를 바꿀 때는 Worker 의 시크릿 키도 같은 종류(test/live)로 함께 바꿔야 한다.
+  TOSS_CLIENT_KEY: 'test_gck_mBZ1gQ4YVXbjk2QjxN6a8l2KPoqN'
 };
 
 // ── 사업자 정보 ─────────────────────────────────────────────
