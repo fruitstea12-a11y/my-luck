@@ -22,6 +22,8 @@ a{color:var(--accent)}
 h1{font-size:20px;margin:0}
 h2{font-size:17px;margin:26px 0 8px;padding-bottom:8px;border-bottom:2px solid var(--accent)}
 .card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px 16px;margin:12px 0}
+.thumb{display:flex;justify-content:center;align-items:flex-end;gap:4px;background:var(--chip);border-radius:12px;padding:14px 10px 0;margin:0 0 14px;overflow:hidden}
+.thumb img{height:160px;width:auto;object-fit:contain;display:block}
 .card .name{font-size:18px;font-weight:600;margin:0}
 .card .desc{color:var(--sub);font-size:13.5px;margin:4px 0 12px}
 .price{display:flex;align-items:baseline;gap:8px;margin:0 0 12px}
@@ -54,6 +56,7 @@ li{margin:3px 0}
 
  <h2>유료 상품</h2>
  <div class="card">
+  <div class="thumb"><img src="chars/muto_m.webp" alt="관계 사용설명서 캐릭터 (남)" width="120" height="160"><img src="chars/muto_f.webp" alt="관계 사용설명서 캐릭터 (여)" width="120" height="160"></div>
   <p class="name">🤝 관계 사용설명서 <span class="status" id="saleStatus"></span></p>
   <p class="desc">사주와 MBTI로 보는 나의 관계 방식 디지털 리포트 — 연애·친구·가족·사회 관계 전반</p>
   <p class="price"><b>2,900원</b><small>1회 결제 · 부가세 포함</small></p>
