@@ -1874,7 +1874,7 @@ async function payMount(){
   }catch(e){console.error('pay mount',e);PAY.el=null;
     // 원인을 알 수 있게 토스 오류 코드를 함께 보여준다 (예: NOT_FOUND_VARIANT_KEY)
     const why=e&&(e.code||e.message)?' ['+String(e.code||'')+(e.code&&e.message?' · ':'')+String(e.message||'').slice(0,80)+']':'';
-    paySetMsg('결제창을 불러오지 못했어요. 새로고침 후 다시 시도해주세요.'+why)}
+    if(!PAY.ret)paySetMsg('결제창을 불러오지 못했어요. 새로고침 후 다시 시도해주세요.'+why)}
   payBtn();
 }
 function payBtn(){const b=document.getElementById('relBuyBtn');if(b)b.disabled=!(S.rel.agree&&PAY.ready&&!PAY.busy);
@@ -1916,11 +1916,16 @@ async function payReturn(){
   try{S.data=makeData()}catch(e){return go('input')}
   S.ai={P:null,A:null,B:null,M:null};const c=await loadResults();if(c)Object.assign(S.ai,c);S.needEnsure=true;
   if(R.pay!=='ok'){S.rel.agree=false;PAY.msg=R.code==='PAY_PROCESS_CANCELED'?'결제를 취소했어요.':('결제가 완료되지 않았어요.'+(R.message?' ('+R.message+')':''));go('relIntro');return}
-  S.step='relIntro';PAY.busy=true;PAY.msg='결제를 확인하고 있어요…';render();
-  let j=null;
+  S.step='relIntro';PAY.ret=R;await payConfirm();
+}
+// 서버에 결제 승인을 요청한다. 실패하면 이유와 다시 시도 버튼을 보여준다(토스 결제는 10분 안에 승인해야 한다)
+async function payConfirm(){
+  const R=PAY.ret;if(!R)return;
+  PAY.busy=true;PAY.msg='결제를 확인하고 있어요…';render();
+  let j=null,st=0;
   for(let i=0;i<3&&!j;i++){
     try{const r=await fetch(apiBase()+'/api/pay/confirm',{method:'POST',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({paymentKey:R.paymentKey,orderId:R.orderId,amount:R.amount})});j=await r.json()}
+      body:JSON.stringify({paymentKey:R.paymentKey,orderId:R.orderId,amount:R.amount})});st=r.status;j=await r.json()}
     catch(_){await new Promise(r=>setTimeout(r,1500))}
   }
   PAY.busy=false;
@@ -1928,11 +1933,13 @@ async function payReturn(){
     try{localStorage.setItem(REL_ORDER_KEY,R.orderId);localStorage.setItem(REL_PAID_KEY,'1');
         const pd=JSON.parse(localStorage.getItem('myluck:rel:pending')||'{}');
         localStorage.setItem('myluck:rel:agreedAt',pd.agreedAt||'');localStorage.removeItem('myluck:rel:pending')}catch(_){}
-    PAY.msg='';relStart();return}
-  PAY.msg=j&&j.code==='pay_failed'?('결제가 승인되지 않았어요. '+(j.message||'')):
-          '결제 확인이 늦어지고 있어요. 새로고침하지 말고 잠시 뒤 문의해주세요. 주문번호: '+R.orderId;
-  render();
+    PAY.msg='';PAY.ret=null;relStart();return}
+  const code=(j&&j.code)||(st?'http_'+st:'network');
+  PAY.msg=(j&&j.code==='pay_failed'?'결제가 승인되지 않았어요. '+(j.message||''):'결제 확인에 실패했어요.')+
+    ' [오류: '+code+'] 주문번호: '+R.orderId;
+  PAY.retryable=true;render();
 }
+window.payConfirm=payConfirm;
 payReturn();
 function relKey(){return 'myluck:rel:'+REL_PROMPT_VERSION+':'+JSON.stringify([S.input.date,S.input.time,S.input.noTime,S.input.lon,S.input.gender,S.input.ya,S.mbti?.type||''])}
 function relSave(){const d={};['R1','R2','R3'].forEach(k=>{const v=S.rel.ai[k];if(v&&!v.loading&&!v.error)d[k]=v});if(S.rel.meta)d.meta=S.rel.meta;
@@ -2122,6 +2129,7 @@ function viewRelIntro(){const d=S.data.relD,i=S.input;
   ${PAY_TEST&&!(window.LUCK_CONFIG||{}).REL_SALE_OPEN?'<p class="note paytest">🧪 테스트 결제 모드예요. 실제로 돈이 나가지 않아요.</p>':''}
   <div class="paybox"><div id="payMethods"></div><div id="payAgree"></div></div>
   <p id="payMsg" class="paymsg" aria-live="polite">${esc(PAY.msg)}</p>
+  ${PAY.retryable&&PAY.ret&&!PAY.busy?'<button class="ghost" onclick="payConfirm()">결제 다시 확인하기</button>':''}
   <button class="primary" id="relBuyBtn" ${S.rel.agree&&PAY.ready&&!PAY.busy?'':'disabled'} onclick="relBuy()">${PAY.busy?'결제를 확인하고 있어요…':priceNow()+'으로 전체 보기 →'}</button>
   <p class="fine" style="text-align:center">${priceNote()?priceNote()+'<br>':''}한 번 결제하면 이 기기에서 계속 볼 수 있어요.</p>
 `:`<div class="rterms">
