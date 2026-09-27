@@ -1215,10 +1215,9 @@ async function start(){
   S.ai={P:null,A:null,B:null,M:null};S.rel.ai={R1:null,R2:null,R3:null};S.tab=0;S.ui={bandOpen:false,weekOpen:false,openMonth:null,relBarOpen:false,relMoreOpen:false};saveProfile();
   const c=await loadResults();if(c)Object.assign(S.ai,c);
   go('result');
-  if(!apiBase()&&!sample){const er={error:'이 화면에서는 AI 해석을 쓸 수 없어요. claude.ai에서 열어주세요.',tried:true};['P','A','B','M'].forEach(k=>S.ai[k]=S.ai[k]||er);render();return}
-  // 4장을 한꺼번에 던지면 API 쪽 분당 한도에 걸린다. 2장씩 나눠 보낸다.
-  ensure('P');ensure('A');setTimeout(()=>{ensure('B');ensure('M')},2500)}
-function ensure(g){const ready=!!apiBase()||!!sample;if(ready&&(!S.ai[g]||(S.ai[g].error&&!S.ai[g].tried)))runAI(g)}
+  // 무료 카드 4종은 모두 미리 만든 조각을 조립한다(AI 호출 없음).
+  ['P','A','B','M'].forEach(ensure)}
+function ensure(g){const ready=true;if(ready&&(!S.ai[g]||(S.ai[g].error&&!S.ai[g].tried)))runAI(g)}
 
 function brief(){const D=S.data,c=D.chart,n=c.natal;
   return {age:D.age,currentYear:D.cy,birthYear:c.inp.y,hasBirthTime:c.hasTime,nearJeolWithoutTime:c.nearJeol,
@@ -1447,10 +1446,44 @@ async function bLocal(){
       fields,mbtiWork:mb?(T.mbtiWork[t1+'|'+mb]||''):''},
     usage:{luckKeywords:T.luckKeywords[weak]||[],action:v(T.action[weak]),place:v(T.place[weak],1),item:v(T.item[weak],2),
       mbtiPractice:mb?(T.mbtiPractice[mb]||[]):[],cautions},pre:'c46-pre-v1'}}
+// 카드2·3(A)도 AI를 부르지 않는다 — card23-pre.json(c23-pre-v1) 조각을 코드가 고른다.
+// 반환 형태는 워커 A 카드 응답과 같다: {decadeSummary, turning:[...], money:{...}}
+let C23PRE=null;
+async function aLocal(){
+  if(!C23PRE){const r=await fetch('card23-pre.json?v=c23-pre-v1');if(!r.ok)throw {code:'network'};C23PRE=await r.json()}
+  const T=C23PRE,D=S.data,n=D.chart.natal,inp=S.input||{},mb=S.mbti?.type||null;
+  let seed=0;for(const ch of String(inp.date)+String(inp.time))seed=(seed*31+ch.charCodeAt(0))>>>0;
+  const used=new Set();
+  const pick=(arr,salt=0)=>{const a=arr||[];if(!a.length)return '';for(let j=0;j<a.length;j++){const x=a[(seed+salt+j)%a.length];if(!used.has(x)){used.add(x);return x}}return a[(seed+salt)%a.length]};
+  const argmax=o=>Object.keys(o).sort((a,b)=>o[b]-o[a])[0];
+  // 10년 흐름 요약: 지금 대운과 다음 대운의 가장 힘이 실린 영역
+  const decs=D.decades||[];let ci=0;decs.forEach((d,i)=>{if(d.ageYear<=D.age)ci=i});
+  const cur=decs[ci],nxt=decs[ci+1];const cd=cur?argmax(cur.scores):'change',nd=nxt?argmax(nxt.scores):cd;
+  const decadeSummary=[pick(T.dec1[cd]),pick((nd===cd?T.dec2same:T.dec2)[nd])].filter(Boolean).join(' ');
+  // 변곡점
+  let letters=[];if(mb){const p=S.mbti.pct?Object.values(S.mbti.pct):null;letters=p?p.slice().sort((a,b)=>b.pct-a.pct).map(v=>v.letter):mb.split('')}
+  const WHY={'대운 교체':'shift','일지 충':'home','월지 충':'work'};
+  const turning=(D.tps||[]).map((t,k)=>{const d=t.top,dir=t.scores[d]>=50?'up':'down';
+    const w=WHY[(t.why||[]).find(x=>WHY[x])]||'shift',key=d+'|'+w+'|'+dir;
+    const ts=T.title[key]||[],fs=T.flow[key]||[];let vi=(seed+k)%2;if(used.has(ts[vi]))vi=1-vi;used.add(ts[vi]);
+    let myWay='',relation='사주 기준';
+    if(letters.length){for(let j=0;j<letters.length*2;j++){const L=letters[(k+j)%letters.length],v2=Math.floor((k+j)/letters.length)%2,mk=d+'|'+dir+'|'+L;
+        const x=(T.myWay[mk]||[])[v2];if(x&&!used.has(x)){used.add(x);myWay=x;relation=(T.rel[mk]||[])[v2]||'보완';break}}}
+    else myWay=pick(T.myWayNone[d+'|'+dir],k);
+    return {year:t.year,title:ts[vi]||'',flow:fs[vi]||'',myWay,relation,question:pick(T.question[d+'|'+dir],k)}});
+  // 돈 구조
+  const g=n.gods||{},G={비겁:(g.비견||0)+(g.겁재||0),식상:(g.식신||0)+(g.상관||0),재성:(g.편재||0)+(g.정재||0),관성:(g.편관||0)+(g.정관||0),인성:(g.편인||0)+(g.정인||0)};
+  const main=argmax(G),j=(main==='재성'||G.재성>=0.8)?'J':'N',mk=main+'|'+j,vi=seed%2;
+  const GK={bi:'비겁',sik:'식상',jae:'재성',gwan:'관성',in:'인성'};
+  const bigYears=(D.bigMoney||[]).map((b,k)=>{const kind=b.scores.change>=60?'변동':b.scores.money>=60?'기회':'축적';
+    const gp=GK[GRP[((b.gods||{}).seun||[])[0]]]||'재성';return {year:b.year,kind,desc:pick(T.desc[kind+'|'+gp],k)}});
+  return {decadeSummary,turning,money:{style:(T.style[mk]||[])[vi]||'',grow:(T.grow[mk]||[])[vi]||'',leak:(T.leak[mk]||[])[vi]||'',
+    mbtiMoney:mb?(T.mbtiMoney[mb]||''):'',bigYears},pre:'c23-pre-v1'}}
 async function callCard(g){
   if(g==='P') return card1Local();
   if(g==='M') return monthsLocal();
   if(g==='B') return bLocal();
+  if(g==='A') return aLocal();
   const base=apiBase();
   if(!base){ // Worker 주소가 없으면 예전 방식(Artifact 런타임)으로 — 개발용
     if(!sample) throw {code:'upstream'};
@@ -2112,7 +2145,7 @@ function card2(){const A=S.ai.A,D=S.data;let h=`<h4 style="margin-top:0">10년 �
  if(!ok('A'))return h+wait('A');h+=`<p>${esc(A.decadeSummary)}</p><h4>인생 변곡점 5</h4><ol class="tl">`;
  D.tps.forEach((t,k)=>{const x=(A.turning||[]).find(v=>+v.year===t.year)||(A.turning||[])[k]||{};const rel=x.relation||'';
   h+=`<li class="${t.year===D.cy?'now':t.year<D.cy?'past':''}"><div class="age">${t.age}세<small>${t.year}</small><em>${DOMK[t.top]}</em></div><div><b>${esc(x.title)}</b>
-  <p><span class="lab">🔮 운의 흐름</span>${esc(x.flow)}</p><p><span class="lab">🧬 나의 방식${S.mbti?' · '+esc(S.mbti.type):''}</span>${esc(x.myWay)}</p>
+  <p><span class="lab">🔮 운의 흐름</span>${esc(x.flow)}</p><p><span class="lab">${S.mbti?'🧬 나의 방식 · '+esc(S.mbti.type):'🧭 이때를 쓰는 방식'}</span>${esc(x.myWay)}</p>
   ${rel?`<p class="rel ${rel==='충돌'?'clash':rel==='일치'?'match':''}">${esc(rel)}</p>`:''}<p class="q">“${esc(x.question)}”</p>${basisHTML(t.why.concat(t.tags),t.why.concat(t.tags).length?'':t.pillar+'년 흐름')}</div></li>`});
  return h+'</ol>'}
 function card3(){const A=S.ai.A,D=S.data,Y=D.recent;
@@ -2121,7 +2154,7 @@ function card3(){const A=S.ai.A,D=S.data,Y=D.recent;
  return `<h4 style="margin-top:0">돈이 들어오는 방식</h4><p>${esc(mo.style)}</p>${bars}
  <h4>돈이 크게 움직이는 해</h4>${D.bigMoney.map((b,k)=>{const x=(mo.bigYears||[]).find(v=>+v.year===b.year)||(mo.bigYears||[])[k]||{};return `<div class="pill"><b>${b.year} · ${b.age}세</b> <em>${esc(x.kind)}</em> <span class="sc">돈 ${b.scores.money}</span><p>${esc(x.desc)}</p></div>`}).join('')}
  <h4>돈이 커지는 조건</h4><p>${esc(mo.grow)}</p><h4>돈이 새는 패턴</h4><p>${esc(mo.leak)}</p>
- <div class="combo"><small>🧬 MBTI로 본 돈 쓰는 방식${S.mbti?' · '+esc(S.mbti.type):''}</small><p>${esc(mo.mbtiMoney)}</p></div>`}
+ ${mo.mbtiMoney?`<div class="combo"><small>🧬 MBTI로 본 돈 쓰는 방식${S.mbti?' · '+esc(S.mbti.type):''}</small><p>${esc(mo.mbtiMoney)}</p></div>`:''}`}
 function card4(){const B=S.ai.B,n=S.data.chart.natal;const head=`<div class="type"><small>성과를 만드는 방식</small><p class="big">${n.achieveType[0]} <span>+ ${n.achieveType[1]}</span></p></div>`;
  if(!ok('B'))return head+wait('B');const a=B.achieve||{};
  const fields=Array.isArray(a.fields)?a.fields:String(a.fields||'').split(/[,·、]/).map(x=>x.trim()).filter(Boolean).slice(0,6);
