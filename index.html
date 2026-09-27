@@ -184,6 +184,8 @@ select:disabled{opacity:.45}
 .two{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .col{background:var(--paper);border-radius:12px;padding:9px 10px}.col h4{margin-top:0;margin-bottom:3px;font-size:13px}.col p{font-size:13px;line-height:1.6}
 .col .tags{margin-bottom:5px}.col .tags span{font-size:11.5px;padding:1px 7px}
+.kw{margin:8px 0 0}.kw span{font-weight:600}
+.why{margin:10px 0 0;font-size:13px;line-height:1.65;color:var(--ink,#2b2622);background:var(--paper);border-radius:10px;padding:10px 12px}.why b{display:block;font-size:12px;margin-bottom:2px}.why small{display:block;margin-top:4px;font-size:11px;color:var(--sub)}
 .tags{display:flex;flex-wrap:wrap;gap:5px;margin:0 0 8px}.tags span{font-size:12px;background:var(--chip);border-radius:999px;padding:2px 9px}
 .tags.fields span{font-size:14px;padding:4px 12px;background:var(--paper);border:1px solid var(--line)}
 .combo{margin:12px 0 4px;padding:10px 14px;border-left:3px solid var(--to);background:var(--paper);border-radius:0 10px 10px 0}
@@ -580,7 +582,11 @@ function dayFit(Y,dp){const els=[stemEl(dp.s),stemEl(HIDDEN[dp.b][HIDDEN[dp.b].l
 // 천을귀인 (일간 기준)
 const GUIIN={0:[1,7],4:[1,7],6:[1,7],1:[0,8],5:[0,8],2:[11,9],3:[11,9],7:[2,6],8:[5,3],9:[5,3]};
 // 강한 날 판정 순서 — 앞에 있을수록 먼저 말한다
-const TAG_PRI=['일지 충','일간 충','일간 합','귀인','일지 합','월지 충','기신일','용신일','월지 합','도화','역마','화개','연지 충','시지 충','연지 합','시지 합'];
+// 형·해는 원국 일지(나 자신·가까운 사람 자리)와만 본다. 파는 명리에서 가장 약한 작용이라 쓰지 않는다.
+const HYUNG=[[2,5],[5,8],[8,2],[1,10],[10,7],[7,1],[0,3],[4,4],[6,6],[9,9],[11,11]];
+const HAE=[[0,7],[1,6],[2,5],[3,4],[8,11],[9,10]];
+const pairIn=(L,a,b)=>L.some(([x,y])=>(x===a&&y===b)||(x===b&&y===a));
+const TAG_PRI=['일지 충','일간 충','일간 합','귀인','일지 합','월지 충','기신일','용신일','월지 합','도화','역마','화개','일지 형','일지 해','연지 충','시지 충','연지 합','시지 합'];
 const STRONG_TAGS=['일지 충','일간 충','일지 합','기신일','용신일'];   // 약 30% 날만 강하게 말한다 (2026-09 시뮬레이션 12,000일)
 
 // ----- period scoring -----
@@ -989,7 +995,7 @@ const QS=[
  ['J','P','주말 계획이 갑자기 바뀌면','불편하다','오히려 재밌다']];
 const TYPES=['ISTJ','ISFJ','INFJ','INTJ','ISTP','ISFP','INFP','INTP','ESTP','ESFP','ENFP','ENTP','ESTJ','ESFJ','ENFJ','ENTJ'];
 const VERSION='rules-v0.4';
-const TODAY_VERSION='today-v2';  // 오늘의 운 규칙(용신·천간합충·귀인·강도) 버전
+const TODAY_VERSION='today-v3';  // 오늘의 운 규칙(용신·천간합충·귀인·강도) 버전
 const PROMPT_VERSION='prompt-v3.1'; // 프롬프트를 고치면 이 번호를 올려 옛 캐시 결과를 버린다
 const INTRO_KEY=KEYS[Math.floor(Math.random()*KEYS.length)]; // 첫 화면: 진입할 때마다 10개 일간 중 하나를 랜덤 선택해 남녀 한 쌍 표시
 let S={saved:null,step:'intro',input:null,mbti:null,chart:null,data:null,ai:{A:null,B:null},tab:0,qi:0,ans:[]};
@@ -1411,7 +1417,9 @@ const TAGLINE={'일지 충':'가까운 사람과 말이 엇갈리기 쉬우니 �
  '일지 합':'가까운 사람과 손발이 잘 맞는 날이에요.',
  '일간 합':'나를 끌어당기는 기운이 들어와 사람이나 제안에 마음이 기울기 쉬운 날이에요.',
  '일간 충':'나와 정면으로 부딪히는 기운이 들어와 평소 방식이 잘 안 먹힐 수 있어요. 한 박자 늦춰보세요.',
- 귀인:'도움을 주는 사람이 가까이 오는 날이에요. 막힌 일은 혼자 붙잡지 말고 물어보세요.','월지 합':'주변과 협력하기 좋은 날이에요.','연지 합':'오랜 인연에서 연락이 올 수 있어요.','시지 합':'준비해온 일에 힘이 붙어요.',역마:'이동과 외출이 운을 열어줘요.',도화:'사람들의 눈에 띄기 쉬운 날이에요.',화개:'혼자 집중하는 시간에 일이 잘 풀려요.'};
+ 귀인:'도움을 주는 사람이 가까이 오는 날이에요. 막힌 일은 혼자 붙잡지 말고 물어보세요.',
+ '일지 형':'사소한 일이 자꾸 신경 쓰이기 쉬운 날이에요. 같은 문제가 반복되면 방식을 바꿔보세요.',
+ '일지 해':'겉으로는 별일 없는데 묘하게 마음이 불편할 수 있어요. 오늘 느낀 서운함은 바로 꺼내기보다 하루 묵혀보세요.','월지 합':'주변과 협력하기 좋은 날이에요.','연지 합':'오랜 인연에서 연락이 올 수 있어요.','시지 합':'준비해온 일에 힘이 붙어요.',역마:'이동과 외출이 운을 열어줘요.',도화:'사람들의 눈에 띄기 쉬운 날이에요.',화개:'혼자 집중하는 시간에 일이 잘 풀려요.'};
 const WD=['일','월','화','수','목','금','토'];
 function kstParts(d){const k=new Date(d.getTime()+9*36e5);return {y:k.getUTCFullYear(),m:k.getUTCMonth()+1,d:k.getUTCDate(),wd:k.getUTCDay()}}
 function dayInfo(chart,date){const p=kstParts(date);const idx=mod(jdn(p.y,p.m,p.d)-2415021+10,60);const dp={s:idx%10,b:idx%12};
@@ -1424,6 +1432,7 @@ function dayInfo(chart,date){const p=kstParts(date);const idx=mod(jdn(p.y,p.m,p.
  if(Math.abs(ds-dp.s)===6&&Math.min(ds,dp.s)<=3)extra.push('일간 충');
  if(GUIIN[ds].includes(dp.b))extra.push('귀인');
  if(fit>=1.5)extra.push('용신일'); if(fit<=-1.5)extra.push('기신일');
+ {const nb=chart.pillars.day.b;if(HAP6[nb]!==dp.b&&CLASH(nb)!==dp.b){if(pairIn(HYUNG,nb,dp.b))extra.push('일지 형');else if(pairIn(HAE,nb,dp.b))extra.push('일지 해')}}
  const adj={money:0,achieve:0,relation:0,change:0,condition:0};
  DOM.forEach(k=>adj[k]+=fit*(k==='condition'?5:3));
  if(extra.includes('일간 합'))adj.relation+=5;
@@ -1433,7 +1442,7 @@ function dayInfo(chart,date){const p=kstParts(date);const idx=mod(jdn(p.y,p.m,p.
  const tags=[...new Set(extra.concat(rd.tags))].sort((a,b)=>{const i=TAG_PRI.indexOf(a),j=TAG_PRI.indexOf(b);return (i<0?99:i)-(j<0?99:j)});
  const level=tags.some(x=>STRONG_TAGS.includes(x))?'strong':tags.length?'mild':'calm';
  const dOnly=mix([[rd,1]]);const top=DOM.slice().sort((a,b)=>(dOnly[b]+sc[b])-(dOnly[a]+sc[a]))[0],low=DOM.slice().sort((a,b)=>(dOnly[a]+sc[a])-(dOnly[b]+sc[b]))[0];
- return {p,pillar:pairName(dp),scores:sc,top,low,god:tenGod(chart.natal.dayStem,dp.s),tags,level,yong:Y,fit,dayEls:[stemEl(dp.s),stemEl(HIDDEN[dp.b][HIDDEN[dp.b].length-1][0])],idx}}
+ return {p,pillar:pairName(dp),scores:sc,top,low,god:tenGod(chart.natal.dayStem,dp.s),tags,level,yong:Y,fit,stemEl:stemEl(dp.s),dayB:dp.b,dayEls:[stemEl(dp.s),stemEl(HIDDEN[dp.b][HIDDEN[dp.b].length-1][0])],idx}}
 
 // ---------- 오늘의 아이템 (AI 호출 없음) ----------
 // 물건 이름 뒤에 색을 붙이면 '흰색 모자' 같은 살 수 없는 물건이 만들어진다.
@@ -1497,6 +1506,7 @@ function mbtiKey(){const t=S.mbti?.type;return t?t[0]+t[3]:'N'}
 const BR_HOUR=['23~01시','01~03시','03~05시','05~07시','07~09시','09~11시','11~13시','13~15시','15~17시','17~19시','19~21시','21~23시'];
 // 오늘 흔들리는 자리 → 위험 유형
 const RISKKIND=t=>{const s=String(t);
+ if(/형|해$/.test(s))return '예민';
  if(/충/.test(s))return '엇갈림'; if(/합/.test(s))return '휩쓸림';
  if(s==='역마')return '분산'; if(s==='도화')return '노출'; if(s==='화개')return '고립'; return ''};
 const RISK={
@@ -1528,6 +1538,13 @@ const RISK={
   IP:'관심이 몰리면 자리를 피하고 싶어지기 쉬워요.',
   N:'평소보다 말과 행동이 크게 전달되기 쉬워요.',
   guard:'남 얘기는 꺼내지 않기'},
+ 예민:{saju:'작은 일에 마음이 걸리기 쉬운 자리가 열려요.',
+  EJ:'마음에 걸린 걸 바로 짚고 넘어가려다 말이 세게 나가기 쉬워요.',
+  EP:'기분이 표정에 그대로 드러나 상대가 먼저 눈치채기 쉬워요.',
+  IJ:'한 번 걸린 말을 속으로 여러 번 곱씹기 쉬워요.',
+  IP:'불편한 마음을 말없이 거리 두는 걸로 표현하기 쉬워요.',
+  N:'평소라면 넘길 말도 크게 들리기 쉬워요.',
+  guard:'오늘 떠오른 서운함은 내일 다시 보고 말하기'},
  고립:{saju:'혼자 파고들 때 일이 잘 풀리는 자리가 열려요.',
   EJ:'혼자 처리하다 공유가 늦어지기 쉬워요.',
   EP:'집중이 길어지면 연락 확인이 늦기 쉬워요.',
@@ -1593,6 +1610,24 @@ function todayAct(t,g){const lo=t.scores[t.low],hi=t.scores[t.top];
  if(lo<40){const a=LOWACT[t.low];return {title:a[0],why:a[1]}}
  if(hi>=60){const a=HIGHACT[t.top];return {title:a[0],why:a[1]}}
  const a=MIDACT[GRP[g]];return {title:a[0],why:a[1]}}
+// 한 박자 쉬어갈 시간: 오늘 일진 지지와 충하는 시진 → 새벽이면 기신 오행 시진. 활동 시간대만, 좋은 시간과 겹치면 안 보여준다.
+function todayCaution(t,c,good){let b=CLASH(t.dayB),why='오늘 기운과 정면으로 부딪히는 시간대예요.';
+ if(!ACTIVE_BR.includes(b)){const cand=ACTIVE_BR.filter(x=>BR_EL[x]===t.yong.gi);if(!cand.length)return null;b=cand[t.idx%cand.length];why='나와 결이 다른 기운이 도는 시간대예요.'}
+ const label=BR_HOUR[b];return label===good?null:{label,why}}
+const KW_GOD={비견:'내페이스',겁재:'경쟁',식신:'결과물',상관:'아이디어',편재:'기회',정재:'실속',편관:'집중력',정관:'약속',편인:'관점전환',정인:'배움'};
+const KW_TAG={'일지 충':'일정변경','일간 충':'한박자',  '일간 합':'끌림',귀인:'도움','일지 합':'손발척척','월지 충':'변수','용신일':'순풍','기신일':'여유있게',
+ '월지 합':'협력',도화:'주목',역마:'이동',화개:'몰입','일지 형':'예민','일지 해':'속마음','연지 충':'환경변화','시지 충':'일정밀림','연지 합':'옛인연','시지 합':'준비한일'};
+const KW_DOM={money:'돈',achieve:'성과',relation:'사람',change:'변화',condition:'체력'};
+function todayKeywords(t){const k=[KW_GOD[t.god]];const tg=t.tags.find(x=>KW_TAG[x]);k.push(tg?KW_TAG[tg]:'무난');
+ const d=t.scores[t.top]>=55?KW_DOM[t.top]:'쉬어가기';if(!k.includes(d))k.push(d);return k.slice(0,3)}
+const ROLE={bi:'나와 같은 편(동료·경쟁)',sik:'표현하고 만들어내는 힘',jae:'돈과 실속을 챙기는 힘',gwan:'책임과 규칙',in:'배움과 도움'};
+function todayWhy(t){let s=`오늘 들어온 ${EL[t.stemEl]} 기운이 나에게는 ‘${ROLE[GRP[t.god]]}’으로 작용해요.`;
+ const Y=t.yong,good=[Y.yong,Y.hee];
+ if(t.fit>=1)s+=good.includes(t.stemEl)?' 이 기운이 나에게 필요한 쪽이라 전체 흐름이 올라가요.':` 함께 들어온 ${EL[t.dayEls[1]]} 기운이 나에게 필요한 쪽이라 전체 흐름이 올라가요.`;
+ else if(t.fit<=-1)s+=t.stemEl===Y.gi?' 이 기운이 나와 결이 달라 평소보다 힘이 더 들어요.':` 함께 들어온 ${EL[Y.gi]} 기운이 나와 결이 달라 평소보다 힘이 더 들어요.`;
+ const top=t.tags.find(x=>STRONG_TAGS.includes(x)&&x!=='용신일'&&x!=='기신일');
+ if(top&&/충/.test(top))s+=' 내 자리와 부딪히는 기운이 있어 변화 점수가 올라갔어요.';else if(top&&/합/.test(top))s+=' 내 자리와 맞물리는 기운이 있어 관계 점수가 올라갔어요.';
+ return s}
 function todayMatch(t){const m=MATCH[t.god];return {who:m[0],why:m[1],how:MATCHHOW[mbtiKey()]||MATCHHOW.N}}
 // 활동 시간대(07~21시 시작)에 해당하는 지지: 진사오미신유술
 const ACTIVE_BR=[4,5,6,7,8,9,10];
@@ -1620,7 +1655,7 @@ function viewToday(){const D=S.data,c=D.chart,n=c.natal,now=new Date(),t=dayInfo
  const lines=t.tags.map(x=>tagLine(x,t)).filter(Boolean);
  const tag=(t.level==='strong'?lines.slice(0,2):lines.slice(0,1)).join(' ');
  const my=MYWAY[grp][mbtiKey()];const item=todayItem(t,n);
- const mis=todayMistake(t),mat=todayMatch(t),tm=todayTime(t,n),act=todayAct(t,g);
+ const mis=todayMistake(t),mat=todayMatch(t),tm=todayTime(t,n),act=todayAct(t,g),cau=todayCaution(t,c,tm.label),kws=todayKeywords(t);
  const week=[...Array(7)].map((_,k)=>dayInfo(c,new Date(now.getTime()+k*864e5)));
 
  const nm=S.input.name?esc(S.input.name)+'님의':'나의';
@@ -1632,9 +1667,11 @@ function viewToday(){const D=S.data,c=D.chart,n=c.natal,now=new Date(),t=dayInfo
  <article class="card" id="card"><p class="no">TODAY</p>
   <p class="sec">🔮 오늘의 총운</p>
   <div class="todaytop" style="--c:${DOMC[t.top]}"><p class="lead">${esc(flow)}</p>${tag?`<small class="hint">${esc(tag)}</small>`:''}</div>
+  <div class="tags kw">${kws.map(k=>`<span>#${esc(k)}</span>`).join('')}</div>
 
   <p class="sec">📊 오늘의 핵심 영역</p>
   <div class="dom">${DOM.map(d=>`<div><span>${DOMK[d]}</span><div class="bar"><i style="width:${t.scores[d]}%;background:${DOMC[d]}"></i></div><small>${t.scores[d]} · ${LEVEL(t.scores[d])}</small></div>`).join('')}</div>
+  <p class="why"><b>왜 이런 흐름일까요?</b> ${esc(todayWhy(t))}<small>근거 · ${t.pillar}일 · ${esc(g)}${t.tags.length?' · '+esc(t.tags.slice(0,2).join(', ')):''}</small></p>
 
   <p class="sec">💡 오늘 이렇게 해보세요</p>
   <div class="combo"><p><b class="key">✓ ${esc(act.title)}</b>${esc(act.why)}</p></div>
@@ -1650,7 +1687,7 @@ function viewToday(){const D=S.data,c=D.chart,n=c.natal,now=new Date(),t=dayInfo
 
   <p class="sec">⏰ 오늘의 시간 사용법</p>
   <div class="tri"><p><b class="key">${esc(tm.label)} · 흐름이 열리는 시간</b>${esc(tm.why)}</p>
-   <p>${esc(tm.use)}</p></div>
+   <p>${esc(tm.use)}</p>${cau?`<p><span class="lab">한 박자 쉬어갈 시간 · ${esc(cau.label)}</span>${esc(cau.why)} 중요한 결정은 이 시간을 피해보세요.</p>`:''}</div>
 
   <details class="weekbox"${S.ui.weekOpen?' open':''} ontoggle="uiToggle('weekOpen',this.open)"><summary>📅 이번 주 운 보기</summary>
    <div class="wk">${week.map((w,k)=>`<div class="${k===0?'on':''}" style="--c:${DOMC[w.top]}"><small>${k===0?'오늘':WD[w.p.wd]}</small><b>${w.p.d}</b><i></i><em>${DOMK[w.top]}</em><u>${w.scores[w.top]}</u></div>`).join('')}</div>
