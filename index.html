@@ -1388,7 +1388,7 @@ const apiBase=()=>{const b=(window.LUCK_CONFIG||{}).API_BASE;return (b&&!/YOUR-S
 // 반환 형태는 워커 P 카드 응답과 같다: {profile:{oneLine,sajuKeywords,sajuDesc,mbtiDesc,match,diff,combo}}
 let C1PRE=null;
 async function card1Local(){
-  if(!C1PRE){const r=await fetch('card1-pre.json?v=c1-pre-v2');if(!r.ok)throw {code:'network'};C1PRE=await r.json()}
+  if(!C1PRE){const r=await fetch('card1-pre.json?v=c1-pre-v3');if(!r.ok)throw {code:'network'};C1PRE=await r.json()}
   const T=C1PRE,n=S.data.chart.natal,il=S.data.ilgan[0];
   const strong=EL[n.strongEl],weak=n.weakEl===n.strongEl?EL[(n.strongEl+2)%5]:EL[n.weakEl];
   const top=(Object.entries(n.gods||{}).sort((a,b)=>b[1]-a[1])[0]||[])[0];
@@ -1402,7 +1402,7 @@ async function card1Local(){
 // 반환 형태는 워커 M 카드 응답과 같다: {months:[{i,keyword,flow,myWay,tip}]}
 let C5PRE=null;
 async function monthsLocal(){
-  if(!C5PRE){const r=await fetch('card5-pre.json?v=c5-pre-v1');if(!r.ok)throw {code:'network'};C5PRE=await r.json()}
+  if(!C5PRE){const r=await fetch('card5-pre.json?v=c5-pre-v2');if(!r.ok)throw {code:'network'};C5PRE=await r.json()}
   const T=C5PRE,M=S.data.months,inp=S.input||{};
   const GK={bi:'비겁',sik:'식상',jae:'재성',gwan:'관성',in:'인성'};
   // 사람마다 고르는 순서를 다르게 — 생일로 만든 고정 오프셋
@@ -1428,7 +1428,7 @@ async function monthsLocal(){
 // 반환 형태는 워커 B 카드 응답과 같다: {achieve:{...}, usage:{...}}
 let C46PRE=null;
 async function bLocal(){
-  if(!C46PRE){const r=await fetch('card46-pre.json?v=c46-pre-v1');if(!r.ok)throw {code:'network'};C46PRE=await r.json()}
+  if(!C46PRE){const r=await fetch('card46-pre.json?v=c46-pre-v2');if(!r.ok)throw {code:'network'};C46PRE=await r.json()}
   const T=C46PRE,D=S.data,n=D.chart.natal,inp=S.input||{};
   let seed=0;for(const ch of String(inp.date)+String(inp.time))seed=(seed*31+ch.charCodeAt(0))>>>0;
   const v=(arr,salt=0)=>Array.isArray(arr)?arr[(seed+salt)%arr.length]:(arr||'');
@@ -1450,7 +1450,7 @@ async function bLocal(){
 // 반환 형태는 워커 A 카드 응답과 같다: {decadeSummary, turning:[...], money:{...}}
 let C23PRE=null;
 async function aLocal(){
-  if(!C23PRE){const r=await fetch('card23-pre.json?v=c23-pre-v1');if(!r.ok)throw {code:'network'};C23PRE=await r.json()}
+  if(!C23PRE){const r=await fetch('card23-pre.json?v=c23-pre-v2');if(!r.ok)throw {code:'network'};C23PRE=await r.json()}
   const T=C23PRE,D=S.data,n=D.chart.natal,inp=S.input||{},mb=S.mbti?.type||null;
   let seed=0;for(const ch of String(inp.date)+String(inp.time))seed=(seed*31+ch.charCodeAt(0))>>>0;
   const used=new Set();
@@ -1462,13 +1462,16 @@ async function aLocal(){
   const decadeSummary=[pick(T.dec1[cd]),pick((nd===cd?T.dec2same:T.dec2)[nd])].filter(Boolean).join(' ');
   // 변곡점
   let letters=[];if(mb){const p=S.mbti.pct?Object.values(S.mbti.pct):null;letters=p?p.slice().sort((a,b)=>b.pct-a.pct).map(v=>v.letter):mb.split('')}
-  const WHY={'대운 교체':'shift','일지 충':'home','월지 충':'work'};
+  const WHY={'대운 교체':'shift','일지 충':'home','월지 충':'work'};const relCnt={};
   const turning=(D.tps||[]).map((t,k)=>{const d=t.top,dir=t.scores[d]>=50?'up':'down';
     const w=WHY[(t.why||[]).find(x=>WHY[x])]||'shift',key=d+'|'+w+'|'+dir;
     const ts=T.title[key]||[],fs=T.flow[key]||[];let vi=(seed+k)%2;if(used.has(ts[vi]))vi=1-vi;used.add(ts[vi]);
     let myWay='',relation='사주 기준';
-    if(letters.length){for(let j=0;j<letters.length*2;j++){const L=letters[(k+j)%letters.length],v2=Math.floor((k+j)/letters.length)%2,mk=d+'|'+dir+'|'+L;
-        const x=(T.myWay[mk]||[])[v2];if(x&&!used.has(x)){used.add(x);myWay=x;relation=(T.rel[mk]||[])[v2]||'보완';break}}}
+    if(letters.length){for(const pass of [0,1]){for(let j=0;j<letters.length*2&&!myWay;j++){const L=letters[(k+j)%letters.length],v2=Math.floor((k+j)/letters.length)%2,mk=d+'|'+dir+'|'+L;
+        const x=(T.myWay[mk]||[])[v2],rl=(T.rel[mk]||[])[v2]||'보완';
+        // 같은 관계 표시가 3번째로 나오려 하면 첫 바퀴에선 건너뛴다 — 일치·충돌·보완이 고르게 보이게
+        if(!x||used.has(x)||(pass===0&&(relCnt[rl]||0)>=2))continue;used.add(x);myWay=x;relation=rl;relCnt[rl]=(relCnt[rl]||0)+1}
+      if(myWay)break}}
     else myWay=pick(T.myWayNone[d+'|'+dir],k);
     return {year:t.year,title:ts[vi]||'',flow:fs[vi]||'',myWay,relation,question:pick(T.question[d+'|'+dir],k)}});
   // 돈 구조
