@@ -1006,7 +1006,7 @@ const QS=[
  ['J','P','주말 계획이 갑자기 바뀌면','불편하다','오히려 재밌다']];
 const TYPES=['ISTJ','ISFJ','INFJ','INTJ','ISTP','ISFP','INFP','INTP','ESTP','ESFP','ENFP','ENTP','ESTJ','ESFJ','ENFJ','ENTJ'];
 const VERSION='rules-v0.4';
-const TODAY_VERSION='today-v8';  // 오늘의 운 규칙(용신·천간합충·귀인·강도) 버전
+const TODAY_VERSION='today-v8.1';  // 오늘의 운 규칙(용신·천간합충·귀인·강도) 버전
 const PROMPT_VERSION='prompt-v3.1'; // 프롬프트를 고치면 이 번호를 올려 옛 캐시 결과를 버린다
 const INTRO_KEY=KEYS[Math.floor(Math.random()*KEYS.length)]; // 첫 화면: 진입할 때마다 10개 일간 중 하나를 랜덤 선택해 남녀 한 쌍 표시
 let S={saved:null,step:'intro',input:null,mbti:null,chart:null,data:null,ai:{A:null,B:null},tab:0,qi:0,ans:[]};
@@ -1726,6 +1726,7 @@ const SEEN={   // 0~3 평소 모습, 4~5 작은 반전·약점 — 좋은 말만
     '약속 시간보다 조금 일찍 도착하는 편','계획이 갑자기 바뀌면 반갑기 전에 당황부터 할 때가 있음','의외로 여행 가서는 계획에 없던 곳에 끌릴 때가 있음'],
  P:['약속 장소가 바뀌어도 “오히려 좋아” 하는 편','마감이 가까워질수록 집중력이 올라오는 편','선택지를 끝까지 열어뒀다가 마지막에 고르는 편',
     '예정에 없던 일이 오히려 제일 기억에 남을 때가 있음','할 일 목록을 만들어도 순서대로 하진 않을 때가 있음','의외로 한번 꽂힌 일은 밤새서라도 끝내는 편']};
+// (투표 버튼은 신뢰를 깎아 2026-09-27 제거. 문장은 날마다 바뀌는 것으로 빗나감을 흡수한다. 아래 저장 함수는 예전 기록 호환용으로만 남김)
 // 빗나감 대비: 줄마다 '맞아 / 아닌데'. 아닌데 → 그 자리에서 같은 글자의 다른 문장으로 바꾸고, 이 기기에서 다시는 안 보여준다.
 // 맞아 → 기록만(나중에 적중률 확인용). 저장은 이 브라우저(localStorage)에만, 실패해도 화면은 정상.
 const SEEN_KEY='myluck:seenvote:v2';
@@ -1894,8 +1895,7 @@ function viewToday(){const D=S.data,c=D.chart,n=c.natal,now=new Date(),t=dayInfo
   <p class="fine secsub">오늘 사주와 MBTI를 겹쳐보면, 이런 모습이 두드러져요.</p>
   <div class="tri"><p><span class="lab">🌿 오늘의 흐름</span>${esc(gp.flow)}</p>
    ${gp.type?`<p><span class="lab">🧠 MBTI로 보면 · ${esc(gp.type)}</span><b>${esc(gp.letter)}</b> · ${esc(gp.trait)}</p>
-   <p><span class="lab">🐾 평소의 나는?</span></p><ul class="seen">${(()=>{const yes=seenStore().yes;return gp.seen.map(x=>yes.includes(x.id)?`<li class="hit" data-id="${x.id}"><span class="st">${esc(x.txt)}</span><span class="sv"><em>역시 😉</em></span></li>`:`<li data-id="${x.id}"><span class="st">${esc(x.txt)}</span><span class="sv"><button onclick="seenVote(this,'yes')">맞아</button><button onclick="seenVote(this,'no')">아닌데</button></span></li>`).join('')})()}</ul>
-   <p class="fine sfn">나랑 다르면 ‘아닌데’를 눌러주세요. 다른 모습으로 바꾸고, 다음부터는 빼고 보여드려요.</p>
+   <p><span class="lab">🐾 평소의 나는?</span></p><ul class="seen">${gp.seen.map(x=>`<li>${esc(x.txt)}</li>`).join('')}</ul>
    <p><span class="lab">🔮 사주로 보면</span>${gp.saju.head?`<b>${esc(gp.saju.head)}</b> `:''}${esc(gp.saju.body)}<small class="sb">근거 · ${esc(gp.saju.basis)}</small></p>
    <p><span class="lab">✨ 그래서 오늘은</span></p><p class="gapline${gp.match?' ok':''}">${esc(gp.line)}</p>`:''}
    ${gp.type?'':`<p><span class="lab">🔮 사주로 보면</span>${gp.saju.head?`<b>${esc(gp.saju.head)}</b> `:''}${esc(gp.saju.body)}<small class="sb">근거 · ${esc(gp.saju.basis)}</small></p>`}
