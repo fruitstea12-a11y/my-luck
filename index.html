@@ -190,6 +190,10 @@ select:disabled{opacity:.45}
 .seen .sv{display:flex;gap:6px;margin-top:4px}.seen .sv button{font:inherit;font-size:11.5px;font-weight:500;padding:2px 10px;border-radius:999px;border:1px solid var(--line,#e5e0d8);background:transparent;color:var(--sub);cursor:pointer}
 .seen .sv em{font-style:normal;font-size:12px;color:var(--sub);font-weight:500}.seen li.hit .st{color:var(--ink,#2b2622)}.seen li.swap{opacity:.4;transition:opacity .4s}.sfn{margin:-2px 0 8px!important}
 .capturing .seen .sv,.capturing .sfn{display:none!important}
+.wchips{display:flex;gap:6px;flex-wrap:wrap}.wchips button{font:inherit;font-size:13.5px;padding:6px 14px;border-radius:999px;border:1px solid var(--line,#e5e0d8);background:transparent;color:var(--ink,#2b2622);cursor:pointer}
+.wchips button.on{background:#f3ead8;border-color:#d9c7a3;font-weight:700}.wa{margin-top:10px}.wa .wv{font-weight:700;font-size:15px;margin:0 0 6px!important;padding:6px 10px;border-radius:8px;background:var(--paper)}
+.wa.lv0 .wv{box-shadow:inset 3px 0 0 var(--mok)}.wa.lv1 .wv{box-shadow:inset 3px 0 0 var(--to)}.wa.lv2 .wv{box-shadow:inset 3px 0 0 var(--su)}.wrel{width:100%;margin-top:8px;font-size:13px}
+
 .kw{margin:8px 0 0}.kw span{font-weight:600}
 .why{margin:10px 0 0;font-size:13px;line-height:1.65;color:var(--ink,#2b2622);background:var(--paper);border-radius:10px;padding:10px 12px}.why b{display:block;font-size:12px;margin-bottom:2px}.why small{display:block;margin-top:4px;font-size:11px;color:var(--sub)}
 .tags{display:flex;flex-wrap:wrap;gap:5px;margin:0 0 8px}.tags span{font-size:12px;background:var(--chip);border-radius:999px;padding:2px 9px}
@@ -1001,7 +1005,7 @@ const QS=[
  ['J','P','주말 계획이 갑자기 바뀌면','불편하다','오히려 재밌다']];
 const TYPES=['ISTJ','ISFJ','INFJ','INTJ','ISTP','ISFP','INFP','INTP','ESTP','ESFP','ENFP','ENTP','ESTJ','ESFJ','ENFJ','ENTJ'];
 const VERSION='rules-v0.4';
-const TODAY_VERSION='today-v6.2';  // 오늘의 운 규칙(용신·천간합충·귀인·강도) 버전
+const TODAY_VERSION='today-v7';  // 오늘의 운 규칙(용신·천간합충·귀인·강도) 버전
 const PROMPT_VERSION='prompt-v3.1'; // 프롬프트를 고치면 이 번호를 올려 옛 캐시 결과를 버린다
 const INTRO_KEY=KEYS[Math.floor(Math.random()*KEYS.length)]; // 첫 화면: 진입할 때마다 10개 일간 중 하나를 랜덤 선택해 남녀 한 쌍 표시
 let S={saved:null,step:'intro',input:null,mbti:null,chart:null,data:null,ai:{A:null,B:null},tab:0,qi:0,ans:[]};
@@ -1780,6 +1784,63 @@ function todayGap(t,n){const tg=t.tags.find(x=>DEM_TAG[x]);const want=tg?DEM_TAG
  return {flow:D.flow,type,trait:TRAIT[mine],match,
   letter:mine,seen:seenLines(type,mine,t),saju:sajuSees(n,mine,true),line:match?MATCHWHY[want]:D.gap.replace('나는',mine+'인 나는'),
   tip:match?D.tip:D.gapTip}}
+// ---------- 🙋 오늘 신경 쓰이는 거 하나 (AI 없음 · 코드 조합) ----------
+// 고민 4종 × 오늘 십성 그룹(사주) × 신호 보정 → 3단계 판단, + 고민별 MBTI 한 축 반응. 단정 대신 '~하는 날'.
+const WORRY={
+ contact:{label:'연락',dom:'relation',ax:'E',
+  saju:{bi:'나와 비슷한 처지의 사람과 말이 잘 통하는 흐름이에요.',sik:'내 마음을 말로 꺼내기 쉬운 흐름이에요.',jae:'사람과의 연결이 넓어지는 흐름이에요.',
+        gwan:'사적인 말보다 예의와 선이 중요한 흐름이에요.',in:'먼저 다가가기보다 상대 얘기를 들어줄 때 가까워지는 흐름이에요.'},
+  good:['일지 합','일간 합','귀인','도화','월지 합'],bad:['일지 충','일간 충','일지 해','일지 형'],
+  verdict:['먼저 연락해봐도 좋은 날','가볍게 안부 정도가 좋은 날','급한 게 아니면 하루 미뤄도 되는 날'],
+  mbti:{E:'E인 나는 생각나면 바로 보내는 편이에요. 보내기 전에 한 번만 다시 읽어보세요.',I:'I인 나는 문장을 고르다 타이밍을 놓치기 쉬워요. 완벽한 문장보다 짧은 한 줄이 나아요.'}},
+ decide:{label:'결정',dom:'change',ax:'T',
+  saju:{bi:'내 판단에 확신이 강해지는 흐름이에요. 다만 남의 의견이 잘 안 들어올 수 있어요.',sik:'직접 해보면서 답을 찾는 흐름이에요.',jae:'선택지가 여러 개 보이는 흐름이에요. 조건을 비교할수록 답이 선명해져요.',
+        gwan:'책임이 따르는 선택이 눈앞에 오는 흐름이에요. 원칙대로 고르면 뒤탈이 적어요.',in:'정보를 더 모을수록 유리한 흐름이에요. 결론은 서두르지 않아도 돼요.'},
+  good:['용신일','귀인'],bad:['일지 충','월지 충','일간 충','기신일'],
+  verdict:['결정하기 좋은 날','작은 결정은 괜찮은 날','큰 결정은 하루 더 보는 날'],
+  mbti:{T:'T인 나는 장단점 비교는 빠른데, 내 마음이 어느 쪽인지는 뒤늦게 알아채기 쉬워요.',F:'F인 나는 누가 서운할까 봐 내 선택을 미루기 쉬워요. 이번엔 나도 기준에 넣어보세요.'}},
+ money:{label:'돈',dom:'money',ax:'J',
+  saju:{bi:'사람 만나며 나가는 돈이 늘기 쉬운 흐름이에요.',sik:'내 솜씨와 결과물이 돈과 연결되기 쉬운 흐름이에요.',jae:'돈의 흐름이 눈에 잘 들어오는 흐름이라 정리하고 따져보기 좋아요.',
+        gwan:'고정 지출, 약속된 돈을 챙길수록 편한 흐름이에요.',in:'나를 채우는 데 쓰는 돈이 아깝지 않은 흐름이에요.'},
+  good:['용신일'],bad:['기신일'],godAdj:{겁재:-8,비견:-3,정재:5,편재:4},
+  verdict:['돈 정리·계획하기 좋은 날','필요한 지출만 괜찮은 날','큰 지출은 미루는 날'],
+  mbti:{J:'J인 나는 정해둔 예산 안이면 괜찮아요. 예산에 없던 지출만 하루 미뤄보세요.',P:'P인 나는 “지금 아니면 없을 것 같아”에 약해요. 장바구니에 넣고 한 번 자고 결정해보세요.'}},
+ work:{label:'일·시험',dom:'achieve',ax:'S',
+  saju:{bi:'혼자 밀고 나가는 힘이 강한 흐름이에요.',sik:'결과물을 손에 쥐기 좋은 흐름이라 준비한 만큼 보여주기 쉬워요.',jae:'실전 감각이 살아나는 흐름이라 문제를 빨리 읽어내요.',
+        gwan:'평가받는 자리에 힘이 실리는 흐름이에요. 형식과 규칙을 지키면 인정받기 쉬워요.',in:'공부한 게 머리에 잘 남는 흐름이라 새로 넣기보다 복습이 잘 돼요.'},
+  good:['귀인','용신일'],bad:['기신일'],godAdj:{정관:5,식신:5,정인:4},
+  verdict:['실력 보여주기 좋은 날','평소대로 가면 되는 날','무리하지 말고 컨디션부터 챙기는 날'],
+  mbti:{S:'S인 나는 해본 방식에서 실수가 적어요. 새 방법보다 익숙한 순서대로 가보세요.',N:'N인 나는 큰 흐름은 잘 잡는데 작은 실수를 놓치기 쉬워요. 마지막에 숫자·이름만 한 번 더 확인하세요.'}}};
+// 판단은 절대 점수가 아니라 '내 평소(최근·앞으로 30일 평균)보다 높은가'로 한다 — 원래 관계 점수가 낮은 사주도 매일 '미루는 날'이 되지 않게
+const WBASE=new WeakMap();
+function worryBase(c,dom){let m=WBASE.get(c);if(!m){m={};const now=Date.now(),acc={money:0,achieve:0,relation:0,change:0,condition:0};
+ for(let d=-15;d<15;d++){const t=dayInfo(c,new Date(now+d*864e5));DOM.forEach(k=>acc[k]+=t.scores[k])}DOM.forEach(k=>m[k]=acc[k]/30);WBASE.set(c,m)}return m[dom]}
+// 판단(좋음/보통/미룸)과 흐름 문장이 따로 놀지 않게, 판단의 이유를 한 줄 붙인다
+function worryWhy(W,t,lv){const hit=a=>t.tags.find(x=>a.includes(x));
+ if(lv===2){const b=hit(W.bad);if(b){if(/충/.test(b))return '다만 내 자리와 부딪히는 기운이 들어와 말과 뜻이 엇갈리기 쉬워요.';if(/형/.test(b))return '다만 사소한 말에도 예민해지기 쉬운 기운이 겹쳐 있어요.';
+   if(/해/.test(b))return '다만 겉과 속이 다르게 전해지기 쉬운 기운이 겹쳐 있어요.';if(b==='기신일')return '다만 나와 결이 다른 기운이 강해 평소보다 힘이 더 들어요.'}
+  if(W.godAdj&&W.godAdj[t.god]<0)return '다만 오늘은 나가는 쪽 기운이 강해요.';
+  return `다만 평소보다 ${DOMK[W.dom]} 쪽 기운이 잔잔한 날이에요.`}
+ if(lv===0){const g=hit(W.good);if(g){if(/합/.test(g))return '여기에 내 자리와 맞물리는 기운까지 들어와 손발이 잘 맞아요.';if(g==='귀인')return '여기에 도움을 주는 사람이 가까이 오는 기운도 있어요.';
+   if(g==='도화')return '여기에 사람들 눈에 잘 띄는 기운도 있어요.';if(g==='용신일')return '여기에 나에게 필요한 기운이 들어와 전체 흐름이 순해요.'}
+  return `평소보다 ${DOMK[W.dom]} 쪽 기운이 활발한 날이에요.`}
+ return ''}
+function worryAnswer(k,t,c){const W=WORRY[k],grp=GRP[t.god];let v=t.scores[W.dom];
+ t.tags.forEach(x=>{if(W.good.includes(x))v+=6;if(W.bad.includes(x))v-=6});v+=(W.godAdj&&W.godAdj[t.god])||0;
+ const lv=(d=>d>=7?0:d>-7?1:2)(v-worryBase(c,W.dom)),type=S.mbti?.type,tm=todayTime(t,c.natal),cau=todayCaution(t,c,tm.label);
+ const mine=type?type[AXIS_POS[W.ax]]:null;
+ const when=lv<2?`중요한 건 ${tm.label} 사이에 해보세요.`:(cau?`특히 ${cau.label}은 피해보세요.`:'오늘은 준비만 해두고 내일 다시 봐도 충분해요.');
+ return `<div class="wa lv${lv}"><p class="wv">${esc(W.verdict[lv])}</p>
+  <p><span class="lab">🔮 오늘의 흐름</span>오늘은 ${esc(W.saju[grp])} ${esc(worryWhy(W,t,lv))}</p>
+  ${mine?`<p><span class="lab">🧠 ${esc(type)}인 나는</span>${esc(W.mbti[mine])}</p>`:''}
+  <p class="q">⏰ ${esc(when)}</p>
+  ${k==='contact'?`<button class="ghost wrel" onclick="relOpen()">그 사람과 나, 관계 방식이 궁금하다면 → 🤝 관계 사용설명서</button>`:''}</div>`}
+const WORRY_KEY='myluck:worry:v1';
+window.worryPick=k=>{const D=S.data;if(!D)return;const c=D.chart,t=dayInfo(c,new Date()),box=$('worryAns');
+ const same=S.ui.worry===k;S.ui.worry=same?null:k;
+ document.querySelectorAll('.wchips button').forEach(b=>b.classList.toggle('on',!same&&b.dataset.k===k));
+ box.innerHTML=same?'':worryAnswer(k,t,c);
+ try{const d=`${t.p.y}-${t.p.m}-${t.p.d}`,h=JSON.parse(localStorage.getItem(WORRY_KEY)||'[]');if(!same){h.push([d,k]);localStorage.setItem(WORRY_KEY,JSON.stringify(h.slice(-60)))}}catch(e){}};
 function todayMatch(t){const m=MATCH[t.god],ei=S.mbti?.type?.[0];return {who:m[0],why:m[1],how:MATCHHOW[ei]||MATCHHOW.N}}
 // 활동 시간대(07~21시 시작)에 해당하는 지지: 진사오미신유술
 const ACTIVE_BR=[4,5,6,7,8,9,10];
@@ -1833,6 +1894,10 @@ function viewToday(){const D=S.data,c=D.chart,n=c.natal,now=new Date(),t=dayInfo
    <p class="fine">✓ ${esc(mis.guard)}</p>`:''}
    <p><span class="lab">👉 오늘의 사용법</span></p><p class="q">${esc(gp.tip)}</p>
    ${gp.type?'':`<p class="fine">MBTI를 넣으면 오늘 흐름과 내 성향이 맞는 날인지, 엇갈리는 날인지 보여드려요.</p>`}</div>
+
+  <p class="sec">🙋 오늘 신경 쓰이는 거 하나</p>
+  <div class="tri worry"><div class="wchips">${Object.entries(WORRY).map(([k,W])=>`<button data-k="${k}" class="${S.ui.worry===k?'on':''}" onclick="worryPick('${k}')">${esc(W.label)}</button>`).join('')}</div>
+   <div id="worryAns">${S.ui.worry?worryAnswer(S.ui.worry,t,c):'<p class="fine">하나 고르면 오늘 흐름과 내 성향으로 짚어드려요.</p>'}</div></div>
 
   <p class="sec">💡 오늘 이렇게 해보세요</p>
   <div class="combo"><p><b class="key">✓ ${esc(act.title)}</b>${esc(act.why)}</p></div>
