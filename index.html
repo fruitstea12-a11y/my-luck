@@ -185,6 +185,7 @@ select:disabled{opacity:.45}
 .col{background:var(--paper);border-radius:12px;padding:9px 10px}.col h4{margin-top:0;margin-bottom:3px;font-size:13px}.col p{font-size:13px;line-height:1.6}
 .col .tags{margin-bottom:5px}.col .tags span{font-size:11.5px;padding:1px 7px}
 .gapline{margin:8px 0 0!important;padding:8px 10px;border-radius:8px;background:var(--chip);font-size:13.5px;line-height:1.6}.gapline.ok{background:var(--paper)}
+.seen{margin:2px 0 8px;padding:0;list-style:none}.seen li{position:relative;padding:5px 0 5px 20px;font-size:14px;line-height:1.55;font-weight:600}.seen li::before{content:'✔';position:absolute;left:2px;top:5px;color:var(--to);font-size:12px}
 .kw{margin:8px 0 0}.kw span{font-weight:600}
 .why{margin:10px 0 0;font-size:13px;line-height:1.65;color:var(--ink,#2b2622);background:var(--paper);border-radius:10px;padding:10px 12px}.why b{display:block;font-size:12px;margin-bottom:2px}.why small{display:block;margin-top:4px;font-size:11px;color:var(--sub)}
 .tags{display:flex;flex-wrap:wrap;gap:5px;margin:0 0 8px}.tags span{font-size:12px;background:var(--chip);border-radius:999px;padding:2px 9px}
@@ -996,7 +997,7 @@ const QS=[
  ['J','P','주말 계획이 갑자기 바뀌면','불편하다','오히려 재밌다']];
 const TYPES=['ISTJ','ISFJ','INFJ','INTJ','ISTP','ISFP','INFP','INTP','ESTP','ESFP','ENFP','ENTP','ESTJ','ESFJ','ENFJ','ENTJ'];
 const VERSION='rules-v0.4';
-const TODAY_VERSION='today-v5';  // 오늘의 운 규칙(용신·천간합충·귀인·강도) 버전
+const TODAY_VERSION='today-v5.1';  // 오늘의 운 규칙(용신·천간합충·귀인·강도) 버전
 const PROMPT_VERSION='prompt-v3.1'; // 프롬프트를 고치면 이 번호를 올려 옛 캐시 결과를 버린다
 const INTRO_KEY=KEYS[Math.floor(Math.random()*KEYS.length)]; // 첫 화면: 진입할 때마다 10개 일간 중 하나를 랜덤 선택해 남녀 한 쌍 표시
 let S={saved:null,step:'intro',input:null,mbti:null,chart:null,data:null,ai:{A:null,B:null},tab:0,qi:0,ans:[]};
@@ -1676,6 +1677,30 @@ const MATCHWHY={E:'오늘은 E의 친화력이 통하는 날이에요. 스치듯
  F:'오늘은 F의 배려가 통하는 날이에요. 무심코 챙긴 한마디에 “고마워, 그거 필요했어”가 돌아오기 쉬워요.',
  J:'오늘은 J의 계획력이 통하는 날이에요. 미리 챙겨둔 게 “역시 준비돼 있네”로 돌아오기 쉬워요.',
  P:'오늘은 P의 순발력이 통하는 날이에요. 계획이 틀어져도 당황하기보다 “그럼 이쪽으로 가볼까?”가 빨리 나와요.'};
+// 🎯 이런 적 많죠? — '오늘의 나'의 목적은 운세가 아니라 "이거 진짜 나잖아"라는 적중감.
+// MBTI 설명문(즉흥적이에요) 금지, 실제 행동 관찰문만. 글자당 6개, 하루 3개(오늘 축 글자 1 + 나머지 글자에서 2), 날마다 바뀐다.
+// TRAIT·MATCHWHY·사용법 문장과 같은 표현을 쓰지 않는다.
+const SEEN={
+ E:['집에 혼자 있다가도 누가 부르면 금방 나갈 준비가 돼요.','생각이 막히면 누구한테든 말로 풀어보다가 답을 찾아요.','조용한 자리에서 먼저 말을 꺼내는 사람이 대체로 나예요.',
+    '좋은 일이 생기면 누군가에게 바로 알리고 싶어져요.','처음 보는 사람과도 몇 마디면 금방 편해져요.','약속이 취소되면 아쉬운 마음이 먼저 들어요.'],
+ I:['약속이 취소되면 속으로 살짝 반가울 때가 있어요.','단체 대화방에 할 말을 썼다 지웠다 하다 타이밍을 놓치기도 해요.','사람을 많이 만난 날엔 집에 와서 한동안 아무 말도 하기 싫어요.',
+    '전화가 오면 받기 전에 한 번 숨을 고를 때가 있어요.','말을 안 해서 그렇지 머릿속은 늘 바빠요.','친해지기까진 오래 걸려도, 한번 친해지면 오래 가요.'],
+ S:['설명서를 건너뛰지 않고 순서대로 따라 해봐야 마음이 놓여요.','“대충 이쯤”보다 “정확히 몇 시, 몇 개”가 편해요.','해본 방법이 있으면 굳이 새 방법을 찾지 않아요.',
+    '길을 한 번 가보면 다음엔 거의 안 헤매요.','막연한 구상보다 당장 할 수 있는 일부터 손이 가요.','남들이 놓친 작은 변화도 금방 알아채요.'],
+ N:['샤워하다가, 걷다가 갑자기 아이디어가 떠올라요.','대화하다 보면 이야기가 자꾸 다른 주제로 번져요.','늘 가던 길에서도 “저쪽으로 가면 어떨까?”를 한 번쯤 생각해요.',
+    '설명서보다 일단 감으로 만져보는 게 먼저예요.','“만약에 ~라면?” 같은 상상을 자주 해요.','결과보다 “왜 그렇게 되는지”가 더 궁금해요.'],
+ T:['위로가 필요한 친구에게 해결책부터 말하고 아차 할 때가 있어요.','칭찬을 들어도 “근데 어디가 좋았는데?”가 궁금해요.','상대가 감정적으로 나올수록 오히려 차분해져요.',
+    '결정할 땐 장단점을 머릿속으로 표처럼 정리해요.','틀린 건 틀렸다고 말해야 속이 편해요.','누가 서운하다고 하면 “그럴 의도는 없었는데”가 먼저 떠올라요.'],
+ F:['단체 사진에서 누가 빠졌는지가 먼저 눈에 들어와요.','부탁을 거절하고 나면 한동안 마음에 걸려요.','말투가 조금만 달라도 “무슨 일 있나?” 신경 쓰여요.',
+    '맞는 말이어도 차갑게 들리면 받아들이기 어려워요.','누가 힘들어 보이면 내 일보다 먼저 챙기게 돼요.','결정할 때 “이러면 누가 서운할까”부터 생각해요.'],
+ J:['여행 가기 전에 일정표부터 만들어둬야 마음이 편해요.','마감이 있으면 미리 끝내 둬야 불안하지 않아요.','갑자기 “지금 만날래?” 하면 반갑기 전에 당황부터 해요.',
+    '책상이 정리돼 있어야 일이 손에 잡혀요.','해야 할 일이 머릿속에 남아 있으면 쉬어도 쉬는 것 같지 않아요.','약속 시간보다 조금 일찍 도착하는 편이에요.'],
+ P:['마감 직전에 집중력이 제일 좋아져요.','메뉴 고를 때 끝까지 선택지를 열어두다가 마지막에 정해요.','더 괜찮아 보이는 방법이 생기면 하던 걸 멈추고 바로 갈아타요.',
+    '“일단 해보고 생각하자”가 입버릇이에요.','여행 가서 예정에 없던 골목이 제일 기억에 남아요.','할 일 목록을 만들어도 순서대로 하진 않아요.']};
+function seenLines(type,first,t){const h=x=>{let v=2166136261;for(const ch of x){v^=ch.charCodeAt(0);v=Math.imul(v,16777619)>>>0}return v};
+ const day=`${t.p.y}-${t.p.m}-${t.p.d}`,others=[...type].filter(c=>c!==first),r=h(day+type);
+ const pick=[first,others[r%3],others[(r+1)%3]];
+ return pick.map(c=>SEEN[c][h(day+c)%SEEN[c].length])}
 const OPP={E:'I',I:'E',S:'N',N:'S',T:'F',F:'T',J:'P',P:'J'};
 const AXIS_POS={E:0,I:0,S:1,N:1,T:2,F:2,J:3,P:3};
 // 오늘 가장 강한 신호가 축을 정하고, 신호가 없으면 오늘 십성이 정한다
@@ -1686,7 +1711,7 @@ function todayGap(t){const tg=t.tags.find(x=>DEM_TAG[x]);const want=tg?DEM_TAG[t
  const type=S.mbti?.type;if(!type)return {flow:D.flow,tip:D.tip,type:null};
  const mine=type[AXIS_POS[want]],match=mine===want;
  return {flow:D.flow,type,trait:TRAIT[mine],match,
-  letter:mine,line:match?MATCHWHY[want]:D.gap.replace('나는',mine+'인 나는'),
+  letter:mine,seen:seenLines(type,mine,t),line:match?MATCHWHY[want]:D.gap.replace('나는',mine+'인 나는'),
   tip:match?D.tip:D.gapTip}}
 function todayMatch(t){const m=MATCH[t.god],ei=S.mbti?.type?.[0];return {who:m[0],why:m[1],how:MATCHHOW[ei]||MATCHHOW.N}}
 // 활동 시간대(07~21시 시작)에 해당하는 지지: 진사오미신유술
@@ -1739,6 +1764,7 @@ function viewToday(){const D=S.data,c=D.chart,n=c.natal,now=new Date(),t=dayInfo
   <p class="sec">🧬 오늘의 나</p>
   <div class="tri"><p><span class="lab">🌿 오늘의 흐름</span>${esc(gp.flow)}</p>
    ${gp.type?`<p><span class="lab">🧠 그런데 ${esc(gp.type)}인 나는?</span><b>${esc(gp.letter)}</b> · ${esc(gp.trait)}</p>
+   <p><span class="lab">🎯 이런 적 많죠?</span></p><ul class="seen">${gp.seen.map(x=>`<li>${esc(x)}</li>`).join('')}</ul>
    <p><span class="lab">✨ 그래서 오늘은</span></p><p class="gapline${gp.match?' ok':''}">${esc(gp.line)}</p>`:''}
    ${mis?`<p><span class="lab">⚠️ 오늘의 작은 함정</span>${esc(mis.saju)} ${gp.type?esc(gp.type)+'인 나는 ':''}${esc(mis.my)}</p>
    <p class="fine">✓ ${esc(mis.guard)}</p>`:''}
