@@ -2194,7 +2194,7 @@ function watchMonths(){const M=S.data.months;
 window.openM=(k,restore)=>{S.ui.openMonth=k;document.querySelectorAll('.mg .mt').forEach((el,i)=>el.classList.toggle('on',i===k));const m=S.data.months[k];const x=ok('M')?((S.ai.M.months||[]).find(q=>+q.i===k)||{}):{};
  $('mdet').innerHTML=`<div class="mdet"><h4 style="margin-top:0">${m.year}년 ${m.label}${x.keyword?' · '+esc(x.keyword):''}</h4><p class="fine">옆 숫자는 내 12개월 평균과의 차이예요. 사주의 달은 절기로 나뉘어서 양력 1일이 아니라 그달의 절기부터 시작해요.</p>
  <div class="dom">${Object.keys(DOMK).map(d=>`<div><span>${DOMK[d]}</span><div class="bar"><i style="width:${m.scores[d]}%;background:${DOMC[d]}"></i></div><small>${m.scores[d]} <em>(${(v=>v>=0?'+'+v:v)(Math.round(m.scores[d]-m.avg[d]))})</em></small></div>`).join('')}</div>
- ${x.flow?`<p><span class="lab">🔮 사주로 본 이 달의 흐름</span>${esc(x.flow)}</p><p><span class="lab">🧬 MBTI로 본 나의 반응${S.mbti?' · '+esc(S.mbti.type):''}</span>${esc(x.myWay)}</p><p class="q">✓ ${esc(x.tip)}</p>`:''}
+ ${x.flow?`<p><span class="lab">🔮 사주로 본 이 달의 흐름</span>${esc(x.flow)}</p><p><span class="lab">${S.mbti?'🧬 MBTI로 본 나의 반응 · '+esc(S.mbti.type):'🧭 이 달을 쓰는 방식'}</span>${esc(x.myWay)}</p><p class="q">✓ ${esc(x.tip)}</p>`:''}
  ${basisHTML(m.tags,m.pillar+'월')}</div>`;if(!restore)$('mdet').scrollIntoView({behavior:'smooth',block:'nearest'})};
 function card6(){const B=S.ai.B,n=S.data.chart.natal;if(!ok('B'))return wait('B');const u=B.usage||{};
  return `<div class="luck" style="--c:${ELC[n.weakEl]}"><small>보완하면 좋은 기운 · ${EL[n.weakEl]}</small><div class="tags">${(u.luckKeywords||[]).map(k=>`<span>${esc(k)}</span>`).join('')}</div></div>
