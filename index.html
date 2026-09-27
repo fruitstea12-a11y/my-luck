@@ -1385,7 +1385,22 @@ const ERRMSG={not_granted:'Claude 사용 허용이 필요해요.',origin:'접속
  refunded:'환불된 주문이에요.',
  order_limit:'이 주문으로 만들 수 있는 횟수를 모두 썼어요. 문의해주세요.'};
 const apiBase=()=>{const b=(window.LUCK_CONFIG||{}).API_BASE;return (b&&!/YOUR-SUBDOMAIN/.test(b))?b:null};
+// 카드1(P)은 AI를 부르지 않는다 — 미리 만든 조각(card1-pre.json, c1-pre-v1)을 코드가 조립한다.
+// 반환 형태는 워커 P 카드 응답과 같다: {profile:{oneLine,sajuKeywords,sajuDesc,mbtiDesc,match,diff,combo}}
+let C1PRE=null;
+async function card1Local(){
+  if(!C1PRE){const r=await fetch('card1-pre.json?v=c1-pre-v1');if(!r.ok)throw {code:'network'};C1PRE=await r.json()}
+  const T=C1PRE,n=S.data.chart.natal,il=S.data.ilgan[0];
+  const strong=EL[n.strongEl],weak=n.weakEl===n.strongEl?EL[(n.strongEl+2)%5]:EL[n.weakEl];
+  const top=(Object.entries(n.gods||{}).sort((a,b)=>b[1]-a[1])[0]||[])[0];
+  const mb=S.mbti?.type||null;
+  const pair=(mb&&T.combo[il+'|'+mb])||T.noMbti[il];
+  const kw=[T.keywords.dayKw[il],T.keywords.godKw[top],T.keywords.elemKw[strong]].filter(Boolean);
+  return {profile:{oneLine:pair.oneLine,sajuKeywords:kw,
+    sajuDesc:[T.dayBand[il+'|'+n.band],T.elemPair[strong+'|'+weak]].filter(Boolean).join(' '),
+    mbtiDesc:mb?(T.mbtiDesc[mb]||''):'',match:pair.match,diff:pair.diff,combo:pair.combo},pre:'c1-pre-v1'}}
 async function callCard(g){
+  if(g==='P') return card1Local();
   const base=apiBase();
   if(!base){ // Worker 주소가 없으면 예전 방식(Artifact 런타임)으로 — 개발용
     if(!sample) throw {code:'upstream'};
