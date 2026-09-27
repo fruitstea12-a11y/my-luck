@@ -996,7 +996,7 @@ const QS=[
  ['J','P','주말 계획이 갑자기 바뀌면','불편하다','오히려 재밌다']];
 const TYPES=['ISTJ','ISFJ','INFJ','INTJ','ISTP','ISFP','INFP','INTP','ESTP','ESFP','ENFP','ENTP','ESTJ','ESFJ','ENFJ','ENTJ'];
 const VERSION='rules-v0.4';
-const TODAY_VERSION='today-v4.1';  // 오늘의 운 규칙(용신·천간합충·귀인·강도) 버전
+const TODAY_VERSION='today-v4.2';  // 오늘의 운 규칙(용신·천간합충·귀인·강도) 버전
 const PROMPT_VERSION='prompt-v3.1'; // 프롬프트를 고치면 이 번호를 올려 옛 캐시 결과를 버린다
 const INTRO_KEY=KEYS[Math.floor(Math.random()*KEYS.length)]; // 첫 화면: 진입할 때마다 10개 일간 중 하나를 랜덤 선택해 남녀 한 쌍 표시
 let S={saved:null,step:'intro',input:null,mbti:null,chart:null,data:null,ai:{A:null,B:null},tab:0,qi:0,ans:[]};
@@ -1669,6 +1669,15 @@ const DEMAND={
   tip:'바뀐 계획을 기회로 써보세요. 오늘은 즉흥적으로 고른 쪽이 잘 맞기 쉬워요.',
   gap:"오늘의 운은 ‘흐름에 맡겨’인데, 나는 ‘계획이 틀어지면 불안한데…’ 하는 날이에요.",
   gapTip:'계획을 버리진 말고 B안을 하나만 미리 적어두세요. 바뀌어도 덜 흔들려요.'}};
+// 맞는 날: 오늘 흐름이 내 글자의 장점을 쓰게 한다는 걸 보여준다. 흐름·성향·사용법 문장과 단어가 겹치지 않게.
+const MATCHWHY={E:'오늘은 E의 친화력이 통하는 날이에요. 어디서든 대화의 중심이 되기 쉬워요.',
+ I:'오늘은 I의 장점이 통하는 날이에요. 조용히 정리한 생각이 그대로 답이 돼요.',
+ S:'오늘은 S의 꼼꼼함이 이득이 되는 날이에요. 남들이 놓친 조건이 눈에 들어와요.',
+ N:'오늘은 N의 촉이 통하는 날이에요. 남보다 먼저 기회를 알아채기 쉬워요.',
+ T:'오늘은 T의 단호함이 통하는 날이에요. 분명하게 말해도 뒤탈이 적어요.',
+ F:'오늘은 F의 배려가 통하는 날이에요. 건넨 마음이 평소보다 크게 돌아와요.',
+ J:'오늘은 J의 계획력이 통하는 날이에요. 미리 준비한 만큼 결과가 따라와요.',
+ P:'오늘은 P의 순발력이 통하는 날이에요. 남들이 당황할 때 먼저 다른 길을 찾아요.'};
 const OPP={E:'I',I:'E',S:'N',N:'S',T:'F',F:'T',J:'P',P:'J'};
 const AXIS_POS={E:0,I:0,S:1,N:1,T:2,F:2,J:3,P:3};
 // 오늘 가장 강한 신호가 축을 정하고, 신호가 없으면 오늘 십성이 정한다
@@ -1679,7 +1688,7 @@ function todayGap(t){const tg=t.tags.find(x=>DEM_TAG[x]);const want=tg?DEM_TAG[t
  const type=S.mbti?.type;if(!type)return {flow:D.flow,tip:D.tip,type:null};
  const mine=type[AXIS_POS[want]],match=mine===want;
  return {flow:D.flow,type,trait:TRAIT[mine],match,
-  line:match?'오늘은 흐름과 내 성향이 같은 방향이에요. 평소보다 힘이 덜 들어요.':D.gap,
+  letter:mine,line:match?MATCHWHY[want]:D.gap.replace('나는',mine+'인 나는'),
   tip:match?D.tip:D.gapTip}}
 function todayMatch(t){const m=MATCH[t.god];return {who:m[0],why:m[1],how:MATCHHOW[mbtiKey()]||MATCHHOW.N}}
 // 활동 시간대(07~21시 시작)에 해당하는 지지: 진사오미신유술
@@ -1731,7 +1740,7 @@ function viewToday(){const D=S.data,c=D.chart,n=c.natal,now=new Date(),t=dayInfo
 
   <p class="sec">🧬 오늘의 나</p>
   <div class="tri"><p><span class="lab">🌿 오늘의 흐름</span>${esc(gp.flow)}</p>
-   ${gp.type?`<p><span class="lab">🧠 그런데 ${esc(gp.type)}인 나는?</span>${esc(gp.trait)}</p>
+   ${gp.type?`<p><span class="lab">🧠 그런데 ${esc(gp.type)}인 나는?</span><b>${esc(gp.letter)}</b> · ${esc(gp.trait)}</p>
    <p class="gapline${gp.match?' ok':''}">${esc(gp.line)}</p>`:''}
    <p class="q">✨ ${esc(gp.tip)}</p>
    ${gp.type?'':`<p class="fine">MBTI를 넣으면 오늘 흐름과 내 성향이 맞는 날인지, 엇갈리는 날인지 보여드려요.</p>`}
