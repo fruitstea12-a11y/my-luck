@@ -1006,7 +1006,7 @@ const QS=[
  ['J','P','주말 계획이 갑자기 바뀌면','불편하다','오히려 재밌다']];
 const TYPES=['ISTJ','ISFJ','INFJ','INTJ','ISTP','ISFP','INFP','INTP','ESTP','ESFP','ENFP','ENTP','ESTJ','ESFJ','ENFJ','ENTJ'];
 const VERSION='rules-v0.4';
-const TODAY_VERSION='today-v8.1';  // 오늘의 운 규칙(용신·천간합충·귀인·강도) 버전
+const TODAY_VERSION='today-v8.2';  // 오늘의 운 규칙(용신·천간합충·귀인·강도) 버전
 const PROMPT_VERSION='prompt-v3.1'; // 프롬프트를 고치면 이 번호를 올려 옛 캐시 결과를 버린다
 const INTRO_KEY=KEYS[Math.floor(Math.random()*KEYS.length)]; // 첫 화면: 진입할 때마다 10개 일간 중 하나를 랜덤 선택해 남녀 한 쌍 표시
 let S={saved:null,step:'intro',input:null,mbti:null,chart:null,data:null,ai:{A:null,B:null},tab:0,qi:0,ans:[]};
@@ -1771,11 +1771,20 @@ const INNER={E:'겉으로는 활발하지만, 혼자 있어야 다시 충전되�
  S:'현실적으로 움직이지만, 머릿속엔 늘 다른 그림을 하나 품고 있는 타입이에요.',N:'상상은 멀리 가도, 막상 결정할 땐 꽤 현실적인 타입이에요.',
  T:'말은 논리적으로 해도, 속으로는 상대 마음을 오래 신경 쓰는 타입이에요.',F:'마음이 여려 보여도, 결정적인 순간엔 선을 분명히 긋는 타입이에요.',
  J:'계획을 세우지만, 막상 판이 바뀌면 누구보다 빨리 적응하는 타입이에요.',P:'즉흥적으로 보여도, 중요한 건 속으로 다 계산해두는 타입이에요.'};
+// 근거 줄: 사주 용어를 쓰되 바로 괄호로 풀어쓴다 — 전문성은 용어가, 이해는 풀이가 맡는다
+const GOD_GLOSS={비견:'나와 같은 힘',겁재:'경쟁하는 힘',식신:'표현·결과물',상관:'재치·비판',편재:'기회·유동적인 돈',정재:'실속·안정된 돈',편관:'도전·압박',정관:'규칙·책임',편인:'직관·독창',정인:'배움·보살핌'};
+const TAG_GLOSS={충:'부딪힘',합:'맞물림',형:'예민해짐',해:'어긋남',귀인:'도움이 오는 날',도화:'눈에 띄는 날',역마:'움직임이 많은 날',화개:'혼자 몰입하는 날',용신일:'나에게 필요한 기운이 오는 날',기신일:'나와 결이 다른 기운이 강한 날'};
+const tagGloss=x=>{const k=Object.keys(TAG_GLOSS).find(k=>x===k||x.endsWith(' '+k));return k?`${x}(${TAG_GLOSS[k]})`:x};
+const POLE_GODS={E:['식신','상관','편재','겁재'],I:['편인','정인','비견'],S:['정재','정관','식신'],N:['편인','상관','편재'],
+ T:['편관','정관','상관'],F:['정인','식신','정재'],J:['정관','정재','정인'],P:['편관','편재','편인','상관']};
+function poleBasis(n,pole){const top=POLE_GODS[pole].filter(g=>n.gods[g]>0.05).sort((a,b)=>n.gods[b]-n.gods[a]).slice(0,2);
+ if(!top.length)return SAJU_POLE[pole][1];const last=top[top.length-1];
+ return `원국에 ${top.map(g=>`${g}(${GOD_GLOSS[g]})`).join('·')}${josaIga(last)} 두드러진 사주 → ${SAJU_POLE[pole][1].replace(/이 강한 사주$/,'')}`}
 function sajuSees(n,letter,hasMbti){const L=natalLean(n),z=L[letter],o=OPP[letter];
- if(!hasMbti){const pole=z>=0?letter:o;return {head:'',body:SAJU_POLE[pole][0],basis:SAJU_POLE[pole][1],kind:'solo'}}
- if(z>=0.4)return {head:'',body:SAJU_POLE[letter][0]+' MBTI와 따로 봤는데도 같은 방향이에요.',basis:SAJU_POLE[letter][1],kind:'same'};
- if(z<=-0.4)return {head:'겉과 속이 조금 달라요.',body:SAJU_POLE[o][0]+' '+INNER[letter],basis:SAJU_POLE[o][1],kind:'diff'};
- return {head:'',body:`사주에는 두 기질이 고르게 섞여 있어요. 그중 MBTI로 드러난 ${letter} 쪽이 지금 더 앞에 나와 있는 거예요.`,basis:'양쪽 기운이 고르게 있는 사주',kind:'mix'}}
+ if(!hasMbti){const pole=z>=0?letter:o;return {head:'',body:SAJU_POLE[pole][0],basis:poleBasis(n,pole),kind:'solo'}}
+ if(z>=0.4)return {head:'',body:SAJU_POLE[letter][0]+' MBTI와 따로 봤는데도 같은 방향이에요.',basis:poleBasis(n,letter),kind:'same'};
+ if(z<=-0.4)return {head:'겉과 속이 조금 달라요.',body:SAJU_POLE[o][0]+' '+INNER[letter],basis:poleBasis(n,o),kind:'diff'};
+ return {head:'',body:`사주에는 두 기질이 고르게 섞여 있어요. 그중 MBTI로 드러난 ${letter} 쪽이 지금 더 앞에 나와 있는 거예요.`,basis:`원국에 ${letter} 쪽 십성(${POLE_GODS[letter].join('·')})과 반대쪽 십성(${POLE_GODS[o].join('·')})이 고르게 있는 사주`,kind:'mix'}}
 const OPP={E:'I',I:'E',S:'N',N:'S',T:'F',F:'T',J:'P',P:'J'};
 const AXIS_POS={E:0,I:0,S:1,N:1,T:2,F:2,J:3,P:3};
 // 오늘 가장 강한 신호가 축을 정하고, 신호가 없으면 오늘 십성이 정한다
@@ -1913,7 +1922,7 @@ function viewToday(){const D=S.data,c=D.chart,n=c.natal,now=new Date(),t=dayInfo
 
   <p class="sec">📊 오늘의 핵심 영역</p>
   <div class="dom">${DOM.map(d=>`<div><span>${DOMK[d]}</span><div class="bar"><i style="width:${t.scores[d]}%;background:${DOMC[d]}"></i></div><small>${t.scores[d]} · ${LEVEL(t.scores[d])}</small></div>`).join('')}</div>
-  <p class="why"><b>왜 이런 흐름일까요?</b> ${esc(todayWhy(t))}<small>근거 · ${t.pillar}일 · ${esc(g)}${t.tags.length?' · '+esc(t.tags.slice(0,2).join(', ')):''}</small></p>
+  <p class="why"><b>왜 이런 흐름일까요?</b> ${esc(todayWhy(t))}<small>근거 · ${t.pillar}일(오늘의 일진) · ${esc(g)}(${GOD_GLOSS[g]}) 기운${t.tags.length?' · '+esc(t.tags.slice(0,2).map(tagGloss).join(', ')):''}</small></p>
 
   <p class="sec">🤝 오늘 잘 맞는 사람</p>
   <div class="tri"><p><b class="key">${esc(mat.who)}</b>${esc(mat.why)}</p>
