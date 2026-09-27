@@ -457,7 +457,7 @@ details summary{cursor:pointer;color:var(--sub);font-size:14px;padding:10px 0}
 .paybox{margin:12px -4px 0;min-height:40px}
 .paymsg{min-height:1.2em;margin:6px 0 0;font-size:13px;color:var(--accent);text-align:center}
 .paytest{text-align:center}
-</style>
+.fact{margin:10px 0 14px;padding:10px 14px;border-radius:12px;background:#7a2e2e0f;border:1px solid #7a2e2e33}.fact small{display:block;font-size:11.5px;font-weight:700;color:#8a2f2f;margin-bottom:3px}.fact p{margin:0;font-size:15.5px;font-weight:600;line-height:1.5;word-break:keep-all}.sfact{margin:6px 12px 8px;font-size:14px;font-weight:600;line-height:1.45;word-break:keep-all;color:#8a2f2f}</style>
 </head>
 <body><main class="wrap" id="view">
 <!-- 검색엔진용 기본 내용. 화면이 뜨면 스크립트가 이 자리를 바꾼다. -->
@@ -1388,7 +1388,7 @@ const apiBase=()=>{const b=(window.LUCK_CONFIG||{}).API_BASE;return (b&&!/YOUR-S
 // 반환 형태는 워커 P 카드 응답과 같다: {profile:{oneLine,sajuKeywords,sajuDesc,mbtiDesc,match,diff,combo}}
 let C1PRE=null;
 async function card1Local(){
-  if(!C1PRE){const r=await fetch('card1-pre.json?v=c1-pre-v1');if(!r.ok)throw {code:'network'};C1PRE=await r.json()}
+  if(!C1PRE){const r=await fetch('card1-pre.json?v=c1-pre-v2');if(!r.ok)throw {code:'network'};C1PRE=await r.json()}
   const T=C1PRE,n=S.data.chart.natal,il=S.data.ilgan[0];
   const strong=EL[n.strongEl],weak=n.weakEl===n.strongEl?EL[(n.strongEl+2)%5]:EL[n.weakEl];
   const top=(Object.entries(n.gods||{}).sort((a,b)=>b[1]-a[1])[0]||[])[0];
@@ -1397,7 +1397,7 @@ async function card1Local(){
   const kw=[T.keywords.dayKw[il],T.keywords.godKw[top],T.keywords.elemKw[strong]].filter(Boolean);
   return {profile:{oneLine:pair.oneLine,sajuKeywords:kw,
     sajuDesc:[T.dayBand[il+'|'+n.band],T.elemPair[strong+'|'+weak]].filter(Boolean).join(' '),
-    mbtiDesc:mb?(T.mbtiDesc[mb]||''):'',match:pair.match,diff:pair.diff,combo:pair.combo},pre:'c1-pre-v1'}}
+    mbtiDesc:mb?(T.mbtiDesc[mb]||''):'',match:pair.match,diff:pair.diff,combo:pair.combo,fact:pair.fact||''},pre:'c1-pre-v1'}}
 // 카드5(M) 12개월 문구도 AI를 부르지 않는다 — card5-pre.json(c5-pre-v1) 조각을 코드가 고른다.
 // 반환 형태는 워커 M 카드 응답과 같다: {months:[{i,keyword,flow,myWay,tip}]}
 let C5PRE=null;
@@ -2060,7 +2060,8 @@ async function loadProfile(){const r=profRef();
 async function saveResults(){const done={};['P','A','B','M'].forEach(k=>{if(S.ai[k]&&!S.ai[k].loading&&!S.ai[k].error)done[k]=S.ai[k]});
   const j=JSON.stringify(done);try{localStorage.setItem(cacheKey(),j)}catch(_){}
   const r=profRef();if(r){try{await r.collection('results').doc(hash(cacheKey())).set({json:j,at:Date.now()})}catch(_){}}}
-async function loadResults(){const r=profRef();let out=null;
+// 무료 카드는 모두 조각 조립이라 저장본을 쓰지 않는다 — 항상 최신 문구로 다시 만든다(비용 0).
+async function loadResults(){return null;const r=profRef();let out=null;
   if(r){try{const d=await r.collection('results').doc(hash(cacheKey())).get();if(d.exists)out=JSON.parse(d.data().json)}catch(_){}}
   if(!out){try{out=JSON.parse(localStorage.getItem(cacheKey())||'null')}catch(_){}}
   return out}
@@ -2123,7 +2124,7 @@ function elementBars(){const n=S.data.chart.natal;return `<div class="els">${EL.
   <p class="fine">세 가지 모두 내 에너지를 쓰는 방식이 다를 뿐이에요.</p>
  </details>`}
 function card1(){const A=S.ai.P,m=S.mbti;if(!ok('P'))return elementBars()+wait('P');const p=A.profile||{};
- return `<p class="big">${esc(p.oneLine)}</p>
+ return `<p class="big">${esc(p.oneLine)}</p>${p.fact?`<div class="fact"><small>🔥 팩폭 한 줄</small><p>${esc(p.fact)}</p></div>`:''}
  <div class="two"><div class="col saju"><h4>🔮 사주로 본 타고난 나</h4><div class="tags">${(p.sajuKeywords||[]).map(k=>`<span>${esc(k)}</span>`).join('')}</div><p>${esc(p.sajuDesc)}</p></div>
  <div class="col mbti"><h4>🧬 MBTI로 본 지금의 나 ${m?esc(m.type):''}</h4>${m?.pct?`<div class="axes sm">${Object.values(m.pct).map(v=>`<div class="ax"><span>${v.letter} ${v.pct}%</span><div class="bar"><i style="width:${v.pct}%"></i></div></div>`).join('')}</div>`:''}<p>${m?esc(p.mbtiDesc):'MBTI를 입력하지 않았어요.'}</p></div></div>
  ${m?`<h4>일치하는 점</h4><p>${esc(p.match)}</p><h4>다른 점</h4><p>${esc(p.diff)}</p>`:''}
@@ -2711,7 +2712,7 @@ function shareHTML(){const D=S.data,A=ok('P')?S.ai.P.profile:{},m=S.mbti;
  const best=D.months.slice().sort((a,b)=>b.scores[b.top]-a.scores[a.top])[0];
  return `<div class="share"><p class="sbrand">내 운 사용설명서</p><p class="sname">${S.input.name?esc(S.input.name)+'님의':'나의'} 운 사용설명서</p>
  <img src="${CHARS[D.key]}" alt=""><p class="silgan"><b>${D.ilgan[0]}</b>${m?' × <b>'+esc(m.type)+'</b>':''}</p>
- <p class="sone">${esc(A.oneLine||D.ilgan[1])}</p><div class="stags">${(A.sajuKeywords||[]).slice(0,3).map(k=>`<span>#${esc(k)}</span>`).join('')}</div>
+ <p class="sone">${esc(A.oneLine||D.ilgan[1])}</p>${A.fact?`<p class="sfact">🔥 ${esc(A.fact)}</p>`:''}<div class="stags">${(A.sajuKeywords||[]).slice(0,3).map(k=>`<span>#${esc(k)}</span>`).join('')}</div>
  <p class="sbest">앞으로 12개월 중 가장 높은 달 · <b>${best.label} ${DOMK[best.top]} ${best.scores[best.top]}</b></p>
  <p class="sfoot">같은 운이라도, 나는 다르게 씁니다.</p></div>`}
 // mode: 'hide'(기본) 접힌 내용을 숨긴다 · 'open' 전부 펼쳐서 같이 찍는다(유료 리포트 전체 저장)
