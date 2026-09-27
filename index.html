@@ -191,10 +191,14 @@ select:disabled{opacity:.45}
 .seen .sv em{font-style:normal;font-size:12px;color:var(--sub);font-weight:500}.seen li.hit .st{color:var(--ink,#2b2622)}.seen li.swap{opacity:.4;transition:opacity .4s}.sfn{margin:-2px 0 8px!important}
 .capturing .seen .sv,.capturing .sfn{display:none!important}
 .wchips{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}.wchips button{font:inherit;font-size:13px;padding:7px 2px;white-space:nowrap;border-radius:999px;border:1px solid var(--line,#e5e0d8);background:transparent;color:var(--ink,#2b2622);cursor:pointer}
-.wchips button.on{background:#f3ead8;border-color:#d9c7a3;font-weight:700}.wa{margin-top:10px}.wa .wv{font-weight:700;font-size:15px;line-height:1.55;margin:0 0 6px!important;padding:6px 10px;border-radius:8px;background:var(--paper)}
+.wchips button.on{background:var(--chip);border-color:var(--line);font-weight:700}.wa{margin-top:10px}.wa .wv{font-weight:700;font-size:15px;line-height:1.55;margin:0 0 6px!important;padding:6px 10px;border-radius:8px;background:var(--paper)}
 .wa.lv0 .wv{box-shadow:inset 3px 0 0 var(--mok)}.wa.lv1 .wv{box-shadow:inset 3px 0 0 var(--to)}.wa.lv2 .wv{box-shadow:inset 3px 0 0 var(--su)}.wrel{width:100%;margin-top:8px;font-size:13px}
 
 .secsub{margin:-4px 0 6px!important}
+.todaycard .tri{border:0;background:var(--paper)}.todaycard .tri>p+p{border-top:0;padding-top:0}.todaycard .tri>p{margin-bottom:12px}
+.todaycard .gapline{background:var(--panel)}.todaycard .worry .wa .wv{background:var(--panel)}.gf{display:block;font-size:11.5px;color:var(--sub);margin-bottom:2px}
+.nextcta{margin:18px 0 10px;padding:18px 16px;border-radius:14px;background:var(--chip);text-align:center}.nextcta p{margin:0 0 6px;font-size:14px;line-height:1.6}.nextcta b{font-size:16px}
+.nextcta small{display:block;font-size:12px;color:var(--sub);margin-bottom:12px}.nextcta .primary{width:100%}
 .kw{margin:8px 0 0}.kw span{font-weight:600}
 .why{margin:10px 0 0;font-size:13px;line-height:1.65;color:var(--ink,#2b2622);background:var(--paper);border-radius:10px;padding:10px 12px}.why b{display:block;font-size:12px;margin-bottom:2px}.why small{display:block;margin-top:4px;font-size:11px;color:var(--sub)}
 .tags{display:flex;flex-wrap:wrap;gap:5px;margin:0 0 8px}.tags span{font-size:12px;background:var(--chip);border-radius:999px;padding:2px 9px}
@@ -1006,7 +1010,7 @@ const QS=[
  ['J','P','주말 계획이 갑자기 바뀌면','불편하다','오히려 재밌다']];
 const TYPES=['ISTJ','ISFJ','INFJ','INTJ','ISTP','ISFP','INFP','INTP','ESTP','ESFP','ENFP','ENTP','ESTJ','ESFJ','ENFJ','ENTJ'];
 const VERSION='rules-v0.4';
-const TODAY_VERSION='today-v8.2';  // 오늘의 운 규칙(용신·천간합충·귀인·강도) 버전
+const TODAY_VERSION='today-v9';  // 오늘의 운 규칙(용신·천간합충·귀인·강도) 버전
 const PROMPT_VERSION='prompt-v3.1'; // 프롬프트를 고치면 이 번호를 올려 옛 캐시 결과를 버린다
 const INTRO_KEY=KEYS[Math.floor(Math.random()*KEYS.length)]; // 첫 화면: 진입할 때마다 10개 일간 중 하나를 랜덤 선택해 남녀 한 쌍 표시
 let S={saved:null,step:'intro',input:null,mbti:null,chart:null,data:null,ai:{A:null,B:null},tab:0,qi:0,ans:[]};
@@ -1884,7 +1888,7 @@ function viewToday(){const D=S.data,c=D.chart,n=c.natal,now=new Date(),t=dayInfo
    ? FLOW_SOFT[g]+'이에요. 크게 흔들리는 자리 없이 무난하게 흘러가요.'
    : FLOW[g]+'. '+(BANDMOD[isHelp?'help':'use'][n.band]||'');
  const lines=t.tags.map(x=>tagLine(x,t)).filter(Boolean);
- const tag=(t.level==='strong'?lines.slice(0,2):lines.slice(0,1)).join(' ');
+ const tag=lines[0]||'';
  const gp=todayGap(t,n);const item=todayItem(t,n);
  const mis=todayMistake(t),mat=todayMatch(t),tm=todayTime(t,n),act=todayAct(t,g),cau=todayCaution(t,c,tm.label),kws=todayKeywords(t);
  const week=[...Array(7)].map((_,k)=>dayInfo(c,new Date(now.getTime()+k*864e5)));
@@ -1895,30 +1899,28 @@ function viewToday(){const D=S.data,c=D.chart,n=c.natal,now=new Date(),t=dayInfo
  <header class="hero"><img class="char" src="${CHARS[D.key]}" alt=""><div><p class="brand">내 운 사용설명서</p>
   <h2><span class="nm">${nm}</span> 오늘의 운 사용법</h2><p class="ilgan">${t.p.m}월 ${t.p.d}일 (${WD[t.p.wd]}) · <b>${t.pillar}일</b></p>
   <div class="badges"><span>${D.ilgan[0]}</span>${S.mbti?`<span class="mb">${S.mbti.type}</span>`:''}</div></div></header>
- <article class="card" id="card"><p class="no">TODAY</p>
-  <p class="sec">🔮 오늘의 총운</p>
+ <article class="card todaycard" id="card"><p class="no">TODAY</p>
+  <p class="sec">🌿 오늘의 흐름</p>
   <div class="todaytop" style="--c:${DOMC[t.top]}"><p class="lead">${esc(flow)}</p>${tag?`<small class="hint">${esc(tag)}</small>`:''}</div>
   <div class="tags kw">${kws.map(k=>`<span>#${esc(k)}</span>`).join('')}</div>
 
   <p class="sec">🧬 오늘 사주가 보여주는 나</p>
-  <p class="fine secsub">오늘 사주와 MBTI를 겹쳐보면, 이런 모습이 두드러져요.</p>
-  <div class="tri"><p><span class="lab">🌿 오늘의 흐름</span>${esc(gp.flow)}</p>
-   ${gp.type?`<p><span class="lab">🧠 MBTI로 보면 · ${esc(gp.type)}</span><b>${esc(gp.letter)}</b> · ${esc(gp.trait)}</p>
+  <p class="fine secsub">MBTI로 먼저 보고, 사주로 한 번 더 확인해요.</p>
+  <div class="tri">${gp.type?`<p><span class="lab">🧠 MBTI로 보면 · ${esc(gp.type)}</span><b>${esc(gp.letter)}</b> · ${esc(gp.trait)}</p>
    <p><span class="lab">🐾 평소의 나는?</span></p><ul class="seen">${gp.seen.map(x=>`<li>${esc(x.txt)}</li>`).join('')}</ul>
    <p><span class="lab">🔮 사주로 보면</span>${gp.saju.head?`<b>${esc(gp.saju.head)}</b> `:''}${esc(gp.saju.body)}<small class="sb">근거 · ${esc(gp.saju.basis)}</small></p>
-   <p><span class="lab">✨ 그래서 오늘은</span></p><p class="gapline${gp.match?' ok':''}">${esc(gp.line)}</p>`:''}
-   ${gp.type?'':`<p><span class="lab">🔮 사주로 보면</span>${gp.saju.head?`<b>${esc(gp.saju.head)}</b> `:''}${esc(gp.saju.body)}<small class="sb">근거 · ${esc(gp.saju.basis)}</small></p>`}
-   ${mis?`<p><span class="lab">⚠️ 오늘의 작은 함정</span>${esc(mis.saju)} ${gp.type?esc(gp.type)+'인 나는 ':''}${esc(mis.my)}</p>
-   <p class="fine">✓ ${esc(mis.guard)}</p>`:''}
-   <p><span class="lab">👉 오늘의 사용법</span></p><p class="q">${esc(gp.tip)}</p>
-   ${gp.type?'':`<p class="fine">MBTI를 넣으면 오늘 흐름과 내 성향이 맞는 날인지, 엇갈리는 날인지 보여드려요.</p>`}</div>
+   <p><span class="lab">✨ 그래서 오늘은</span></p><p class="gapline${gp.match?' ok':''}"><small class="gf">${esc(gp.flow.replace(/이에요\.$/,''))} →</small>${esc(gp.line)}</p>`
+   :`<p><span class="lab">🔮 사주로 보면</span>${esc(gp.saju.body)}<small class="sb">근거 · ${esc(gp.saju.basis)}</small></p>
+   <p class="fine">MBTI를 넣으면 MBTI로 본 나와 사주로 본 나를 겹쳐서 보여드려요.</p>`}</div>
 
   <p class="sec">💭 오늘, 뭐가 제일 신경 쓰여요?</p>
   <div class="tri worry"><div class="wchips">${Object.entries(WORRY).map(([k,W])=>`<button data-k="${k}" class="${S.ui.worry===k?'on':''}" onclick="worryPick('${k}')">${esc(W.label)}</button>`).join('')}</div>
-   <div id="worryAns">${S.ui.worry?worryAnswer(S.ui.worry,t,c):'<p class="fine">오늘 하나만 골라보세요. 오늘의 흐름을 궁금한 주제에 맞춰 살펴볼게요.</p>'}</div></div>
+   <div id="worryAns">${S.ui.worry?worryAnswer(S.ui.worry,t,c):'<p class="fine">하나만 골라보세요. 그 주제에 맞춰 오늘 흐름을 읽어드려요.</p>'}</div></div>
 
-  <p class="sec">💡 오늘 이렇게 해보세요</p>
-  <div class="combo"><p><b class="key">✓ ${esc(act.title)}</b>${esc(act.why)}</p></div>
+  <p class="sec">💡 오늘의 행동 가이드</p>
+  <div class="tri guide"><p><b class="key">✓ ${esc(act.title)}</b>${esc(act.why)}</p>
+   <p><span class="lab">👉 내 성향으로 쓰는 법</span>${esc(gp.tip)}</p>
+   ${mis?`<p><span class="lab">⚠️ 작은 함정</span>${gp.type?esc(gp.type)+'인 나는 ':''}${esc(mis.my)}<small class="sb">✓ ${esc(mis.guard)}</small></p>`:''}</div>
 
   <p class="sec">📊 오늘의 핵심 영역</p>
   <div class="dom">${DOM.map(d=>`<div><span>${DOMK[d]}</span><div class="bar"><i style="width:${t.scores[d]}%;background:${DOMC[d]}"></i></div><small>${t.scores[d]} · ${LEVEL(t.scores[d])}</small></div>`).join('')}</div>
@@ -1941,7 +1943,10 @@ function viewToday(){const D=S.data,c=D.chart,n=c.natal,now=new Date(),t=dayInfo
    <p class="itemc">오늘의 색 · <b>${esc(item.color)}</b> <small>나에게 필요한 ${EL[item.colorEl]} 기운의 색이에요</small></p>
    <p class="fine">없으면 비슷한 물건으로 충분해요.</p>${itemBox(item.name,prodBox([CATPRE[item.colorEl]+((t.p.d%4)+1)],'비슷한 아이템 보기'))}</div>
   <p class="stamp">내 운 사용설명서 · ${TODAY_VERSION}</p></article>
- <button class="primary" onclick="saveCard()">오늘 카드 저장</button>
+ <div class="nextcta"><p>오늘의 운은 알았고,<br><b>나는 원래 어떤 방식으로 움직이는 사람일까요?</b></p>
+  <small>생년월일과 MBTI로 읽는 6장의 내 운 사용설명서 · 무료</small>
+  <button class="primary" onclick="go('result')">📖 내 운 사용설명서 보기</button></div>
+ <button class="ghost" onclick="saveCard()">오늘 카드 저장</button>
  <button class="ghost" onclick="${S.mbti?"go('confirm')":"go('mbtiAsk')"}">${S.mbti?'입력 정보 수정':'MBTI 추가해서 다시 보기'}</button>
  <button class="ghost" onclick="S.input=null;S.mbti=null;go('intro')">다른 사람 보기</button>
  <p id="saveMsg" class="fine" aria-live="polite"></p>
