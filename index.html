@@ -457,7 +457,7 @@ details summary{cursor:pointer;color:var(--sub);font-size:14px;padding:10px 0}
 .paybox{margin:12px -4px 0;min-height:40px}
 .paymsg{min-height:1.2em;margin:6px 0 0;font-size:13px;color:var(--accent);text-align:center}
 .paytest{text-align:center}
-.fact{margin:10px 0 14px;padding:10px 14px;border-radius:12px;background:#7a2e2e0f;border:1px solid #7a2e2e33}.fact small{display:block;font-size:11.5px;font-weight:700;color:#8a2f2f;margin-bottom:3px}.fact p{margin:0;font-size:15.5px;font-weight:600;line-height:1.5;word-break:keep-all}.sfact{margin:6px 12px 8px;font-size:14px;font-weight:600;line-height:1.45;word-break:keep-all;color:#8a2f2f}</style>
+.fact{margin:10px 0 14px;padding:10px 14px;border-radius:12px;background:#7a2e2e0f;border:1px solid #7a2e2e33}.fact small{display:block;font-size:11.5px;font-weight:700;color:#8a2f2f;margin-bottom:3px}.fact p{margin:0;font-size:15.5px;font-weight:600;line-height:1.5;word-break:keep-all}.sfact{margin:6px 12px 8px;font-size:14px;font-weight:600;line-height:1.45;word-break:keep-all;color:#8a2f2f}.sumbox{margin:14px 0 12px;padding:14px 16px;border-radius:16px;background:var(--panel,#fbf7ef);border:1px solid #b8963e55;box-shadow:inset 3px 0 0 #8a2f2f}.sumh{margin:0 0 8px;font-size:13px;font-weight:700;letter-spacing:.02em;color:#8a2f2f}.sumrow{margin:0 0 10px}.sumrow:last-child{margin:0}.sumrow b{display:block;font-size:12px;color:#8a6d2a;margin-bottom:2px}.sumrow p{margin:0;font-size:14.5px;line-height:1.55;word-break:keep-all}.sumrow ol{margin:2px 0 0;padding-left:20px;font-size:14.5px;line-height:1.6;word-break:keep-all}</style>
 </head>
 <body><main class="wrap" id="view">
 <!-- 검색엔진용 기본 내용. 화면이 뜨면 스크립트가 이 자리를 바꾼다. -->
@@ -2095,6 +2095,7 @@ function viewResult(){const D=S.data,i=S.input,m=S.mbti;
     <div class="badges"><span>${D.pillars.year}년 ${D.pillars.month}월 ${D.pillars.day}일${D.pillars.hour?' '+D.pillars.hour+'시':''}</span>${m?`<span class="mb">${m.type}${m.source==='test'?' 추정':''}</span>`:''}</div>
     ${edgeNote()}${!D.chart.hasTime?`<p class="fine">출생시간 없이 계산했어요. 시주 관련 해석은 제외됩니다.${D.chart.nearJeol?' 절기 경계일이라 월주가 달라질 수 있어요.':''}</p>`:''}</div>
   </header>
+  ${S.tab===0?summaryBox():''}
   <nav class="tabs" role="tablist">${TABS.map((t,k)=>`<button role="tab" aria-selected="${k===S.tab}" onclick="setTab(${k})">${k+1}. ${t}</button>`).join('')}</nav>
   <article id="card" class="card"><p class="no">CARD ${S.tab+1} / 6</p><h3>${TABS[S.tab]}</h3>${[card1,card2,card3,card4,card5,card6][S.tab]()}
    <p class="stamp">내 운 사용설명서 · ${VERSION}</p></article>
@@ -2126,11 +2127,21 @@ function elementBars(){const n=S.data.chart.natal;return `<div class="els">${EL.
   <b>61 이상 · 신강(身強)</b> — 내 힘이 강한 편</p>
   <p class="fine">세 가지 모두 내 에너지를 쓰는 방식이 다를 뿐이에요.</p>
  </details>`}
+// 한눈에 보는 결론 — 이미 만든 조각을 모아서 보여준다(AI 호출 없음)
+function summaryBox(){if(!ok('P'))return '';const p=S.ai.P.profile||{},m=S.mbti;
+ const acts=[];const add=x=>{x=String(x||'').trim().replace(/[.。]$/,'');if(x&&!acts.includes(x)&&acts.length<3)acts.push(x)};
+ if(ok('M'))add(((S.ai.M.months||[])[0]||{}).tip);
+ if(ok('B')){add((S.ai.B.usage||{}).action);add(((S.ai.B.usage||{}).mbtiPractice||[])[0])}
+ if(ok('M'))add(((S.ai.M.months||[])[1]||{}).tip);
+ return `<section class="sumbox"><p class="sumh">한눈에 보는 결론</p>
+  <div class="sumrow"><b>${m?'사주와 MBTI가 같은 점':'타고난 기질의 중심'}</b><p>${esc(p.match)}</p></div>
+  <div class="sumrow"><b>${m?'사주와 MBTI가 다른 점':'내 안에서 부딪히는 점'}</b><p>${esc(p.diff)}</p></div>
+  ${acts.length?`<div class="sumrow"><b>지금 해볼 ${acts.length}가지</b><ol>${acts.map(x=>`<li>${esc(x)}</li>`).join('')}</ol></div>`:''}</section>`}
 function card1(){const A=S.ai.P,m=S.mbti;if(!ok('P'))return elementBars()+wait('P');const p=A.profile||{};
  return `<p class="big">${esc(p.oneLine)}</p>${p.fact?`<div class="fact"><small>🔥 팩폭 한 줄</small><p>${esc(p.fact)}</p></div>`:''}
  <div class="two"><div class="col saju"><h4>🔮 사주로 본 타고난 나</h4><div class="tags">${(p.sajuKeywords||[]).map(k=>`<span>${esc(k)}</span>`).join('')}</div><p>${esc(p.sajuDesc)}</p></div>
  <div class="col mbti"><h4>🧬 MBTI로 본 지금의 나 ${m?esc(m.type):''}</h4>${m?.pct?`<div class="axes sm">${Object.values(m.pct).map(v=>`<div class="ax"><span>${v.letter} ${v.pct}%</span><div class="bar"><i style="width:${v.pct}%"></i></div></div>`).join('')}</div>`:''}<p>${m?esc(p.mbtiDesc):'MBTI를 입력하지 않았어요.'}</p></div></div>
- ${m?`<h4>일치하는 점</h4><p>${esc(p.match)}</p><h4>다른 점</h4><p>${esc(p.diff)}</p>`:''}
+ <!-- 일치·다른 점은 위 '한눈에 보는 결론'에서 보여준다 -->
  <div class="combo"><small>핵심 조합</small><p>${esc(p.combo)}</p></div>
  <h4>나의 오행 분포</h4>${elementBars()}`}
 function lineChart(){const D=S.data.decades,W=340,H=176,ks=['money','achieve','change'];
