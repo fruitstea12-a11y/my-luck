@@ -547,6 +547,42 @@ function analyzeNatal(P){
   return {dayStem:day,dayEl:stemEl(day),elements:share.map(v=>+(v*100).toFixed(1)),strength,band,season,gods,achieveType:achieveType.map(x=>x[0]),weakEl,strongEl}
 }
 
+// ----- 용신·희신·기신 (yong-v1) -----
+// 억부 우선: 신약은 나를 약하게 만드는 가장 큰 원인을 막는 오행, 신강은 넘치는 쪽을 덜어내는 오행.
+// 중화는 조후(겨울생 화, 여름생 수), 조후가 급하지 않으면 가장 적은 오행.
+// 신약·신강이어도 조후 오행이 8% 미만이면 희신 자리에 조후를 둔다(기신과 겹치면 두지 않음).
+// natal 객체에 붙이지 않는다 — AI payload 로 새어 나가 카드 캐시가 흔들리지 않게.
+function yongsin(n){
+  const e=n.dayEl,G=n.gods,grp={bi:G.비견+G.겁재,sik:G.식신+G.상관,jae:G.편재+G.정재,gwan:G.편관+G.정관,in:G.편인+G.정인};
+  const EO={bi:e,in:(e+4)%5,sik:(e+1)%5,jae:(e+2)%5,gwan:(e+3)%5};
+  const johu=n.season==='winter'?1:n.season==='summer'?4:null;
+  let yong,hee,why;
+  if(n.band==='신약'){
+    const drain=['gwan','sik','jae'].sort((a,b)=>grp[b]-grp[a])[0];
+    if(drain==='jae'){yong=EO.bi;hee=EO.in;why='재성이 많아 나를 받쳐줄 비겁이 필요'}
+    else{yong=EO.in;hee=EO.bi;why=drain==='gwan'?'관성 압박을 풀어줄 인성이 필요':'식상으로 새는 힘을 채워줄 인성이 필요'}
+  }else if(n.band==='신강'){
+    if(grp.in>grp.bi){yong=EO.jae;hee=EO.sik;why='인성이 넘쳐 재성으로 덜어냄'}
+    else if(grp.gwan>=grp.sik){yong=EO.gwan;hee=EO.jae;why='비겁이 넘쳐 관성으로 다잡음'}
+    else{yong=EO.sik;hee=EO.jae;why='비겁이 넘쳐 식상으로 풀어냄'}
+  }else{
+    if(johu!=null){yong=johu;why=johu===1?'겨울생이라 따뜻한 화 기운이 필요':'여름생이라 식혀줄 수 기운이 필요'}
+    else{yong=n.weakEl;why='가장 적은 오행을 채워 균형을 맞춤'}
+    hee=(yong+4)%5;
+  }
+  const gi=(yong+3)%5;                       // 용신을 극하는 오행
+  if(johu!=null&&n.band!=='중화'&&johu!==yong&&johu!==gi&&n.elements[johu]<8)hee=johu;
+  return {yong,hee,gi,why}
+}
+// 오늘 일진이 용신과 얼마나 맞는지. 천간 1, 지지 본기 1.2 (지지가 실제 환경). 범위 -2.2 ~ +2.2
+function dayFit(Y,dp){const els=[stemEl(dp.s),stemEl(HIDDEN[dp.b][HIDDEN[dp.b].length-1][0])],w=[1,1.2];let f=0;
+  els.forEach((x,i)=>{if(x===Y.yong)f+=w[i];else if(x===Y.hee)f+=w[i]*0.6;else if(x===Y.gi)f-=w[i]});return +f.toFixed(2)}
+// 천을귀인 (일간 기준)
+const GUIIN={0:[1,7],4:[1,7],6:[1,7],1:[0,8],5:[0,8],2:[11,9],3:[11,9],7:[2,6],8:[5,3],9:[5,3]};
+// 강한 날 판정 순서 — 앞에 있을수록 먼저 말한다
+const TAG_PRI=['일지 충','일간 충','일간 합','귀인','일지 합','월지 충','기신일','용신일','월지 합','도화','역마','화개','연지 충','시지 충','연지 합','시지 합'];
+const STRONG_TAGS=['일지 충','일간 충','일지 합','기신일','용신일'];   // 약 30% 날만 강하게 말한다 (2026-09 시뮬레이션 12,000일)
+
 // ----- period scoring -----
 const BASE={비견:{achieve:3,relation:4,money:-2},겁재:{change:3,relation:3,money:-5},식신:{achieve:8,money:4,condition:1},상관:{achieve:6,change:6,relation:2},
  편재:{money:7,change:4,relation:3},정재:{money:8,condition:1},편관:{achieve:6,change:5,condition:-4},정관:{achieve:7,condition:1},편인:{achieve:3,change:4,condition:2},정인:{achieve:4,condition:6}};
@@ -953,6 +989,7 @@ const QS=[
  ['J','P','주말 계획이 갑자기 바뀌면','불편하다','오히려 재밌다']];
 const TYPES=['ISTJ','ISFJ','INFJ','INTJ','ISTP','ISFP','INFP','INTP','ESTP','ESFP','ENFP','ENTP','ESTJ','ESFJ','ENFJ','ENTJ'];
 const VERSION='rules-v0.4';
+const TODAY_VERSION='today-v2';  // 오늘의 운 규칙(용신·천간합충·귀인·강도) 버전
 const PROMPT_VERSION='prompt-v3.1'; // 프롬프트를 고치면 이 번호를 올려 옛 캐시 결과를 버린다
 const INTRO_KEY=KEYS[Math.floor(Math.random()*KEYS.length)]; // 첫 화면: 진입할 때마다 10개 일간 중 하나를 랜덤 선택해 남녀 한 쌍 표시
 let S={saved:null,step:'intro',input:null,mbti:null,chart:null,data:null,ai:{A:null,B:null},tab:0,qi:0,ans:[]};
@@ -1356,6 +1393,8 @@ async function runAI(g){
 const GRP={비견:'bi',겁재:'bi',식신:'sik',상관:'sik',편재:'jae',정재:'jae',편관:'gwan',정관:'gwan',편인:'in',정인:'in'};
 const FLOW={비견:'내 주관이 또렷해지고 존재감이 커지는 날',겁재:'경쟁과 지출이 함께 움직이기 쉬운 날',식신:'손에 잡히는 결과물을 만들기 좋은 날',상관:'말과 아이디어가 튀어나오는 날, 표현이 날카로워지기 쉬움',
  편재:'기회와 사람이 한꺼번에 들어오는 날',정재:'숫자와 실속을 챙기기 좋은 날',편관:'과제와 압박이 몰려 버티는 힘이 시험받는 날',정관:'책임과 평가가 따르는 날, 약속을 지키면 인정받음',편인:'생각이 깊어지고 방향을 바꾸고 싶어지는 날',정인:'배우고 도움받기 좋은 날, 몸과 마음을 채우는 날'};
+const FLOW_SOFT={비견:'내 페이스대로 움직이기 편한 날',겁재:'주변과 속도를 맞추게 되는 날',식신:'하던 일을 차분히 이어가기 좋은 날',상관:'생각이 말로 잘 나오는 날',
+ 편재:'바깥 소식에 눈이 가는 날',정재:'작은 실속을 챙기기 좋은 날',편관:'해야 할 일이 눈에 잘 들어오는 날',정관:'약속과 순서를 지키기 좋은 날',편인:'혼자 생각을 정리하기 좋은 날',정인:'배우고 받아들이기 좋은 날'};
 const BANDMOD={help:{신약:'힘이 붙는 흐름이에요.',신강:'고집이 세지기 쉬운 흐름이에요.',중화:''},use:{신약:'무리하면 금방 지치기 쉬워요.',신강:'에너지를 시원하게 쓰기 좋은 흐름이에요.',중화:''}};
 const MYWAY={
  bi:{EJ:'앞장서서 정리하려다 주변을 밀어붙이기 쉬워요. 결정권을 나눠보세요.',EP:'사람들과 어울리며 기분 내다 지출이 늘기 쉬워요.',IJ:'내 방식이 맞다는 확신이 강해져요. 한 사람에게만 의견을 물어보세요.',IP:'혼자 하는 게 편해 협업 연락을 미루기 쉬워요.',N:'주관이 강해지는 만큼 주변 의견을 한 번 더 들어보세요.'},
@@ -1369,7 +1408,10 @@ const TODO={비견:['오늘 할 일을 스스로 정하고 한 가지는 끝까�
  편관:['가장 부담스러운 일부터 30분만 손대기','무리한 부탁은 정중하게 거절하기'],정관:['마감과 약속 시간 다시 확인하기','진행 상황을 먼저 공유하기'],
  편인:['큰 결정은 미루고 정보만 모으기','20분 산책하며 생각 정리하기'],정인:['책이나 강의 하나 20분 보기','도움받은 사람에게 고맙다고 말하기']};
 const TAGLINE={'일지 충':'가까운 사람과 말이 엇갈리기 쉬우니 한 번 더 확인하세요.','월지 충':'일정이 흔들리기 쉬우니 여유 시간을 두세요.','연지 충':'바깥 환경의 변화가 느껴질 수 있어요.','시지 충':'계획한 일이 뒤로 밀리기 쉬워요.',
- '일지 합':'가까운 사람과 손발이 잘 맞는 날이에요.','월지 합':'주변과 협력하기 좋은 날이에요.','연지 합':'오랜 인연에서 연락이 올 수 있어요.','시지 합':'준비해온 일에 힘이 붙어요.',역마:'이동과 외출이 운을 열어줘요.',도화:'사람들의 눈에 띄기 쉬운 날이에요.',화개:'혼자 집중하는 시간에 일이 잘 풀려요.'};
+ '일지 합':'가까운 사람과 손발이 잘 맞는 날이에요.',
+ '일간 합':'나를 끌어당기는 기운이 들어와 사람이나 제안에 마음이 기울기 쉬운 날이에요.',
+ '일간 충':'나와 정면으로 부딪히는 기운이 들어와 평소 방식이 잘 안 먹힐 수 있어요. 한 박자 늦춰보세요.',
+ 귀인:'도움을 주는 사람이 가까이 오는 날이에요. 막힌 일은 혼자 붙잡지 말고 물어보세요.','월지 합':'주변과 협력하기 좋은 날이에요.','연지 합':'오랜 인연에서 연락이 올 수 있어요.','시지 합':'준비해온 일에 힘이 붙어요.',역마:'이동과 외출이 운을 열어줘요.',도화:'사람들의 눈에 띄기 쉬운 날이에요.',화개:'혼자 집중하는 시간에 일이 잘 풀려요.'};
 const WD=['일','월','화','수','목','금','토'];
 function kstParts(d){const k=new Date(d.getTime()+9*36e5);return {y:k.getUTCFullYear(),m:k.getUTCMonth()+1,d:k.getUTCDate(),wd:k.getUTCDay()}}
 function dayInfo(chart,date){const p=kstParts(date);const idx=mod(jdn(p.y,p.m,p.d)-2415021+10,60);const dp={s:idx%10,b:idx%12};
@@ -1377,8 +1419,21 @@ function dayInfo(chart,date){const p=kstParts(date);const idx=mod(jdn(p.y,p.m,p.
  const Z={out:{money:0,achieve:0,relation:0,change:0,condition:0},tags:[],gods:[]};
  const rd=rawScore(chart,dp),rm=rawScore(chart,mp),ry=rawScore(chart,yp),rw=dw?rawScore(chart,dw):Z;
  const sc=mix([[rw,0.15],[ry,0.2],[rm,0.2],[rd,0.45]]);
+ const Y=yongsin(chart.natal),fit=dayFit(Y,dp),ds=chart.natal.dayStem,extra=[];
+ if((ds+5)%10===dp.s)extra.push('일간 합');
+ if(Math.abs(ds-dp.s)===6&&Math.min(ds,dp.s)<=3)extra.push('일간 충');
+ if(GUIIN[ds].includes(dp.b))extra.push('귀인');
+ if(fit>=1.5)extra.push('용신일'); if(fit<=-1.5)extra.push('기신일');
+ const adj={money:0,achieve:0,relation:0,change:0,condition:0};
+ DOM.forEach(k=>adj[k]+=fit*(k==='condition'?5:3));
+ if(extra.includes('일간 합'))adj.relation+=5;
+ if(extra.includes('일간 충')){adj.change+=5;adj.condition-=4}
+ if(extra.includes('귀인')){adj.relation+=3;adj.achieve+=3}
+ DOM.forEach(k=>sc[k]=Math.max(10,Math.min(95,Math.round(sc[k]+adj[k]))));
+ const tags=[...new Set(extra.concat(rd.tags))].sort((a,b)=>{const i=TAG_PRI.indexOf(a),j=TAG_PRI.indexOf(b);return (i<0?99:i)-(j<0?99:j)});
+ const level=tags.some(x=>STRONG_TAGS.includes(x))?'strong':tags.length?'mild':'calm';
  const dOnly=mix([[rd,1]]);const top=DOM.slice().sort((a,b)=>(dOnly[b]+sc[b])-(dOnly[a]+sc[a]))[0],low=DOM.slice().sort((a,b)=>(dOnly[a]+sc[a])-(dOnly[b]+sc[b]))[0];
- return {p,pillar:pairName(dp),scores:sc,top,low,god:tenGod(chart.natal.dayStem,dp.s),tags:rd.tags,idx}}
+ return {p,pillar:pairName(dp),scores:sc,top,low,god:tenGod(chart.natal.dayStem,dp.s),tags,level,yong:Y,fit,dayEls:[stemEl(dp.s),stemEl(HIDDEN[dp.b][HIDDEN[dp.b].length-1][0])],idx}}
 
 // ---------- 오늘의 아이템 (AI 호출 없음) ----------
 // 물건 이름 뒤에 색을 붙이면 '흰색 모자' 같은 살 수 없는 물건이 만들어진다.
@@ -1403,7 +1458,9 @@ const ITEMS={
 const ITEMC={0:'초록색',1:'붉은색',2:'노란색',3:'흰색',4:'남색'};
 function todayItem(t,n){const grp=GRP[t.god],list=ITEMS[grp]||ITEMS.bi;
  const k=(t.p.d+t.p.m+t.idx)%list.length;const it=list[k];
- return {name:it[0], why:it[1], color:ITEMC[(t.p.d+n.weakEl)%5]}}
+ // 용신이 오늘 이미 들어왔으면 희신, 아니면 용신·희신을 날마다 번갈아 (둘 다 나에게 필요한 기운)
+ const Y=t.yong,ce=t.dayEls.includes(Y.yong)?Y.hee:t.dayEls.includes(Y.hee)?Y.yong:(t.idx%3===2?Y.hee:Y.yong);
+ return {name:it[0], why:it[1], color:ITEMC[ce], colorEl:ce}}
 
 // ---------- 쿠팡 파트너스 상품 슬롯 (products.js가 있을 때만 노출) ----------
 const CATPRE=['W','F','T','G','S'];              // 목 화 토 금 수
@@ -1544,17 +1601,25 @@ function todayTime(t,n){const b=t.idx%12,h=HAP6[b];
  let pick=h,why='오늘 일진과 맞물리는 시간대예요.';
  if(!ACTIVE_BR.includes(h)){
    // 육합 시간이 새벽이면, 나를 밀어주는 오행(인성·비겁)의 시간 중 활동 시간대에서 고른다
-   const e=stemEl(n.dayStem), want=[(e+4)%5, e];
+   const want=[t.yong.yong, t.yong.hee];
    const cand=ACTIVE_BR.filter(x=>want.includes(BR_EL[x]));
    pick=(cand.length?cand:ACTIVE_BR).sort((x,y)=>brDist(x,h)-brDist(y,h))[0];
-   why='오늘 내 기운을 밀어주는 시간대예요.';
+   why='나에게 필요한 기운이 도는 시간대예요.';
  }
  return {label:BR_HOUR[pick],why,use:TIMEUSE[mbtiKey()]||TIMEUSE.N}}
 
+function tagLine(x,t){
+ if(x==='용신일')return `나에게 필요한 ${EL[t.yong.yong]} 기운이 들어와 평소보다 일이 순하게 풀리기 쉬운 날이에요.`;
+ if(x==='기신일')return `나와 결이 다른 ${EL[t.yong.gi]} 기운이 강해 평소보다 힘이 더 들 수 있어요. 일정을 조금 헐겁게 잡아보세요.`;
+ return TAGLINE[x]||''}
 function viewToday(){const D=S.data,c=D.chart,n=c.natal,now=new Date(),t=dayInfo(c,now);
  const g=t.god,grp=GRP[g],isHelp=grp==='bi'||grp==='in';
- const flow=FLOW[g]+'. '+(BANDMOD[isHelp?'help':'use'][n.band]||'');
- const my=MYWAY[grp][mbtiKey()];const item=todayItem(t,n);const tag=t.tags.map(x=>TAGLINE[x]).filter(Boolean)[0];
+ const flow=t.level==='calm'
+   ? FLOW_SOFT[g]+'이에요. 크게 흔들리는 자리 없이 무난하게 흘러가요.'
+   : FLOW[g]+'. '+(BANDMOD[isHelp?'help':'use'][n.band]||'');
+ const lines=t.tags.map(x=>tagLine(x,t)).filter(Boolean);
+ const tag=(t.level==='strong'?lines.slice(0,2):lines.slice(0,1)).join(' ');
+ const my=MYWAY[grp][mbtiKey()];const item=todayItem(t,n);
  const mis=todayMistake(t),mat=todayMatch(t),tm=todayTime(t,n),act=todayAct(t,g);
  const week=[...Array(7)].map((_,k)=>dayInfo(c,new Date(now.getTime()+k*864e5)));
 
@@ -1593,9 +1658,9 @@ function viewToday(){const D=S.data,c=D.chart,n=c.natal,now=new Date(),t=dayInfo
 
   <p class="sec">✨ 오늘의 아이템</p>
   <div class="item"><p class="ib">${esc(item.name)}</p><p>${esc(item.why)}</p>
-   <p class="itemc">오늘의 색 · <b>${esc(item.color)}</b> <small>${EL[n.weakEl]} 기운을 보완하는 색이에요</small></p>
-   <p class="fine">없으면 비슷한 물건으로 충분해요.</p>${itemBox(item.name,prodBox([CATPRE[n.weakEl]+((t.p.d%4)+1)],'비슷한 아이템 보기'))}</div>
-  <p class="stamp">내 운 사용설명서 · ${VERSION}</p></article>
+   <p class="itemc">오늘의 색 · <b>${esc(item.color)}</b> <small>나에게 필요한 ${EL[item.colorEl]} 기운의 색이에요</small></p>
+   <p class="fine">없으면 비슷한 물건으로 충분해요.</p>${itemBox(item.name,prodBox([CATPRE[item.colorEl]+((t.p.d%4)+1)],'비슷한 아이템 보기'))}</div>
+  <p class="stamp">내 운 사용설명서 · ${TODAY_VERSION}</p></article>
  <button class="primary" onclick="saveCard()">오늘 카드 저장</button>
  <button class="ghost" onclick="${S.mbti?"go('confirm')":"go('mbtiAsk')"}">${S.mbti?'입력 정보 수정':'MBTI 추가해서 다시 보기'}</button>
  <button class="ghost" onclick="S.input=null;S.mbti=null;go('intro')">다른 사람 보기</button>
