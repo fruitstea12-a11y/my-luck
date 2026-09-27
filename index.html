@@ -186,6 +186,7 @@ select:disabled{opacity:.45}
 .col .tags{margin-bottom:5px}.col .tags span{font-size:11.5px;padding:1px 7px}
 .gapline{margin:8px 0 0!important;padding:8px 10px;border-radius:8px;background:var(--chip);font-size:13.5px;line-height:1.6}.gapline.ok{background:var(--paper)}
 .seen{margin:2px 0 8px;padding:0;list-style:none}.seen li{position:relative;padding:5px 0 5px 20px;font-size:14px;line-height:1.55;font-weight:600}.seen li::before{content:'✔';position:absolute;left:2px;top:5px;color:var(--to);font-size:12px}
+.sb{display:block;margin-top:3px;font-size:11px;color:var(--sub)}.item .ir{font-weight:600;margin:4px 0}
 .kw{margin:8px 0 0}.kw span{font-weight:600}
 .why{margin:10px 0 0;font-size:13px;line-height:1.65;color:var(--ink,#2b2622);background:var(--paper);border-radius:10px;padding:10px 12px}.why b{display:block;font-size:12px;margin-bottom:2px}.why small{display:block;margin-top:4px;font-size:11px;color:var(--sub)}
 .tags{display:flex;flex-wrap:wrap;gap:5px;margin:0 0 8px}.tags span{font-size:12px;background:var(--chip);border-radius:999px;padding:2px 9px}
@@ -997,7 +998,7 @@ const QS=[
  ['J','P','주말 계획이 갑자기 바뀌면','불편하다','오히려 재밌다']];
 const TYPES=['ISTJ','ISFJ','INFJ','INTJ','ISTP','ISFP','INFP','INTP','ESTP','ESFP','ENFP','ENTP','ESTJ','ESFJ','ENFJ','ENTJ'];
 const VERSION='rules-v0.4';
-const TODAY_VERSION='today-v5.1';  // 오늘의 운 규칙(용신·천간합충·귀인·강도) 버전
+const TODAY_VERSION='today-v6';  // 오늘의 운 규칙(용신·천간합충·귀인·강도) 버전
 const PROMPT_VERSION='prompt-v3.1'; // 프롬프트를 고치면 이 번호를 올려 옛 캐시 결과를 버린다
 const INTRO_KEY=KEYS[Math.floor(Math.random()*KEYS.length)]; // 첫 화면: 진입할 때마다 10개 일간 중 하나를 랜덤 선택해 남녀 한 쌍 표시
 let S={saved:null,step:'intro',input:null,mbti:null,chart:null,data:null,ai:{A:null,B:null},tab:0,qi:0,ans:[]};
@@ -1466,6 +1467,26 @@ const ITEMS={
  in:[['책','20분만 읽어도 머릿속이 정리돼요.'],
      ['무릎담요','몸이 따뜻해지면 생각도 천천히 가라앉아요.'],
      ['작은 식물','눈이 쉬어가는 자리를 하나 만들어보세요.']]};
+// 물건마다 한 축을 정해두고, 그 축의 내 글자로 '왜 오늘 나에게 이게 필요한지'를 잇는다 (운을 바꾼다는 말은 쓰지 않는다)
+const ITEM_WHY={
+ '볼펜':['J','J인 나는 정해둔 걸 눈으로 확인해야 마음이 놓여요.','P인 나는 오늘 생각이 자주 바뀌어, 적어두지 않으면 흘리기 쉬워요.'],
+ '메모지':['J','J인 나는 할 일이 눈앞에 붙어 있어야 흔들리지 않아요.','P인 나는 오늘 이것저것 손대다 원래 하려던 걸 잊기 쉬워요.'],
+ '텀블러':['E','E인 나는 오늘 밖에서 사람 만나며 쓰는 돈이 늘기 쉬워요.','I인 나는 익숙한 내 것이 있으면 밖에서도 마음이 편해요.'],
+ '메모장':['N','N인 나는 오늘 아이디어가 떠올랐다 금방 사라지기 쉬워요.','S인 나는 떠오른 걸 바로 구체적으로 적어야 다음 행동으로 이어져요.'],
+ '머그컵':['E','E인 나는 오늘 이 사람 저 사람 챙기다 내 일에 머무는 시간이 짧아지기 쉬워요.','I인 나는 오늘 혼자 한 가지에 오래 머물 때 일이 잘 풀려요.'],
+ '이어폰':['E','E인 나는 주변 소리에 금방 끌려가 하던 일이 끊기기 쉬워요.','I인 나는 오늘 나만의 공간이 있어야 집중이 돼요.'],
+ '작은 지갑':['J','J인 나는 오늘 쓸 돈을 미리 정해두면 마음이 편해요.','P인 나는 오늘 즉흥적으로 지갑이 열리기 쉬워요.'],
+ '영수증 파우치':['S','S인 나는 쓴 내역이 눈에 보여야 정리가 돼요.','N인 나는 큰 그림은 잘 보지만 작은 지출은 놓치기 쉬워요.'],
+ '가계부 노트':['J','J인 나는 숫자를 적어둘 때 머리가 맑아져요.','P인 나는 오늘 한 약속을 나중에 헷갈리기 쉬워요.'],
+ '손목시계':['J','J인 나는 오늘 약속이 몰려도 시간을 확인하면 차분해져요.','P인 나는 하다 보면 시간 가는 걸 잊기 쉬워요.'],
+ '클리어파일':['S','S인 나는 할 일이 눈앞에 정리돼 있어야 손이 가요.','N인 나는 이것저것 펼쳐놓다 급한 걸 놓치기 쉬워요.'],
+ '포스트잇':['J','J인 나는 오늘 남은 일이 한눈에 보여야 마음이 놓여요.','P인 나는 오늘 여기저기 손대다 끝낸 게 뭔지 헷갈리기 쉬워요.'],
+ '책':['N','N인 나는 오늘 새로운 생각거리가 생기면 머리가 오히려 맑아져요.','S인 나는 오늘 검증된 내용을 차근차근 읽을 때 생각이 정리돼요.'],
+ '무릎담요':['F','F인 나는 오늘 남 챙기느라 내 몸 챙기는 걸 잊기 쉬워요.','T인 나는 오늘 머리를 많이 쓰는 만큼 몸은 편하게 둬야 해요.'],
+ '작은 식물':['F','F인 나는 눈에 초록이 보이면 마음이 금방 풀려요.','T인 나는 오늘 생각을 끊어줄 쉼표 하나가 필요해요.']};
+const josaIga=w=>{const c=w.charCodeAt(w.length-1)-0xAC00;return c>=0&&c%28?'이':'가'};
+function itemReason(name){const r=ITEM_WHY[name],type=S.mbti?.type;if(!r||!type)return null;
+ const ax=AXIS_POS[r[0]],mine=type[ax];return (mine===r[0]?r[1]:r[2])+` 그래서 오늘은 ${name}${josaIga(name)} 잘 맞아요.`}
 const ITEMC={0:'초록색',1:'붉은색',2:'노란색',3:'흰색',4:'남색'};
 function todayItem(t,n){const grp=GRP[t.god],list=ITEMS[grp]||ITEMS.bi;
  const k=(t.p.d+t.p.m+t.idx)%list.length;const it=list[k];
@@ -1701,17 +1722,46 @@ function seenLines(type,first,t){const h=x=>{let v=2166136261;for(const ch of x)
  const day=`${t.p.y}-${t.p.m}-${t.p.d}`,others=[...type].filter(c=>c!==first),r=h(day+type);
  const pick=[first,others[r%3],others[(r+1)%3]];
  return pick.map(c=>SEEN[c][h(day+c)%SEEN[c].length])}
+// 🔮 사주가 본 나 — 생년월일만으로 MBTI 축의 기울기를 잡아 교차 확인한다.
+// 근거: 십성 구성. 외향=식상·편재(드러냄) vs 내향=인성(안으로 모음) / 현실=정재·정관·식신 vs 가능성=편인·상관
+//       논리=관성·상관 vs 마음=정인·식신 / 계획=정(正) 계열 vs 유연=편(偏) 계열
+// 기준값: 2026-09 실제 원국 3,000개 시뮬레이션 중앙값·표준편차. |z|≥0.4 만 기울었다고 본다(약 36% / 28% 중립 / 36%).
+const LEAN_CAL={EI:[0.153,0.384],SN:[0.078,0.367],TF:[-0.068,0.377],JP:[-0.153,0.364]};
+function natalLean(n){const G=n.gods,F={EI:[G.식신+G.상관+G.편재+G.겁재*0.5,G.편인+G.정인+G.비견*0.5],
+  SN:[G.정재+G.정관+G.식신,G.편인+G.상관+G.편재*0.5],TF:[G.편관+G.정관*0.5+G.상관*0.5,G.정인+G.식신+G.정재*0.3],
+  JP:[G.정관+G.정재+G.정인,G.편관+G.편재+G.편인+G.상관]};const out={};
+ for(const k in F){const [a,b]=F[k],z=((a-b)/(a+b+0.5)-LEAN_CAL[k][0])/LEAN_CAL[k][1];out[k[0]]=z;out[k[1]]=-z}
+ return out}
+const SAJU_POLE={
+ E:['사람 속에서 기운이 살아나고, 생각을 밖으로 꺼내며 풀어가는 모습이 보여요.','드러내고 표현하는 기운이 강한 사주'],
+ I:['밖으로 꺼내기 전에 안에서 충분히 삭이고 정리하는 모습이 보여요.','생각을 안으로 모으는 기운이 강한 사주'],
+ S:['손에 잡히는 것, 확실한 것부터 챙기는 모습이 보여요.','실속과 현실을 보는 기운이 강한 사주'],
+ N:['남들이 안 보는 가능성을 먼저 떠올리는 모습이 보여요.','새로운 관점을 여는 기운이 강한 사주'],
+ T:['마음보다 기준을 먼저 세우고, 할 말은 하는 모습이 보여요.','판단하고 결단하는 기운이 강한 사주'],
+ F:['사람의 마음을 먼저 품고 챙기는 모습이 보여요.','돌보고 품어주는 기운이 강한 사주'],
+ J:['정해둔 방식을 지키며 차근차근 쌓아가는 모습이 보여요.','규칙과 안정을 따르는 기운이 강한 사주'],
+ P:['정해둔 방식 하나를 고수하기보다 상황에 따라 방향을 바꾸는 모습이 보여요.','변화와 융통을 따르는 기운이 강한 사주']};
+// MBTI(겉)와 사주(속)가 다를 때 — 한 줄로 '겉과 속' 타입을 짚는다
+const INNER={E:'겉으로는 활발하지만, 혼자 있어야 다시 충전되는 타입이에요.',I:'조용해 보여도, 속으로는 사람과 나누고 싶은 게 많은 타입이에요.',
+ S:'현실적으로 움직이지만, 머릿속엔 늘 다른 그림을 하나 품고 있는 타입이에요.',N:'상상은 멀리 가도, 막상 결정할 땐 꽤 현실적인 타입이에요.',
+ T:'말은 논리적으로 해도, 속으로는 상대 마음을 오래 신경 쓰는 타입이에요.',F:'마음이 여려 보여도, 결정적인 순간엔 선을 분명히 긋는 타입이에요.',
+ J:'계획을 세우지만, 막상 판이 바뀌면 누구보다 빨리 적응하는 타입이에요.',P:'즉흥적으로 보여도, 중요한 건 속으로 다 계산해두는 타입이에요.'};
+function sajuSees(n,letter,hasMbti){const L=natalLean(n),z=L[letter],o=OPP[letter];
+ if(!hasMbti){const pole=z>=0?letter:o;return {head:'생년월일만 보고 잡은 모습이에요.',body:SAJU_POLE[pole][0],basis:SAJU_POLE[pole][1],kind:'solo'}}
+ if(z>=0.4)return {head:'사주에서도 같은 얘기가 나와요.',body:SAJU_POLE[letter][0],basis:SAJU_POLE[letter][1],kind:'same'};
+ if(z<=-0.4)return {head:'그런데 사주는 조금 다르게 봐요.',body:SAJU_POLE[o][0]+' '+INNER[letter],basis:SAJU_POLE[o][1],kind:'diff'};
+ return {head:'사주에는 두 모습이 비슷하게 섞여 있어요.',body:`그중 MBTI로 드러난 ${letter} 쪽이 지금 더 앞에 나와 있는 거예요.`,basis:'양쪽 기운이 고르게 있는 사주',kind:'mix'}}
 const OPP={E:'I',I:'E',S:'N',N:'S',T:'F',F:'T',J:'P',P:'J'};
 const AXIS_POS={E:0,I:0,S:1,N:1,T:2,F:2,J:3,P:3};
 // 오늘 가장 강한 신호가 축을 정하고, 신호가 없으면 오늘 십성이 정한다
 const DEM_TAG={'일지 충':'P','월지 충':'P','일간 충':'P','시지 충':'P','연지 충':'P',역마:'P',
  '일간 합':'E','일지 합':'E','월지 합':'E',귀인:'E',도화:'E',화개:'I'};
 const DEM_GOD={비견:'T',겁재:'E',식신:'J',상관:'N',편재:'N',정재:'S',편관:'T',정관:'J',편인:'I',정인:'F'};
-function todayGap(t){const tg=t.tags.find(x=>DEM_TAG[x]);const want=tg?DEM_TAG[tg]:DEM_GOD[t.god];const D=DEMAND[want];
- const type=S.mbti?.type;if(!type)return {flow:D.flow,tip:D.tip,type:null};
+function todayGap(t,n){const tg=t.tags.find(x=>DEM_TAG[x]);const want=tg?DEM_TAG[tg]:DEM_GOD[t.god];const D=DEMAND[want];
+ const type=S.mbti?.type;if(!type)return {flow:D.flow,tip:D.tip,type:null,saju:sajuSees(n,want,false)};
  const mine=type[AXIS_POS[want]],match=mine===want;
  return {flow:D.flow,type,trait:TRAIT[mine],match,
-  letter:mine,seen:seenLines(type,mine,t),line:match?MATCHWHY[want]:D.gap.replace('나는',mine+'인 나는'),
+  letter:mine,seen:seenLines(type,mine,t),saju:sajuSees(n,mine,true),line:match?MATCHWHY[want]:D.gap.replace('나는',mine+'인 나는'),
   tip:match?D.tip:D.gapTip}}
 function todayMatch(t){const m=MATCH[t.god],ei=S.mbti?.type?.[0];return {who:m[0],why:m[1],how:MATCHHOW[ei]||MATCHHOW.N}}
 // 활동 시간대(07~21시 시작)에 해당하는 지지: 진사오미신유술
@@ -1739,7 +1789,7 @@ function viewToday(){const D=S.data,c=D.chart,n=c.natal,now=new Date(),t=dayInfo
    : FLOW[g]+'. '+(BANDMOD[isHelp?'help':'use'][n.band]||'');
  const lines=t.tags.map(x=>tagLine(x,t)).filter(Boolean);
  const tag=(t.level==='strong'?lines.slice(0,2):lines.slice(0,1)).join(' ');
- const gp=todayGap(t);const item=todayItem(t,n);
+ const gp=todayGap(t,n);const item=todayItem(t,n);
  const mis=todayMistake(t),mat=todayMatch(t),tm=todayTime(t,n),act=todayAct(t,g),cau=todayCaution(t,c,tm.label),kws=todayKeywords(t);
  const week=[...Array(7)].map((_,k)=>dayInfo(c,new Date(now.getTime()+k*864e5)));
 
@@ -1754,22 +1804,24 @@ function viewToday(){const D=S.data,c=D.chart,n=c.natal,now=new Date(),t=dayInfo
   <div class="todaytop" style="--c:${DOMC[t.top]}"><p class="lead">${esc(flow)}</p>${tag?`<small class="hint">${esc(tag)}</small>`:''}</div>
   <div class="tags kw">${kws.map(k=>`<span>#${esc(k)}</span>`).join('')}</div>
 
-  <p class="sec">📊 오늘의 핵심 영역</p>
-  <div class="dom">${DOM.map(d=>`<div><span>${DOMK[d]}</span><div class="bar"><i style="width:${t.scores[d]}%;background:${DOMC[d]}"></i></div><small>${t.scores[d]} · ${LEVEL(t.scores[d])}</small></div>`).join('')}</div>
-  <p class="why"><b>왜 이런 흐름일까요?</b> ${esc(todayWhy(t))}<small>근거 · ${t.pillar}일 · ${esc(g)}${t.tags.length?' · '+esc(t.tags.slice(0,2).join(', ')):''}</small></p>
-
-  <p class="sec">💡 오늘 이렇게 해보세요</p>
-  <div class="combo"><p><b class="key">✓ ${esc(act.title)}</b>${esc(act.why)}</p></div>
-
   <p class="sec">🧬 오늘의 나</p>
   <div class="tri"><p><span class="lab">🌿 오늘의 흐름</span>${esc(gp.flow)}</p>
    ${gp.type?`<p><span class="lab">🧠 그런데 ${esc(gp.type)}인 나는?</span><b>${esc(gp.letter)}</b> · ${esc(gp.trait)}</p>
    <p><span class="lab">🎯 이런 적 많죠?</span></p><ul class="seen">${gp.seen.map(x=>`<li>${esc(x)}</li>`).join('')}</ul>
+   <p><span class="lab">🔮 사주가 본 나</span>${esc(gp.saju.head)} ${esc(gp.saju.body)}<small class="sb">근거 · ${esc(gp.saju.basis)}</small></p>
    <p><span class="lab">✨ 그래서 오늘은</span></p><p class="gapline${gp.match?' ok':''}">${esc(gp.line)}</p>`:''}
+   ${gp.type?'':`<p><span class="lab">🔮 사주가 본 나</span>${esc(gp.saju.head)} ${esc(gp.saju.body)}<small class="sb">근거 · ${esc(gp.saju.basis)}</small></p>`}
    ${mis?`<p><span class="lab">⚠️ 오늘의 작은 함정</span>${esc(mis.saju)} ${gp.type?esc(gp.type)+'인 나는 ':''}${esc(mis.my)}</p>
    <p class="fine">✓ ${esc(mis.guard)}</p>`:''}
    <p><span class="lab">👉 오늘의 사용법</span></p><p class="q">${esc(gp.tip)}</p>
    ${gp.type?'':`<p class="fine">MBTI를 넣으면 오늘 흐름과 내 성향이 맞는 날인지, 엇갈리는 날인지 보여드려요.</p>`}</div>
+
+  <p class="sec">💡 오늘 이렇게 해보세요</p>
+  <div class="combo"><p><b class="key">✓ ${esc(act.title)}</b>${esc(act.why)}</p></div>
+
+  <p class="sec">📊 오늘의 핵심 영역</p>
+  <div class="dom">${DOM.map(d=>`<div><span>${DOMK[d]}</span><div class="bar"><i style="width:${t.scores[d]}%;background:${DOMC[d]}"></i></div><small>${t.scores[d]} · ${LEVEL(t.scores[d])}</small></div>`).join('')}</div>
+  <p class="why"><b>왜 이런 흐름일까요?</b> ${esc(todayWhy(t))}<small>근거 · ${t.pillar}일 · ${esc(g)}${t.tags.length?' · '+esc(t.tags.slice(0,2).join(', ')):''}</small></p>
 
   <p class="sec">🤝 오늘 잘 맞는 사람</p>
   <div class="tri"><p><b class="key">${esc(mat.who)}</b>${esc(mat.why)}</p>
@@ -1784,7 +1836,7 @@ function viewToday(){const D=S.data,c=D.chart,n=c.natal,now=new Date(),t=dayInfo
    <p class="fine"><b>이번 주 포인트</b> · ${weekPoint(week)}</p></details>
 
   <p class="sec">✨ 오늘의 아이템</p>
-  <div class="item"><p class="ib">${esc(item.name)}</p><p>${esc(item.why)}</p>
+  <div class="item"><p class="ib">${esc(item.name)}</p>${itemReason(item.name)?`<p class="ir">${esc(itemReason(item.name))}</p>`:`<p>${esc(item.why)}</p>`}
    <p class="itemc">오늘의 색 · <b>${esc(item.color)}</b> <small>나에게 필요한 ${EL[item.colorEl]} 기운의 색이에요</small></p>
    <p class="fine">없으면 비슷한 물건으로 충분해요.</p>${itemBox(item.name,prodBox([CATPRE[item.colorEl]+((t.p.d%4)+1)],'비슷한 아이템 보기'))}</div>
   <p class="stamp">내 운 사용설명서 · ${TODAY_VERSION}</p></article>
