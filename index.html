@@ -1399,8 +1399,58 @@ async function card1Local(){
   return {profile:{oneLine:pair.oneLine,sajuKeywords:kw,
     sajuDesc:[T.dayBand[il+'|'+n.band],T.elemPair[strong+'|'+weak]].filter(Boolean).join(' '),
     mbtiDesc:mb?(T.mbtiDesc[mb]||''):'',match:pair.match,diff:pair.diff,combo:pair.combo},pre:'c1-pre-v1'}}
+// 카드5(M) 12개월 문구도 AI를 부르지 않는다 — card5-pre.json(c5-pre-v1) 조각을 코드가 고른다.
+// 반환 형태는 워커 M 카드 응답과 같다: {months:[{i,keyword,flow,myWay,tip}]}
+let C5PRE=null;
+async function monthsLocal(){
+  if(!C5PRE){const r=await fetch('card5-pre.json?v=c5-pre-v1');if(!r.ok)throw {code:'network'};C5PRE=await r.json()}
+  const T=C5PRE,M=S.data.months,inp=S.input||{};
+  const GK={bi:'비겁',sik:'식상',jae:'재성',gwan:'관성',in:'인성'};
+  // 사람마다 고르는 순서를 다르게 — 생일로 만든 고정 오프셋
+  let seed=0;for(const ch of String(inp.date)+String(inp.time))seed=(seed*31+ch.charCodeAt(0))>>>0;
+  const used=new Set();
+  const pick=(pools,salt)=>{const all=pools.flat().filter(Boolean);if(!all.length)return '';
+    const off=(seed+salt)%all.length;
+    for(let j=0;j<all.length;j++){const x=all[(off+j)%all.length];if(!used.has(x)){used.add(x);return x}}
+    return all[off]};
+  let letters=[];
+  if(S.mbti?.type){const p=S.mbti.pct?Object.values(S.mbti.pct):null;
+    letters=p?p.slice().sort((a,b)=>b.pct-a.pct).map(v=>v.letter):S.mbti.type.split('')}
+  const LV=['low','mid','high'];
+  return {months:M.map((m,i)=>{const d=m.top,v=m.scores[d];
+    const b4=v<40?0:v<60?1:v<80?2:3,lv=v<45?'low':v<60?'mid':'high',g=GK[GRP[(m.gods||[])[0]]]||'인성';
+    const other=LV.filter(x=>x!==lv);
+    const my=letters.length
+      ?pick([letters.map((L,j)=>(T.myWay[d+'|'+lv+'|'+L]||[])[(i+j)%2]),letters.map((L,j)=>(T.myWay[d+'|'+lv+'|'+L]||[])[(i+j+1)%2])],0)
+      :pick([T.myWayNone[d+'|'+lv]],i);
+    return {i,keyword:pick([T.keyword[d+'|'+b4]],i),flow:pick([T.flow[d+'|'+lv+'|'+g]],i),myWay:my,
+      tip:pick([T.tip[d+'|'+lv],...other.map(x=>T.tip[d+'|'+x])],i*7)}})}}
+// 카드4·6(B)도 AI를 부르지 않는다 — card46-pre.json(c46-pre-v1) 조각을 코드가 고른다.
+// 반환 형태는 워커 B 카드 응답과 같다: {achieve:{...}, usage:{...}}
+let C46PRE=null;
+async function bLocal(){
+  if(!C46PRE){const r=await fetch('card46-pre.json?v=c46-pre-v1');if(!r.ok)throw {code:'network'};C46PRE=await r.json()}
+  const T=C46PRE,D=S.data,n=D.chart.natal,inp=S.input||{};
+  let seed=0;for(const ch of String(inp.date)+String(inp.time))seed=(seed*31+ch.charCodeAt(0))>>>0;
+  const v=(arr,salt=0)=>Array.isArray(arr)?arr[(seed+salt)%arr.length]:(arr||'');
+  const take=(arr,k,salt=0)=>{const a=(arr||[]).slice(),o=[];let x=seed+salt;while(a.length&&o.length<k){o.push(a.splice(x%a.length,1)[0]);x=Math.floor(x/3)+7}return o};
+  const t1=n.achieveType[0],t2=n.achieveType[1],weak=EL[n.weakEl],mb=S.mbti?.type||null;
+  const fields=[...take(T.fields[t1],2,1),...take(T.fields[t2],2,2)].filter((x,i,a)=>a.indexOf(x)===i);
+  const CAT=t=>{const g=(t.tags||[])[0]||'';if(/^(일지|월지|연지|시지) 충/.test(g))return g.slice(0,2)+'충';if(/합$/.test(g))return '합';return ['역마','화개','도화'].includes(g)?g:'없음'};
+  const usedC=new Set();
+  const cautions=(D.cautions||[]).map((t,i)=>{const s=t.scores;
+    const drv=s.condition<45?'C':s.change>70?'X':((50-s.condition)>=(s.change-50)?'C':'X');
+    const pool=T.cautions[CAT(t)+'|'+drv]||T.cautions['없음|'+drv];
+    let c=pool[(seed+i)%pool.length];if(usedC.has(c.risk))c=pool[(seed+i+1)%pool.length];usedC.add(c.risk);
+    return {when:t.year+'년',risk:c.risk,myMistake:c.myMistake,guard:c.guard}});
+  return {achieve:{typeDesc:T.typeDesc[t1+'|'+t2]||'',conditions:take(T.conditions[t1],3),blocked:T.blocked[t1+'|'+n.band]||'',
+      fields,mbtiWork:mb?(T.mbtiWork[t1+'|'+mb]||''):''},
+    usage:{luckKeywords:T.luckKeywords[weak]||[],action:v(T.action[weak]),place:v(T.place[weak],1),item:v(T.item[weak],2),
+      mbtiPractice:mb?(T.mbtiPractice[mb]||[]):[],cautions},pre:'c46-pre-v1'}}
 async function callCard(g){
   if(g==='P') return card1Local();
+  if(g==='M') return monthsLocal();
+  if(g==='B') return bLocal();
   const base=apiBase();
   if(!base){ // Worker 주소가 없으면 예전 방식(Artifact 런타임)으로 — 개발용
     if(!sample) throw {code:'upstream'};
@@ -2149,7 +2199,7 @@ window.openM=(k,restore)=>{S.ui.openMonth=k;document.querySelectorAll('.mg .mt')
 function card6(){const B=S.ai.B,n=S.data.chart.natal;if(!ok('B'))return wait('B');const u=B.usage||{};
  return `<div class="luck" style="--c:${ELC[n.weakEl]}"><small>보완하면 좋은 기운 · ${EL[n.weakEl]}</small><div class="tags">${(u.luckKeywords||[]).map(k=>`<span>${esc(k)}</span>`).join('')}</div></div>
  <h4>🍀 이렇게 해보세요</h4><p>${esc(u.action)}</p><h4>🏞 이런 환경이 좋아요</h4><p>${esc(u.place)}</p><h4>🎒 곁에 두면 좋은 것</h4><p>${esc(u.item)}</p>${prodBox([1,2,3,4].map(i=>CATPRE[n.weakEl]+i),'관련 아이템 보기')}
- <h4>🧬 MBTI 맞춤 실천법${S.mbti?' · '+esc(S.mbti.type):''}</h4><ul class="checks">${(u.mbtiPractice||[]).map(c=>`<li>${esc(c)}</li>`).join('')}</ul>
+ ${(u.mbtiPractice||[]).length?`<h4>🧬 MBTI 맞춤 실천법${S.mbti?' · '+esc(S.mbti.type):''}</h4><ul class="checks">${(u.mbtiPractice||[]).map(c=>`<li>${esc(c)}</li>`).join('')}</ul>`:''}
  <h4>📌 이 시기의 사용법</h4>
  <p class="fine">앞으로 흐름이 크게 달라지는 시기예요. 그때의 흐름을 어떻게 활용하면 좋을지 정리했어요.</p>
  ${(u.cautions||[]).map(c=>`<div class="pill turn"><b>${esc(c.when)}</b> <em>${esc(c.risk)}</em><p>${esc(c.myMistake)}</p><p class="q">이때는 ${esc(c.guard)}</p></div>`).join('')}`+relTease()}
