@@ -457,7 +457,7 @@ details summary{cursor:pointer;color:var(--sub);font-size:14px;padding:10px 0}
 .paybox{margin:12px -4px 0;min-height:40px}
 .paymsg{min-height:1.2em;margin:6px 0 0;font-size:13px;color:var(--accent);text-align:center}
 .paytest{text-align:center}
-.fact{margin:10px 0 14px;padding:10px 14px;border-radius:12px;background:#7a2e2e0f;border:1px solid #7a2e2e33}.fact small{display:block;font-size:11.5px;font-weight:700;color:#8a2f2f;margin-bottom:3px}.fact p{margin:0;font-size:15.5px;font-weight:600;line-height:1.5;word-break:keep-all}.sfact{margin:6px 12px 8px;font-size:14px;font-weight:600;line-height:1.45;word-break:keep-all;color:#8a2f2f}.sumbox{margin:14px 0 12px;padding:14px 16px;border-radius:16px;background:var(--panel,#fbf7ef);border:1px solid #b8963e55;box-shadow:inset 3px 0 0 #8a2f2f}.sumh{margin:0 0 8px;font-size:13px;font-weight:700;letter-spacing:.02em;color:#8a2f2f}.sumrow{margin:0 0 10px}.sumrow:last-child{margin:0}.sumrow b{display:block;font-size:12px;color:#8a6d2a;margin-bottom:2px}.sumrow p{margin:0;font-size:14.5px;line-height:1.55;word-break:keep-all}.sumrow ol{margin:2px 0 0;padding-left:20px;font-size:14.5px;line-height:1.6;word-break:keep-all}</style>
+.fact{margin:10px 0 14px;padding:10px 14px;border-radius:12px;background:#7a2e2e0f;border:1px solid #7a2e2e33}.fact small{display:block;font-size:11.5px;font-weight:700;color:#8a2f2f;margin-bottom:3px}.fact p{margin:0;font-size:15.5px;font-weight:600;line-height:1.5;word-break:keep-all}.sfact{margin:6px 12px 8px;font-size:14px;font-weight:600;line-height:1.45;word-break:keep-all;color:#8a2f2f}.sumbox{margin:14px 0 12px;padding:14px 16px;border-radius:16px;background:var(--panel,#fbf7ef);border:1px solid #b8963e55;box-shadow:inset 3px 0 0 #8a2f2f}.sumh{margin:0 0 8px;font-size:13px;font-weight:700;letter-spacing:.02em;color:#8a2f2f}.sumrow{margin:0 0 10px}.sumrow:last-child{margin:0}.sumrow b{display:block;font-size:12px;color:#8a6d2a;margin-bottom:2px}.sumrow p{margin:0;font-size:14.5px;line-height:1.55;word-break:keep-all}.sumrow ol{margin:2px 0 0;padding-left:20px;font-size:14.5px;line-height:1.6;word-break:keep-all}.privnote{margin:0 0 12px;padding:9px 12px;border-radius:10px;background:#b8963e14;font-size:13px;line-height:1.5;color:#5b4a2a;word-break:keep-all}</style>
 </head>
 <body><main class="wrap" id="view">
 <!-- 검색엔진용 기본 내용. 화면이 뜨면 스크립트가 이 자리를 바꾼다. -->
@@ -1070,6 +1070,7 @@ function viewIntro(){return `<section class="intro">
 function viewInput(){const i=S.input||S.saved?.input||{};return `<section>
   <p class="stepno">STEP 1 / 2</p><h2>출생정보</h2>
   <div class="form">
+   <p class="privnote">🔒 입력한 정보는 서버로 보내지 않아요. 이 기기 안에서만 계산하고, 저장도 이 기기에만 돼요.</p>
    <label>이름 또는 별명 <small>(선택)</small><input id="nm" maxlength="10" value="${esc(i.name||'')}" placeholder="결과에 표시돼요"></label>
    <div class="timebox"><span class="tlabel">생년월일 <small>양력</small></span>
     <div class="row3d"><select id="by" aria-label="년">${yearOpts(i)}</select><select id="bmo" aria-label="월">${monOpts(i)}</select><select id="bda" aria-label="일">${dayOpts(i)}</select></div></div>
