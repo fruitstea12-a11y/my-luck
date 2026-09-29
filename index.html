@@ -2139,7 +2139,7 @@ function summaryBox(){if(!ok('P'))return '';const p=S.ai.P.profile||{},m=S.mbti;
   <div class="sumrow"><b>${m?'사주와 MBTI가 다른 점':'내 안에서 부딪히는 점'}</b><p>${esc(p.diff)}</p></div>
   ${acts.length?`<div class="sumrow"><b>지금 해볼 ${acts.length}가지</b><ol>${acts.map(x=>`<li>${esc(x)}</li>`).join('')}</ol></div>`:''}</section>`}
 function card1(){const A=S.ai.P,m=S.mbti;if(!ok('P'))return elementBars()+wait('P');const p=A.profile||{};
- return `<p class="big">${esc(p.oneLine)}</p>${p.fact?`<div class="fact"><small>🔎 성향을 보면</small><p>${esc(p.fact)}</p></div>`:''}
+ return `<p class="big">${esc(p.oneLine)}</p>${p.fact?`<div class="fact"><small>🔎 이런 성향이 보여요</small><p>${esc(p.fact)}</p></div>`:''}
  <div class="two"><div class="col saju"><h4>🔮 사주로 본 타고난 나</h4><div class="tags">${(p.sajuKeywords||[]).map(k=>`<span>${esc(k)}</span>`).join('')}</div><p>${esc(p.sajuDesc)}</p></div>
  <div class="col mbti"><h4>🧬 MBTI로 본 지금의 나 ${m?esc(m.type):''}</h4>${m?.pct?`<div class="axes sm">${Object.values(m.pct).map(v=>`<div class="ax"><span>${v.letter} ${v.pct}%</span><div class="bar"><i style="width:${v.pct}%"></i></div></div>`).join('')}</div>`:''}<p>${m?esc(p.mbtiDesc):'MBTI를 입력하지 않았어요.'}</p></div></div>
  <!-- 일치·다른 점은 위 '한눈에 보는 결론'에서 보여준다 -->
