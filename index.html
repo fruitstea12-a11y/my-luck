@@ -2139,7 +2139,7 @@ function summaryBox(){if(!ok('P'))return '';const p=S.ai.P.profile||{},m=S.mbti;
   <div class="sumrow"><b>${m?'사주와 MBTI가 다른 점':'내 안에서 부딪히는 점'}</b><p>${esc(p.diff)}</p></div>
   ${acts.length?`<div class="sumrow"><b>지금 해볼 ${acts.length}가지</b><ol>${acts.map(x=>`<li>${esc(x)}</li>`).join('')}</ol></div>`:''}</section>`}
 function card1(){const A=S.ai.P,m=S.mbti;if(!ok('P'))return elementBars()+wait('P');const p=A.profile||{};
- return `<p class="big">${esc(p.oneLine)}</p>${p.fact?`<div class="fact"><small>🔥 팩폭 한 줄</small><p>${esc(p.fact)}</p></div>`:''}
+ return `<p class="big">${esc(p.oneLine)}</p>${p.fact?`<div class="fact"><small>🔍 자주 나타나는 패턴</small><p>${esc(p.fact)}</p></div>`:''}
  <div class="two"><div class="col saju"><h4>🔮 사주로 본 타고난 나</h4><div class="tags">${(p.sajuKeywords||[]).map(k=>`<span>${esc(k)}</span>`).join('')}</div><p>${esc(p.sajuDesc)}</p></div>
  <div class="col mbti"><h4>🧬 MBTI로 본 지금의 나 ${m?esc(m.type):''}</h4>${m?.pct?`<div class="axes sm">${Object.values(m.pct).map(v=>`<div class="ax"><span>${v.letter} ${v.pct}%</span><div class="bar"><i style="width:${v.pct}%"></i></div></div>`).join('')}</div>`:''}<p>${m?esc(p.mbtiDesc):'MBTI를 입력하지 않았어요.'}</p></div></div>
  <!-- 일치·다른 점은 위 '한눈에 보는 결론'에서 보여준다 -->
@@ -2727,7 +2727,7 @@ function shareHTML(){const D=S.data,A=ok('P')?S.ai.P.profile:{},m=S.mbti;
  const best=D.months.slice().sort((a,b)=>b.scores[b.top]-a.scores[a.top])[0];
  return `<div class="share"><p class="sbrand">내 운 사용설명서</p><p class="sname">${S.input.name?esc(S.input.name)+'님의':'나의'} 운 사용설명서</p>
  <img src="${CHARS[D.key]}" alt=""><p class="silgan"><b>${D.ilgan[0]}</b>${m?' × <b>'+esc(m.type)+'</b>':''}</p>
- <p class="sone">${esc(A.oneLine||D.ilgan[1])}</p>${A.fact?`<p class="sfact">🔥 ${esc(A.fact)}</p>`:''}<div class="stags">${(A.sajuKeywords||[]).slice(0,3).map(k=>`<span>#${esc(k)}</span>`).join('')}</div>
+ <p class="sone">${esc(A.oneLine||D.ilgan[1])}</p>${A.fact?`<p class="sfact">🔍 ${esc(A.fact)}</p>`:''}<div class="stags">${(A.sajuKeywords||[]).slice(0,3).map(k=>`<span>#${esc(k)}</span>`).join('')}</div>
  <p class="sbest">앞으로 12개월 중 가장 높은 달 · <b>${best.label} ${DOMK[best.top]} ${best.scores[best.top]}</b></p>
  <p class="sfoot">같은 운이라도, 나는 다르게 씁니다.</p></div>`}
 // mode: 'hide'(기본) 접힌 내용을 숨긴다 · 'open' 전부 펼쳐서 같이 찍는다(유료 리포트 전체 저장)
