@@ -2459,8 +2459,18 @@ async function relRun(g){
       if(i<2&&RETRY.has(code)){await new Promise(r=>setTimeout(r,1400+Math.random()*1200));continue}
       S.rel.ai[g]={error:ERRMSG[code]||'리포트를 만들지 못했어요.',tried:true}}
   }
+  if(g==='R1'&&S.rel.ai.R1&&S.rel.ai.R1.error)await relAutoRefund();
   if(S.step==='relReport')render();
   if(g==='R1'&&!S.rel.ai.R1.error&&!S.rel.ai.R3)relRun('R3');   // 💌 는 ①~⑦ 결과로 쓴다
+}
+// ①~⑦ 을 끝내 만들지 못하면 결제를 자동으로 취소한다. 환불 여부는 서버가 기록(실패 3회 이상, ①~⑦ 미생성)으로 판단한다.
+async function relAutoRefund(){
+  const id=relOrderId(),base=apiBase();if(!id||!base)return;
+  try{const r=await fetch(base+'/api/pay/refund-failed',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({orderId:id})});
+    const j=await r.json();
+    if(j.ok){try{localStorage.removeItem(REL_ORDER_KEY);localStorage.removeItem(REL_PAID_KEY)}catch(_){}
+      S.rel.ai.R1={error:'리포트를 만들지 못해 결제를 자동으로 취소했어요. 카드사에 따라 1~3영업일 안에 취소가 반영돼요. 불편을 드려 죄송해요.',tried:true,refunded:true}}
+  }catch(_){}
 }
 function relMakeMeta(){const D=S.data,M=D.months,f=M[0],t=M[M.length-1];
   return {made:new Date().toISOString().slice(0,10),
@@ -2582,7 +2592,7 @@ function viewRelIntro(){const d=S.data.relD,i=S.input;
    <ul>
     <li>결제하면 <b>바로 리포트를 만들기 시작해요.</b> 만들어진 뒤에는 청약철회가 제한돼요.</li>
     <li>아직 만들기 전이라면 <b>전액 환불</b>돼요.</li>
-    <li>리포트를 만들지 못하면 <b>결제는 그대로 두고 다시 만들어드려요.</b> 추가 결제는 없어요.</li>
+    <li>리포트를 만들지 못하면 <b>자동으로 다시 시도</b>하고, 그래도 만들지 못하면 <b>결제를 자동으로 취소</b>해요.</li>
     <li>①~⑦과 💌 카드는 <b>언제든 다시 볼 수 있어요.</b> ⑧ 관계 흐름은 리포트를 처음 만든 달부터 <b>12개월</b> 동안 제공돼요.</li>
     <li>위 미리보기로 ①을 먼저 확인하실 수 있어요.</li>
     <li>자세한 내용은 <a href="policy.html#refund" target="_blank" rel="noopener">환불정책</a>에서 확인하실 수 있어요.</li>
@@ -2613,6 +2623,7 @@ window.relSetAgree=v=>{S.rel.agree=!!v;payBtn()};
 
 // ── S5 리포트 ───────────────────────────────────────────────
 function relWait(g,label){const a=S.rel.ai[g];
+  if(a?.refunded)return `<div class="note">${esc(a.error)}</div>`;
   if(a?.error)return `<div class="note">${esc(a.error)} <button class="mini" onclick="relRun('${g}')">다시 시도</button></div>`;
   return `<div class="loading"><span class="dot"></span><span>${label}</span></div>`}
 window.relRun=relRun;
