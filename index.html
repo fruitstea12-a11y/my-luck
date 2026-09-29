@@ -41,8 +41,8 @@
 <link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/astronomy-engine@2.1.19/astronomy.browser.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-<script src="config.js?v=20260926a"></script>
-<script src="products.js?v=20260926a"></script>
+<script src="config.js?v=20260929a"></script>
+<script src="products.js?v=20260929a"></script>
 <style>
 :root{--paper:#F4ECDF;--panel:#FBF6EC;--ink:#2B2622;--sub:#6E655C;--line:#DCCFBC;--chip:#EBE0CE;
 --mok:#5E7F55;--hwa:#C8643B;--to:#B8893E;--geum:#7F7B76;--su:#3E5A7E;--accent:#9B3D2A}
@@ -2590,7 +2590,7 @@ function viewRelIntro(){const d=S.data.relD,i=S.input;
    <label class="rchk"><input type="checkbox" id="relAgree" ${S.rel.agree?'checked':''}
      onchange="relSetAgree(this.checked)"> 위 내용을 확인했고, 결제 후 바로 리포트 생성에 동의해요.</label>
   </div>
-  ${PAY_TEST&&!(window.LUCK_CONFIG||{}).REL_SALE_OPEN?'<p class="note paytest">🧪 테스트 결제 모드예요. 실제로 돈이 나가지 않아요.</p>':''}
+  ${/^test_/.test(payKey())?'<p class="note paytest">🧪 결제 심사 중이라 테스트 결제로 열려 있어요. 실제로 돈이 나가지 않아요.</p>':''}
   <div class="paybox"><div id="payMethods"></div><div id="payAgree"></div></div>
   <p id="payMsg" class="paymsg" aria-live="polite">${esc(PAY.msg)}</p>
   ${PAY.retryable&&PAY.ret&&!PAY.busy?'<button class="ghost" onclick="payConfirm()">결제 다시 확인하기</button>':''}

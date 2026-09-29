@@ -2,7 +2,8 @@
 window.LUCK_CONFIG = {
   API_BASE: 'https://my-luck-api.fruitstea12.workers.dev',
   // 관계 사용설명서 결제 오픈. PG 연동이 끝나면 true 로 바꾼다. false 면 '오픈 준비 중'으로 보인다.
-  REL_SALE_OPEN: false,
+  // 2026-09-29: 토스 심사(비회원 카드결제 확인)를 위해 결제 버튼을 연다. 라이브 키 발급 전까지는 테스트 키라 실제 청구가 없다.
+  REL_SALE_OPEN: true,
   // ⑧ 관계 흐름 12개월 갱신 상품. 결제를 붙이면 true.
   REL_RENEW_OPEN: false,
   // 토스페이먼츠 결제위젯 클라이언트 키 (공개돼도 되는 키). 테스트: test_gck_…  실제: live_gck_…
