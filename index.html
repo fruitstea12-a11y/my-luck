@@ -181,9 +181,9 @@ select:disabled{opacity:.45}
 .card{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:16px 15px}
 .card .no{font-size:12px;color:var(--to);letter-spacing:.08em;margin:0}
 .big{font-size:21px;line-height:1.4;margin:0 0 10px!important}.big span{font-size:15px;color:var(--sub)}
-.two{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.two{display:grid;grid-template-columns:1fr;gap:10px}
 .col{background:var(--paper);border-radius:12px;padding:9px 10px}.col h4{margin-top:0;margin-bottom:3px;font-size:13px}.col p{font-size:13px;line-height:1.6}
-.col .tags{margin-bottom:5px}.col .tags span{font-size:11.5px;padding:1px 7px}
+.col .tags{margin-bottom:5px}.col .tags span{font-size:12px;padding:2px 9px}
 .gapline{margin:8px 0 0!important;padding:8px 10px;border-radius:8px;background:var(--chip);font-size:13.5px;line-height:1.6}.gapline.ok{background:var(--paper)}
 .seen{margin:2px 0 8px;padding:0;list-style:none}.seen li{position:relative;padding:5px 0 5px 20px;font-size:14px;line-height:1.55;font-weight:600}.seen li::before{content:'✔';position:absolute;left:2px;top:5px;color:var(--to);font-size:12px}
 .sb{display:block;margin-top:3px;font-size:11px;color:var(--sub)}.item .ir{font-weight:600;margin:4px 0}
@@ -1389,7 +1389,7 @@ const apiBase=()=>{const b=(window.LUCK_CONFIG||{}).API_BASE;return (b&&!/YOUR-S
 // 반환 형태는 워커 P 카드 응답과 같다: {profile:{oneLine,sajuKeywords,sajuDesc,mbtiDesc,match,diff,combo}}
 let C1PRE=null;
 async function card1Local(){
-  if(!C1PRE){const r=await fetch('card1-pre.json?v=c1-pre-v3');if(!r.ok)throw {code:'network'};C1PRE=await r.json()}
+  if(!C1PRE){const r=await fetch('card1-pre.json?v=c1-pre-v4');if(!r.ok)throw {code:'network'};C1PRE=await r.json()}
   const T=C1PRE,n=S.data.chart.natal,il=S.data.ilgan[0];
   const strong=EL[n.strongEl],weak=n.weakEl===n.strongEl?EL[(n.strongEl+2)%5]:EL[n.weakEl];
   const top=(Object.entries(n.gods||{}).sort((a,b)=>b[1]-a[1])[0]||[])[0];
