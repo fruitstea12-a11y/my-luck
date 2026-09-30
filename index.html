@@ -153,6 +153,9 @@ select:disabled{opacity:.45}
 .chk{flex-direction:row;align-items:center;gap:8px;color:var(--ink);font-size:14px}.chk input{width:auto}
 .seg{display:grid;grid-template-columns:1fr 70px 70px;gap:8px;align-items:center;font-size:13px;color:var(--sub)}
 .seg button.on{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+#prel.seg{grid-template-columns:repeat(3,minmax(0,1fr))}
+#prel.seg>span{grid-column:1/-1;margin-bottom:2px}
+#prel.seg button{white-space:nowrap;padding-left:4px;padding-right:4px}
 .adv summary{cursor:pointer;font-size:13px;color:var(--sub);padding:4px 0} .adv{display:flex;flex-direction:column;gap:6px}
 .choice{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:18px 0 8px}
 .choice button{display:flex;flex-direction:column;gap:4px;padding:20px 12px;text-align:center}.choice b{font-size:16px}.choice span{font-size:12px;color:var(--sub)}
@@ -2808,7 +2811,7 @@ Object.assign(GLOSS,{'천간합':'두 사람의 타고난 기운이 서로 끌�
   '일지 삼합':'같은 방향을 볼 때 힘이 모이는 자리','같은 일지':'생활 방식이 닮은 자리'});
 Object.assign(ERRMSG,{pair_mismatch:'이 결제는 다른 두 사람의 궁합에 쓰였어요. 문의해주세요.'});
 
-const MATCH_REL_KO={lover:'연인',some:'썸·좋아하는 사람',spouse:'배우자'};
+const MATCH_REL_KO={lover:'연인',some:'썸·짝사랑',spouse:'배우자'};
 
 // ── 두 사람 관계 판정 ─────────────────────────────────────────
 const STEM_HAP={0:5,5:0,1:6,6:1,2:7,7:2,3:8,8:3,4:9,9:4};
