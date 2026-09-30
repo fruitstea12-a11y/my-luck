@@ -41,7 +41,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/astronomy-engine@2.1.19/astronomy.browser.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-<script src="config.js?v=20260929b"></script>
+<script src="config.js?v=20261001a"></script>
 <script src="products.js?v=20260929b"></script>
 <style>
 :root{--paper:#F4ECDF;--panel:#FBF6EC;--ink:#2B2622;--sub:#6E655C;--line:#DCCFBC;--chip:#EBE0CE;
@@ -396,6 +396,25 @@ details summary{cursor:pointer;color:var(--sub);font-size:14px;padding:10px 0}
 .rbridge{display:flex;align-items:center;gap:10px;margin-top:16px;padding:13px 14px;
  border:1px dashed var(--line);border-radius:12px}
 .rbridge b{font-size:13px}
+button.rbridge{width:100%;background:transparent;color:var(--ink);font:inherit;text-align:left;cursor:pointer}
+button.rbridge span{color:var(--accent);font-weight:700}
+/* 💞 궁합 */
+.mme{display:flex;align-items:center;gap:10px;margin:10px 0 4px;padding:11px 14px;border:1px solid var(--line);border-radius:12px;background:var(--panel);font-size:13px}
+.mme span{flex:none;color:var(--sub);font-size:12px}.mme b{flex:1;min-width:0}.mme .mini{flex:none}
+.mpair{display:flex;align-items:flex-start;justify-content:center;gap:6px;margin:10px 0 4px}
+.mpair figure{flex:1;min-width:0;max-width:150px;margin:0;text-align:center}
+.mpair img{width:88px;height:117px;object-fit:contain}
+.mpair figcaption b{display:block;font-size:14px}.mpair figcaption small{display:block;font-size:11px;color:var(--sub);line-height:1.5}
+.mpair .mx{flex:none;align-self:center;font-size:22px;margin-top:-30px}
+.mlegend{list-style:none;margin:8px 0 0;padding:0}.mlegend li{font-size:11.5px;color:var(--sub);padding:1px 0}.mlegend b{color:var(--ink);font-weight:700;margin-right:3px}
+.mstrip{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:3px;align-items:end;height:92px;margin:8px 0 2px}
+.mstrip>div{display:flex;align-items:flex-end;justify-content:center;gap:1px;height:100%;position:relative;padding-bottom:16px;border-radius:5px}
+.mstrip>div.pk{background:var(--chip)}
+.mstrip i{display:block;width:38%;background:var(--accent);border-radius:2px 2px 0 0;min-height:2px}
+.mstrip i.t{background:var(--su)}
+.mstrip small{position:absolute;bottom:0;left:0;right:0;text-align:center;font-size:9px;color:var(--sub);white-space:nowrap}
+.mlg .k1,.mlg .k2{display:inline-block;width:9px;height:9px;border-radius:2px;background:var(--accent);margin:0 3px 0 0;vertical-align:-1px}
+.mlg .k2{background:var(--su);margin-left:6px}
 .rbridge span{margin-left:auto;font-size:12px;color:var(--sub);white-space:nowrap}
 
 .rshare{margin:6px 0 14px;font-size:15px;line-height:1.75}
@@ -1042,10 +1061,14 @@ function render(){const v=$('view');
   else if(S.step==='today')v.innerHTML=viewToday();
   else if(S.step==='relIntro')v.innerHTML=viewRelIntro();
   else if(S.step==='relReport')v.innerHTML=viewRelReport();
+  else if(S.step==='matchInput')v.innerHTML=viewMatchInput(),bindMatchInput();
+  else if(S.step==='matchIntro')v.innerHTML=viewMatchIntro();
+  else if(S.step==='matchReport')v.innerHTML=viewMatchReport();
   // 다시 그린 뒤 열려 있던 월 상세를 되살린다
   if(S.step==='result'&&S.tab===4&&S.ui.openMonth!=null&&$('mdet'))openM(S.ui.openMonth,true);
   // 관계 사용설명서 결제 화면이면 결제위젯을 붙인다
-  if(S.step==='relIntro'&&REL_SALE_OPEN)payMount();
+  if(S.step==='relIntro'&&REL_SALE_OPEN){PAY.product='rel';payMount()}
+  if(S.step==='matchIntro'&&MATCH_SALE_OPEN&&S.match.calc){PAY.product='match';payMount()}
   // 결제창에서 돌아온 뒤 무료 결과로 가면 빠진 카드를 채운다
   if(S.step==='result'&&S.needEnsure){S.needEnsure=false;['P','A','B','M'].forEach(ensure)}
 }
@@ -1064,6 +1087,7 @@ function viewIntro(){return `<section class="intro">
     return `<p class="back">${nm}다시 오셨네요.</p>
       <button class="primary" onclick="openSaved('today')">오늘의 운 사용법 보기</button>
       <button class="ghost" onclick="openSaved('result')">내 운 사용설명서 다시 보기</button>
+      <button class="ghost" onclick="matchOpen()">💞 그 사람과 궁합 보기</button>
       <button class="ghost" onclick="go('input')">새로 입력하기</button>`})()}
   <p class="fine">사주 해석은 전통 명리 이론에 기반한 참고용 콘텐츠입니다.</p></section>`}
 // ---------- input ----------
@@ -1217,7 +1241,9 @@ async function start(){
   const c=await loadResults();if(c)Object.assign(S.ai,c);
   go('result');
   // 무료 카드 4종은 모두 미리 만든 조각을 조립한다(AI 호출 없음).
-  ['P','A','B','M'].forEach(ensure)}
+  ['P','A','B','M'].forEach(ensure);
+  // 궁합 보기에서 내 정보를 먼저 넣으러 왔던 경우 → 상대 입력으로 이어간다
+  if(S.after==='match'){S.after=null;S.match.calc=null;go('matchInput')}}
 function ensure(g){const ready=true;if(ready&&(!S.ai[g]||(S.ai[g].error&&!S.ai[g].tried)))runAI(g)}
 
 function brief(){const D=S.data,c=D.chart,n=c.natal;
@@ -2100,7 +2126,7 @@ function viewResult(){const D=S.data,i=S.input,m=S.mbti;
   <nav class="tabs" role="tablist">${TABS.map((t,k)=>`<button role="tab" aria-selected="${k===S.tab}" onclick="setTab(${k})">${k+1}. ${t}</button>`).join('')}</nav>
   <article id="card" class="card"><p class="no">CARD ${S.tab+1} / 6</p><h3>${TABS[S.tab]}</h3>${[card1,card2,card3,card4,card5,card6][S.tab]()}
    <p class="stamp">내 운 사용설명서 · ${VERSION}</p></article>
-  ${S.tab===4?relPromo('card5'):S.tab===5?relPromo('end'):''}
+  ${S.tab===4?relPromo('card5'):S.tab===5?relPromo('end')+matchPromo():''}
   <div class="actions">
    <button class="primary" onclick="saveShare()">공유용 카드 저장</button>
    <button onclick="saveCard()">이 카드 저장</button>
@@ -2315,7 +2341,10 @@ function relUnlocked(){return !!relOrderId()}
 // ── 결제 (토스페이먼츠 결제위젯) ─────────────────────────────
 //   relBuy → Worker /api/pay/prepare (주문번호·금액은 서버가 정한다) → 결제위젯 결제창
 //   → 돌아오면(?pay=ok) payReturn → /api/pay/confirm (서버가 토스 승인) → 주문번호 저장 → 리포트 생성
-const PAY={w:null,methods:null,agree:null,el:null,ready:false,busy:false,msg:''};
+const PAY={w:null,methods:null,agree:null,el:null,ready:false,busy:false,msg:'',product:'rel',amt:null};
+// 상품별 금액·동의 상태. 금액은 서버(/api/pay/prepare)가 다시 정하고, 여기 값과 다르면 결제를 멈춘다.
+const payPrice=pr=>pr==='match'?MATCH_PRICE:REL_PRICE.now;
+const payAgreed=pr=>pr==='match'?!!(S.match&&S.match.agree):!!S.rel.agree;
 const payKey=()=>(window.LUCK_CONFIG||{}).TOSS_CLIENT_KEY||'';
 function paySdk(){if(window.TossPayments)return Promise.resolve();
   return new Promise((ok,no)=>{const s=document.createElement('script');s.src='https://js.tosspayments.com/v2/standard';
@@ -2326,8 +2355,9 @@ async function payMount(){
   PAY.el=el;PAY.ready=false;payBtn();
   try{
     await paySdk();
-    if(!PAY.w){PAY.w=TossPayments(payKey()).widgets({customerKey:TossPayments.ANONYMOUS});
-      await PAY.w.setAmount({currency:'KRW',value:REL_PRICE.now})}
+    if(!PAY.w)PAY.w=TossPayments(payKey()).widgets({customerKey:TossPayments.ANONYMOUS});
+    const amt=payPrice(PAY.product);
+    if(PAY.amt!==amt){await PAY.w.setAmount({currency:'KRW',value:amt});PAY.amt=amt}
     try{PAY.methods&&await PAY.methods.destroy()}catch(_){}
     try{PAY.agree&&await PAY.agree.destroy()}catch(_){}
     if(document.getElementById('payMethods')!==el)return;   // 그 사이 화면이 바뀌었다
@@ -2341,23 +2371,29 @@ async function payMount(){
     if(!PAY.ret)paySetMsg('결제창을 불러오지 못했어요. 새로고침 후 다시 시도해주세요.'+why)}
   payBtn();
 }
-function payBtn(){const b=document.getElementById('relBuyBtn');if(b)b.disabled=!(S.rel.agree&&PAY.ready&&!PAY.busy);
-  if(b&&PAY.busy)b.textContent='결제창으로 이동 중…'}
+function payBtn(){[['relBuyBtn','rel'],['matchBuyBtn','match']].forEach(([id,pr])=>{const b=document.getElementById(id);if(!b)return;
+  b.disabled=!(payAgreed(pr)&&PAY.ready&&!PAY.busy);if(PAY.busy)b.textContent='결제창으로 이동 중…'})}
 function paySetMsg(t){PAY.msg=t||'';const m=document.getElementById('payMsg');if(m)m.textContent=PAY.msg}
-async function relBuy(){
-  if(!REL_SALE_OPEN||PAY.busy)return;
-  if(!S.rel.agree)return;   // 고지 동의 없이는 결제로 넘어가지 않는다
+async function relBuy(){return payBuy('rel')}
+async function payBuy(product){
+  if(PAY.busy)return;
+  if(product==='rel'&&!REL_SALE_OPEN)return;
+  if(product==='match'&&(!MATCH_SALE_OPEN||!S.match.calc))return;
+  if(!payAgreed(product))return;   // 고지 동의 없이는 결제로 넘어가지 않는다
+  if(PAY.product!==product||PAY.amt!==payPrice(product))return paySetMsg('결제창을 준비하는 중이에요. 잠시 후 다시 눌러주세요.');
   if(!PAY.ready)return paySetMsg('결제창을 준비하는 중이에요. 잠시 후 다시 눌러주세요.');
   const base=apiBase();if(!base)return paySetMsg('결제 서버에 연결하지 못했어요.');
   PAY.busy=true;payBtn();paySetMsg('');
   const agreedAt=new Date().toISOString();
   try{
     const r=await fetch(base+'/api/pay/prepare',{method:'POST',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({product:'rel',agreedAt})});
+      body:JSON.stringify({product,agreedAt})});
     const j=await r.json();
     if(!j.ok)throw new Error(j.code||'prepare');
-    if(j.amount!==REL_PRICE.now)throw new Error('amount');
-    try{localStorage.setItem('myluck:rel:pending',JSON.stringify({orderId:j.orderId,agreedAt}))}catch(_){}
+    if(j.amount!==payPrice(product))throw new Error('amount');
+    // 결제창에서 돌아오면 페이지가 새로 열린다. 궁합은 어떤 두 사람이었는지 같이 남겨둔다.
+    try{localStorage.setItem('myluck:rel:pending',JSON.stringify({orderId:j.orderId,agreedAt,product,
+      partner:product==='match'?S.match.partner:null}))}catch(_){}
     const back=location.origin+location.pathname;
     await PAY.w.requestPayment({orderId:j.orderId,orderName:j.orderName,
       successUrl:back+'?pay=ok',failUrl:back+'?pay=fail'});
@@ -2366,7 +2402,8 @@ async function relBuy(){
     const code=e&&(e.code||e.message);
     paySetMsg(code==='USER_CANCEL'||code==='PAY_PROCESS_CANCELED'?'결제를 취소했어요.':'결제를 시작하지 못했어요. 잠시 후 다시 시도해주세요.');
   }
-  PAY.busy=false;payBtn();const b=document.getElementById('relBuyBtn');if(b)b.textContent=priceNow()+'으로 전체 보기 →';
+  PAY.busy=false;payBtn();
+  const b=document.getElementById(product==='match'?'matchBuyBtn':'relBuyBtn');if(b)b.textContent=won(payPrice(product))+'으로 전체 보기 →';
 }
 // 결제창에서 돌아왔을 때
 const PAY_RETURN=(()=>{try{const q=new URLSearchParams(location.search);const p=q.get('pay');if(!p)return null;
@@ -2379,8 +2416,15 @@ async function payReturn(){
   S.input=p.input;S.mbti=p.mbti;
   try{S.data=makeData()}catch(e){return go('input')}
   S.ai={P:null,A:null,B:null,M:null};const c=await loadResults();if(c)Object.assign(S.ai,c);S.needEnsure=true;
-  if(R.pay!=='ok'){S.rel.agree=false;PAY.msg=R.code==='PAY_PROCESS_CANCELED'?'결제를 취소했어요.':('결제가 완료되지 않았어요.'+(R.message?' ('+R.message+')':''));go('relIntro');return}
-  S.step='relIntro';PAY.ret=R;await payConfirm();
+  let pend={};try{pend=JSON.parse(localStorage.getItem('myluck:rel:pending')||'{}')||{}}catch(_){}
+  const product=/^match_/.test(R.orderId||'')||(!R.orderId&&pend.product==='match')?'match':'rel';
+  R.product=product;PAY.product=product;
+  const intro=product==='match'?'matchIntro':'relIntro';
+  if(product==='match'){S.match.partner=pend.partner||matchLoadPartner();
+    try{if(S.match.partner)matchCompute()}catch(e){console.error(e)}
+    if(!S.match.calc){alert('궁합을 볼 상대 정보를 찾지 못했어요. 문의해주세요. 주문번호: '+(R.orderId||''));go('result');return}}
+  if(R.pay!=='ok'){S.rel.agree=false;S.match.agree=false;PAY.msg=R.code==='PAY_PROCESS_CANCELED'?'결제를 취소했어요.':('결제가 완료되지 않았어요.'+(R.message?' ('+R.message+')':''));go(intro);return}
+  S.step=intro;PAY.ret=R;await payConfirm();
 }
 // 서버에 결제 승인을 요청한다. 실패하면 이유와 다시 시도 버튼을 보여준다(토스 결제는 10분 안에 승인해야 한다)
 async function payConfirm(){
@@ -2393,6 +2437,10 @@ async function payConfirm(){
     catch(_){await new Promise(r=>setTimeout(r,1500))}
   }
   PAY.busy=false;
+  if(j&&j.ok&&R.product==='match'){
+    matchSetOrder(S.match.calc.pair,R.orderId);
+    try{localStorage.removeItem('myluck:rel:pending')}catch(_){}
+    PAY.msg='';PAY.ret=null;matchStart();return}
   if(j&&j.ok){
     try{localStorage.setItem(REL_ORDER_KEY,R.orderId);localStorage.setItem(REL_PAID_KEY,'1');
         const pd=JSON.parse(localStorage.getItem('myluck:rel:pending')||'{}');
@@ -2696,7 +2744,7 @@ function relSec6(){const a=S.rel.ai.R1;if(!relOk('R1'))return rsec(5,relWait('R1
   return rsec(5,rp('편한 연락 리듬',a.contact)+rp('지키고 싶은 영역',a.space)
    +rp('부탁을 받아주는 선',a.yieldLine)+rp('거리를 두는 방식',a.distance)+rp('기운을 채우는 방법',a.recharge)+rb(5))}
 function relSec7(){const a=S.rel.ai.R1,d=S.data.relD;
-  const bridge=`<div class="rbridge"><b>그 사람과 나는 어떨까?</b><span>💞 궁합 보기 · 준비 중</span></div>`;
+  const bridge=`<button class="rbridge" onclick="matchOpen()"><b>그 사람과 나는 어떨까?</b><span>💞 궁합 보기 →</span></button>`;
   if(!relOk('R1'))return rsec(6,relWait('R1','정리하는 중…'));
   return rsec(6,rp('편하게 맞는 결',a.easyFit)
    +`<p class="tri"><span class="lab">겪어두면 좋은 결 · ${esc(d.complementKey)}</span>${esc(a.complement)}</p>`
@@ -2733,6 +2781,421 @@ window.saveRelShare=()=>{const st=$('relStage');st.innerHTML=relShareHTML();
 // 리포트 전체 — 접어둔 내용까지 펼쳐서 한 장으로 찍는다
 const relDone=()=>relOk('R1')&&relOk('R2')&&relOk('R3');
 window.saveRelAll=()=>capture($('relBody'),`myluck-relation-full-${stamp()}.png`,'open');
+
+// ═══════════════════════════════════════════════════════════════
+// 💞 궁합 사용설명서 (match-ui-v1.0 · match-index-v1.0)
+//
+//  matchInput   상대 정보 입력 (내 정보는 저장된 값을 그대로 쓴다)
+//  matchIntro   미리보기 ① — AI 호출 0. 코드 계산값만 보여준다. 결제
+//  matchReport  리포트 — G1(①~⑥) G2(⑦) G3(💞) 3회 호출
+//
+//  계산은 전부 여기서 한다. AI 는 문장만 쓴다(원칙: 계산·근거는 코드).
+//  주문 하나 = 두 사람 한 쌍. 서버가 첫 호출 때 pair 를 주문에 묶는다.
+// ═══════════════════════════════════════════════════════════════
+const MATCH_PROMPT_VERSION='match-prompt-v1.0';   // worker 와 같은 값
+const MATCH_PRICE=4900;
+// 오픈 전 실결제 확인용: 주소 뒤 ?matchtest=1 → 이 탭에서만 결제 버튼이 열린다(?matchtest=0 으로 끔)
+const MATCH_TEST=(()=>{try{const q=new URLSearchParams(location.search).get('matchtest');
+  if(q==='1')sessionStorage.setItem('myluck:matchtest','1');if(q==='0')sessionStorage.removeItem('myluck:matchtest');
+  return sessionStorage.getItem('myluck:matchtest')==='1'}catch(_){return false}})();
+const MATCH_SALE_OPEN=!!(window.LUCK_CONFIG&&window.LUCK_CONFIG.MATCH_SALE_OPEN)||MATCH_TEST;
+const MATCH_ORDERS_KEY='myluck:match:orders';     // {pair: orderId}
+const MATCH_PARTNER_KEY='myluck:match:partner';   // 마지막으로 입력한 상대
+S.match={partner:null,calc:null,ai:{G1:null,G2:null,G3:null},agree:false,meta:null};
+
+Object.assign(HANJA,{'천간합':'天干合','일지 원진':'日支 怨嗔','일지 삼합':'日支 三合','같은 일지':'日支 同'});
+Object.assign(GLOSS,{'천간합':'두 사람의 타고난 기운이 서로 끌어당기는 자리','일지 원진':'가까울수록 사소한 반응에 신경이 쓰이는 자리',
+  '일지 삼합':'같은 방향을 볼 때 힘이 모이는 자리','같은 일지':'생활 방식이 닮은 자리'});
+Object.assign(ERRMSG,{pair_mismatch:'이 결제는 다른 두 사람의 궁합에 쓰였어요. 문의해주세요.'});
+
+const MATCH_REL_KO={lover:'연인',some:'썸·좋아하는 사람',spouse:'배우자'};
+
+// ── 두 사람 관계 판정 ─────────────────────────────────────────
+const STEM_HAP={0:5,5:0,1:6,6:1,2:7,7:2,3:8,8:3,4:9,9:4};
+const WONJIN={0:7,7:0,1:6,6:1,2:9,9:2,3:8,8:3,4:11,11:4,5:10,10:5};
+// 일간 오행 관계 (나 기준)
+function elRelOf(a,b){if(a===b)return 'same';if((a+1)%5===b)return 'iFeed';if((b+1)%5===a)return 'theyFeed';if((a+2)%5===b)return 'iLead';return 'theyLead'}
+// 일지 관계
+function brRelOf(a,b){if(a===b)return 'same';if(HAP6[a]===b)return 'hap';if(CLASH(a)===b)return 'clash';if(WONJIN[a]===b)return 'wonjin';if(SAL[a][0]===SAL[b][0])return 'triad';return 'none'}
+
+const MATCH_KEYS=['pull','ease','talk','pace','friction'];
+const MATCH_KO={pull:'끌림',ease:'편안함',talk:'대화',pace:'속도차',friction:'부딪힘'};
+const MATCH_DESC={pull:'서로에게 눈이 가고 궁금해지는 정도',ease:'함께 있을 때 힘이 덜 드는 정도',talk:'말이 잘 통하고 대화가 이어지는 정도',
+  pace:'연락·결정·표현 속도가 서로 다른 정도',friction:'부딪히며 서로를 움직이는 정도'};
+
+// 궁합 지표 5종 (match-index-v1.0). 50 = 보통, 10~95. 단일 궁합 점수는 만들지 않는다.
+function matchIndices(me,them,elr,brr,hap){
+  const M=me.rel.scores,T=them.rel.scores,avg=k=>(M[k]+T[k])/2,d=k=>Math.abs(M[k]-T[k]);
+  const mb=!!(me.mbti&&them.mbti),m=me.mbti||'',t=them.mbti||'';
+  const same=i=>mb&&m[i]===t[i];
+  const sameN=mb?[0,1,2,3].filter(same).length:2;
+  const mw=me.weak,tw=them.weak;
+  const fillMe=them.els[mw]-me.els[mw], fillThem=me.els[tw]-them.els[tw];
+  const comp=Math.max(-12,Math.min(12,(fillMe+fillThem)/2*0.6));
+  const cl=v=>Math.round(Math.max(10,Math.min(95,v)));
+  const pull=50+(hap?14:0)+({hap:8,triad:5,same:2,clash:3,wonjin:0,none:0}[brr])+comp
+    +((me.rel.dohwa||them.rel.dohwa)?4:0)+(avg('novelty')-50)*0.2+({iLead:6,theyLead:6,iFeed:3,theyFeed:3,same:0}[elr]);
+  const ease=50+({iFeed:8,theyFeed:10,same:6,iLead:-6,theyLead:-6}[elr])+({hap:10,triad:7,same:4,clash:-12,wonjin:-7,none:0}[brr])
+    +(avg('steady')-50)*0.25-(avg('friction')-50)*0.25+(mb?(sameN-2)*3:0);
+  const talk=50+(avg('expression')-50)*0.3+(avg('bond')-50)*0.15+(mb?(same(1)?8:-4)+(same(2)?4:-3):0)
+    +({same:5,iFeed:3,theyFeed:3,iLead:-2,theyLead:-2}[elr])+(hap?4:0);
+  const pace=50+(d('novelty')+d('space')+d('expression'))*0.3-12+(mb?(same(0)?-4:8)+(same(3)?-4:8):0)+(brr==='clash'?6:0);
+  const friction=50+({clash:14,wonjin:8,hap:-6,triad:-4,same:2,none:0}[brr])+({iLead:8,theyLead:8,iFeed:-3,theyFeed:-3,same:3}[elr])
+    +(avg('friction')-50)*0.4+(mb?((m[2]==='T'&&t[2]==='T')?4:0)+(same(3)?0:4):0);
+  const raw={pull,ease,talk,pace,friction};
+  // 무작위 두 사람 표본으로 잰 원점수 분포(평균·표준편차)로 눈금을 맞춘다 → 평균 50, 표준편차 13
+  const z=k=>MATCH_CAL[k]?50+(raw[k]-MATCH_CAL[k][0])/MATCH_CAL[k][1]*13:raw[k];
+  return {scores:Object.fromEntries(MATCH_KEYS.map(k=>[k,cl(z(k))])),raw,fillMe,fillThem};
+}
+// match-cal-v1: 무작위 3,000쌍(1960~2005년생, MBTI 80%·출생시간 60% 입력) 원점수 [평균, 표준편차]
+let MATCH_CAL={pull:[65.87,8.33],ease:[52.93,10.73],talk:[53.35,7.21],pace:[57.08,10.59],friction:[55.78,9.09]};
+
+// ── 코드가 정하는 문구 ───────────────────────────────────────
+const MATCH_TYPE={same:'나란히 걷는 사이',iFeed:'내가 힘을 실어주는 사이',theyFeed:'상대가 힘을 실어주는 사이',
+  iLead:'내가 방향을 잡아주는 사이',theyLead:'상대가 나를 다잡아주는 사이',hap:'서로 끌어당기는 사이'};
+const MATCH_ELLINE={
+  same:'두 사람은 타고난 기운의 결이 같아요. 말하지 않아도 통하는 부분이 많은 편이에요.',
+  iFeed:'내 기운이 상대 쪽으로 흘러가는 구조예요. 내가 챙겨줄 때 관계가 살아나요.',
+  theyFeed:'상대의 기운이 나를 북돋는 구조예요. 곁에 있으면 힘이 차오르는 편이에요.',
+  iLead:'내가 상대의 속도를 잡아주는 구조예요. 방향을 정할 때 내 말에 무게가 실려요.',
+  theyLead:'상대가 나를 다잡아주는 구조예요. 내가 흐트러질 때 기준이 되어주는 편이에요.',
+  hap:'타고난 기운이 서로를 끌어당기는 조합이에요. 처음부터 묘하게 신경이 쓰이는 사이예요.'};
+const MATCH_BRLINE={
+  hap:'생활 리듬도 잘 맞물려서, 같이 있을수록 편해지는 쪽이에요.',
+  triad:'같은 목표를 볼 때 두 사람의 힘이 한쪽으로 모여요.',
+  clash:'생활 리듬은 서로 달라요. 부딪히면서 서로를 움직이게 하는 사이예요.',
+  wonjin:'가까워질수록 사소한 말투와 반응에 신경이 쓰이는 조합이에요.',
+  same:'생활 방식이 닮아서 편해요. 대신 같은 지점에서 함께 막히기도 해요.',
+  none:'생활 리듬은 각자 달라요. 서로의 방식을 알아갈수록 가까워지는 사이예요.'};
+// AI 에 넘기는 뜻 (본문에 사주 용어를 쓰지 않게 뜻만 준다)
+const MATCH_VIEW={
+  same:{me:'나와 결이 비슷해서 편하지만, 서로 지지 않으려는 마음도 생기기 쉬운 사람',them:'나와 결이 비슷해서 편하지만, 서로 지지 않으려는 마음도 생기기 쉬운 사람'},
+  iFeed:{me:'곁에서 힘을 실어주고 챙겨주는 사람',them:'내가 챙겨주고 싶어지고, 나의 에너지가 향하는 사람'},
+  theyFeed:{me:'챙겨주고 싶어지고, 상대의 에너지가 향하는 사람',them:'곁에 있으면 힘이 나고 든든해지는 사람'},
+  iLead:{me:'방향을 잡아주고 기준을 세워주는 사람. 때로는 그 기준이 부담으로 느껴지기도 하는 사람',them:'내가 이끌고 싶어지지만, 속도를 맞춰줘야 하는 사람'},
+  theyLead:{me:'다잡아주고 싶어지는 사람',them:'나를 긴장시키고 기준이 되어주는 사람. 때로는 그 기준이 부담으로 느껴지기도 하는 사람'}};
+const MATCH_BRMEAN={hap:'생활 리듬이 잘 맞물려 같이 있을수록 편해지는 조합',triad:'같은 목표를 볼 때 힘이 모이는 조합',
+  clash:'생활 리듬과 속도가 달라 부딪히며 서로를 움직이는 조합',wonjin:'가까울수록 사소한 말투와 반응에 신경이 쓰이는 조합',
+  same:'생활 방식이 닮아 편하지만 같은 지점에서 함께 막히기 쉬운 조합',none:'생활 리듬이 각자 달라 서로의 방식을 알아가며 맞춰가는 조합'};
+const MBTI_AX_MEAN={
+  EI:{diff:'충전하는 방식이 다르다. 한쪽은 사람 속에서, 한쪽은 혼자 있는 시간에 채워진다',same_E:'둘 다 사람 속에서 채워진다',same_I:'둘 다 조용히 혼자 채우는 시간이 필요하다'},
+  SN:{diff:'대화에서 한쪽은 구체적인 사실에, 한쪽은 가능성과 의미에 먼저 반응한다',same_S:'둘 다 구체적인 사실과 경험으로 이야기한다',same_N:'둘 다 가능성과 의미로 이야기한다'},
+  TF:{diff:'부딪힐 때 한쪽은 문제 해결이, 한쪽은 마음 확인이 먼저다',same_T:'둘 다 문제를 먼저 풀려고 한다',same_F:'둘 다 마음을 먼저 확인하려고 한다'},
+  JP:{diff:'약속과 계획을 정하는 속도가 다르다. 한쪽은 미리 정하고, 한쪽은 그때그때 정한다',same_J:'둘 다 미리 정해두는 쪽이 편하다',same_P:'둘 다 그때그때 정하는 쪽이 편하다'}};
+function mbtiCompare(a,b){if(!a||!b)return null;
+  return ['EI','SN','TF','JP'].map((ax,i)=>({축:ax[0]+'/'+ax[1],나:a[i],상대:b[i],같음:a[i]===b[i],
+    뜻:a[i]===b[i]?MBTI_AX_MEAN[ax]['same_'+a[i]]:MBTI_AX_MEAN[ax].diff}))}
+
+// ── 상대 사주 ────────────────────────────────────────────────
+// 상대 출생지는 받지 않는다(한국 중부 경도 127.5 기준). 출생시간이 있을 때만 시주 경계에 몇 분 영향이 있다.
+function partnerChart(p){const [y,m,d]=p.date.split('-').map(Number);
+  const [hh,mm]=p.noTime?[null,null]:p.time.split(':').map(Number);
+  const auto=koreaClockOffset(y,m,d,hh,mm);
+  return buildChart({y,m,d,hh,mm,lon:127.5,tz:auto.tz,dst:auto.dst,gender:p.gender,ziMode:'jo'})}
+const weakIdx=els=>{let wi=0;for(let i=1;i<5;i++)if(els[i]<els[wi])wi=i;return wi};
+
+// 해시 — 두 사람 한 쌍을 가리키는 짧은 키 (서버 주문에 묶는 값)
+function cyrb(str,seed){let h1=0xdeadbeef^seed,h2=0x41c6ce57^seed;for(let i=0;i<str.length;i++){const c=str.charCodeAt(i);
+  h1=Math.imul(h1^c,2654435761);h2=Math.imul(h2^c,1597334677)}
+  h1=Math.imul(h1^(h1>>>16),2246822507)^Math.imul(h2^(h2>>>13),3266489909);
+  h2=Math.imul(h2^(h2>>>16),2246822507)^Math.imul(h1^(h1>>>13),3266489909);
+  return (h2>>>0).toString(16).padStart(8,'0')+(h1>>>0).toString(16).padStart(8,'0')}
+function matchPair(){const i=S.input,p=S.match.partner;
+  const s=JSON.stringify([i.date,i.time,i.noTime,i.lon,i.gender,i.ya,S.mbti?.type||'',p.date,p.time,p.noTime,p.gender,p.mbti||'',p.rel]);
+  return 'p'+cyrb(s,1)+cyrb(s,7)}
+
+// ── 엔트리 포인트: 두 사람 계산 전부 ──────────────────────────
+function matchCompute(){
+  const D=S.data,p=S.match.partner;
+  const pc=partnerChart(p);
+  const keep=relRaw.contrib;                 // 상대 계산이 내 근거 기록을 덮지 않게
+  const prel=natalRel(pc);relRaw.contrib=keep;
+  const me={chart:D.chart,rel:D.rel,els:D.chart.natal.elements,weak:weakIdx(D.chart.natal.elements),mbti:S.mbti?.type||null,day:D.chart.pillars.day};
+  const them={chart:pc,rel:prel,els:pc.natal.elements,weak:weakIdx(pc.natal.elements),mbti:p.mbti||null,day:pc.pillars.day};
+  const elr=elRelOf(stemEl(me.day.s),stemEl(them.day.s));
+  const hap=STEM_HAP[me.day.s]===them.day.s;
+  const brr=brRelOf(me.day.b,them.day.b);
+  const idx=matchIndices(me,them,elr,brr,hap);
+  // 12개월 — 같은 절기 경계로 두 사람의 관계 점수를 나란히 본다
+  const pm=next12Months(pc,new Date());
+  const months=D.months.map((m,i)=>{const a=m.scores.relation,b=pm[i].scores.relation;
+    return {idx:i,label:m.label,year:m.year,start:m.start,end:m.end,me:a,them:b,avg:Math.round((a+b)/2),
+      dir:a>=50&&b>=50?'both_active':a<50&&b<50?'both_quiet':a>=50?'me_active':'them_active'}});
+  const by=months.slice().sort((x,y)=>y.avg-x.avg);
+  const picks=[{idx:by[0].idx,type:'high'},{idx:by[1].idx,type:'high'}];
+  const low=by[by.length-1];if(low.avg<50&&!picks.some(o=>o.idx===low.idx))picks.push({idx:low.idx,type:'low'});
+  picks.sort((a,b)=>a.idx-b.idx);
+  const pk=KEYS[them.day.s];
+  const typeName=hap?MATCH_TYPE.hap:MATCH_TYPE[elr];
+  const lines=[hap?MATCH_ELLINE.hap:MATCH_ELLINE[elr],MATCH_BRLINE[brr]];
+  const brTerm={hap:'일지 합',clash:'일지 충',wonjin:'일지 원진',triad:'일지 삼합',same:'같은 일지',none:null}[brr];
+  const basis=[tenGod(me.day.s,them.day.s)+'(상대)',tenGod(them.day.s,me.day.s)+'(나)'].concat(hap?['천간합']:[]).concat(brTerm?[brTerm]:[]);
+  S.match.calc={pc,prel,me,them,elr,brr,hap,idx,months,picks,typeName,lines,basis,
+    pIlgan:ILGAN[them.day.s],pKey:pk+'_'+p.gender,pair:matchPair()};
+  return S.match.calc;
+}
+
+// ── 상대 입력 ────────────────────────────────────────────────
+function matchLoadPartner(){try{return JSON.parse(localStorage.getItem(MATCH_PARTNER_KEY)||'null')}catch(_){return null}}
+function matchSavePartner(){try{localStorage.setItem(MATCH_PARTNER_KEY,JSON.stringify(S.match.partner))}catch(_){}}
+window.matchOpen=async function(){await READY;
+  if(!S.data){const p=S.saved;
+    if(!p){S.after='match';return go('input')}
+    S.input=p.input;S.mbti=p.mbti;try{S.data=makeData()}catch(e){return go('input')}}
+  if(!S.match.partner)S.match.partner=matchLoadPartner();
+  go('matchInput')};
+function viewMatchInput(){const D=S.data,i=S.input,p=S.match.partner||{};
+  const q={date:p.date,time:p.time,noTime:p.noTime};
+  return `<section class="res">
+  <header class="rhead"><p class="brand">💞 궁합 사용설명서</p><h2>그 사람과 나는 어떨까?</h2>
+   <p class="fine">사주 × MBTI로 보는 두 사람의 사용법</p></header>
+  <div class="mme"><span>나</span><b>${i.name?esc(i.name)+' · ':''}${esc(D.ilgan[0])}${S.mbti?' · '+esc(S.mbti.type):''}</b>
+   <button class="mini" onclick="S.after='match';go('input')">수정</button></div>
+  <div class="form">
+   <p class="privnote">🔒 상대 정보도 이 기기 안에서만 계산해요. 생년월일은 서버로 보내지 않아요.</p>
+   <label>상대 이름 또는 별명 <small>(선택)</small><input id="pnm" maxlength="10" value="${esc(p.name||'')}" placeholder="결과에 표시돼요"></label>
+   <div class="timebox"><span class="tlabel">상대 생년월일 <small>양력</small></span>
+    <div class="row3d"><select id="pby" aria-label="년">${yearOpts(q)}</select><select id="pbmo" aria-label="월">${monOpts(q)}</select><select id="pbda" aria-label="일">${dayOpts(q)}</select></div></div>
+   <div class="timebox"><span class="tlabel">상대 출생시간</span>
+    <div class="row3"><select id="pbh" aria-label="시">${timeHourOpts(q)}</select><select id="pbmin" aria-label="분">${timeMinOpts(q)}</select>
+    <label class="chk"><input type="checkbox" id="pnotime" ${p.noTime!==false?'checked':''}> 몰라요</label></div></div>
+   <div class="seg" id="pgen" role="radiogroup" aria-label="상대 성별"><span>상대 성별 <small>대운 방향 계산에만 사용</small></span>
+    <button type="button" data-g="m" class="${p.gender==='m'?'on':''}">남</button><button type="button" data-g="f" class="${p.gender==='f'?'on':''}">여</button></div>
+   <label>상대 MBTI <small>(모르면 사주만으로 봐요)</small><select id="pmbti"><option value="">몰라요</option>${TYPES.map(t=>`<option ${p.mbti===t?'selected':''}>${t}</option>`).join('')}</select></label>
+   <div class="seg" id="prel" role="radiogroup" aria-label="관계"><span>두 사람은</span>
+    ${Object.entries(MATCH_REL_KO).map(([k,v])=>`<button type="button" data-r="${k}" class="${p.rel===k?'on':''}">${v}</button>`).join('')}</div>
+   <p class="fine">상대 출생지는 한국 중부 기준으로 계산해요. 출생시간을 모르면 시주를 빼고 봐요.</p>
+  </div>
+  <p id="perr" class="err"></p>
+  <button class="primary" id="pnext">두 사람 궁합 보기 →</button>
+  <button class="ghost" onclick="go('result')">← 내 운 사용설명서로</button></section>`}
+function bindMatchInput(){
+  const p=S.match.partner||{};let g=p.gender||null,rel=p.rel||null;
+  document.querySelectorAll('#pgen button').forEach(b=>b.onclick=()=>{g=b.dataset.g;document.querySelectorAll('#pgen button').forEach(x=>x.classList.toggle('on',x===b))});
+  document.querySelectorAll('#prel button').forEach(b=>b.onclick=()=>{rel=b.dataset.r;document.querySelectorAll('#prel button').forEach(x=>x.classList.toggle('on',x===b))});
+  const tog=()=>{const n=$('pnotime').checked;$('pbh').disabled=n;$('pbmin').disabled=n};$('pnotime').onchange=tog;tog();
+  const refreshDays=()=>{const keep=$('pbda').value;const y=+$('pby').value||2000,m=+$('pbmo').value||1;$('pbda').innerHTML=dayOpts({},y,m);if(keep&&+keep<=new Date(y,m,0).getDate())$('pbda').value=keep};
+  $('pby').onchange=refreshDays;$('pbmo').onchange=refreshDays;
+  $('pnext').onclick=()=>{const err=t=>$('perr').textContent=t;
+    const y=$('pby').value,m=$('pbmo').value,d=$('pbda').value;
+    if(!(y&&m&&d))return err('상대 생년월일(년·월·일)을 모두 선택해주세요.');
+    const noTime=$('pnotime').checked,hv=$('pbh').value;
+    if(!noTime&&hv==='')return err('출생 "시"를 선택하거나 "몰라요"를 체크해주세요.');
+    if(!g)return err('상대 성별을 선택해주세요.');
+    if(!rel)return err('두 사람의 관계를 선택해주세요.');
+    S.match.partner={name:$('pnm').value.trim(),date:`${y}-${String(m).padStart(2,'0')}-${String(d).padStart(2,'0')}`,
+      time:noTime?'':String(hv).padStart(2,'0')+':'+String($('pbmin').value).padStart(2,'0'),noTime,gender:g,mbti:$('pmbti').value||null,rel};
+    matchSavePartner();
+    try{matchCompute()}catch(e){console.error(e);return err('계산 중 오류가 났어요: '+e.message)}
+    S.match.agree=false;
+    if(matchOrderId())return matchStart();
+    go('matchIntro')}}
+
+// ── 주문 ─────────────────────────────────────────────────────
+function matchOrders(){try{return JSON.parse(localStorage.getItem(MATCH_ORDERS_KEY)||'{}')||{}}catch(_){return {}}}
+function matchOrderId(){const c=S.match.calc;return c?(matchOrders()[c.pair]||''):''}
+function matchSetOrder(pair,id){const o=matchOrders();if(id)o[pair]=id;else delete o[pair];try{localStorage.setItem(MATCH_ORDERS_KEY,JSON.stringify(o))}catch(_){}}
+
+// ── 공통 조각 ─────────────────────────────────────────────────
+const pname=()=>{const n=S.match.partner&&S.match.partner.name;return n?esc(n):'상대'};
+const mname=()=>S.input.name?esc(S.input.name):'나';
+function matchPairHead(){const c=S.match.calc,D=S.data,p=S.match.partner;
+  return `<div class="mpair">
+   <figure><img src="${CHARS[D.key]}" alt=""><figcaption><b>${mname()}</b><small>${esc(D.ilgan[0])} · ${esc(D.ilgan[1])}${S.mbti?'<br>'+esc(S.mbti.type):''}</small></figcaption></figure>
+   <span class="mx">💞</span>
+   <figure><img src="${CHARS[c.pKey]}" alt=""><figcaption><b>${pname()}</b><small>${esc(c.pIlgan[0])} · ${esc(c.pIlgan[1])}${p.mbti?'<br>'+esc(p.mbti):''}</small></figcaption></figure></div>`}
+const mbarBody=()=>{const s=S.match.calc.idx.scores;
+  return `<div class="rbars mbars">${MATCH_KEYS.map(k=>`<div><span>${MATCH_KO[k]}</span><div class="bar"><i style="width:${s[k]}%;background:var(--accent)"></i></div><small>${s[k]}</small></div>`).join('')}</div>
+   <ul class="mlegend">${MATCH_KEYS.map(k=>`<li><b>${MATCH_KO[k]}</b> ${MATCH_DESC[k]}</li>`).join('')}</ul>
+   <p class="fine">50이 보통이에요. 속도차·부딪힘이 높다는 건 나쁘다는 뜻이 아니라, 방식이 달라 맞춰갈 거리가 있다는 뜻이에요.</p>
+   <p class="fine method">두 사람의 일간·일지 관계, 오행 보완, 관계 지표 7종, MBTI 네 축을 코드가 계산해요. 한 줄 궁합 점수는 만들지 않아요.</p>`};
+function matchSec1Free(){const c=S.match.calc;
+  return `<p class="rtype">「${esc(c.typeName)}」</p>${c.lines.map(l=>`<p class="rlead">${esc(l)}</p>`).join('')}
+   <p class="sec">두 사람의 궁합 지표 5가지</p>${mbarBody()}${basisHTML(c.basis)}`}
+
+// ── 미리보기 · 결제 ──────────────────────────────────────────
+const MATCH_SECS=[['①','두 사람은'],['②','끌리는 이유'],['③','서로에게 나는'],['④','엇갈리는 순간'],
+  ['⑤','부딪혔을 때'],['⑥','오래 편한 법'],['⑦','앞으로 12개월 두 사람 흐름'],['💞','우리 사용법']];
+const MATCH_ITEMS=['관계 이름 · 지표 5가지 · 함께 있을 때의 분위기','내가 끌리는 지점 · 상대가 끌리는 지점 · 가까워지는 계기',
+  '상대에게 나는 · 나에게 상대는 · 서로 채워주는 것','속도 차이 · 표현 차이 · 오해하기 쉬운 지점',
+  '나는 무엇부터 · 상대는 무엇부터 · 다시 편해지는 법 · 건넬 한 마디','연락 리듬 · 지켜줄 영역 · 함께 커지는 것',
+  '두 사람 흐름이 움직이는 달 × (흐름 · 우리의 반응 · 함께 할 것)','둘이 같이 보는 카드'];
+const MATCH_LOCKS=['상대는 나의 어디에 끌릴까?','싸우면 상대는 무엇부터 풀고 싶어할까?','두 사람이 엇갈리기 쉬운 순간은?','앞으로 12개월, 두 사람이 가까워지는 달은?'];
+function viewMatchIntro(){const c=S.match.calc;if(!c)return viewMatchInput();
+  const rk=MATCH_REL_KO[S.match.partner.rel]||'';
+  return `<section class="res">
+  <header class="rhead"><p class="brand">💞 궁합 사용설명서</p><h2>${mname()} × ${pname()}</h2><p class="fine">${esc(rk)}</p></header>
+  ${matchPairHead()}
+  <article class="card rsec"><p class="no">① 두 사람은 <em class="freetag">무료 공개</em></p>${matchSec1Free()}
+   <p class="fine">여기까지는 두 사람의 사주 원국에서 코드가 계산한 값이에요.</p></article>
+  <article class="card"><p class="no">리포트에서 이어서 보는 것</p>
+   <div class="rlocks">${MATCH_LOCKS.map(l=>`<p>🔒 ${esc(l)}</p>`).join('')}</div>
+   <ul class="rlist">${MATCH_SECS.map(([n,t],k)=>`<li${k?'':' class="free"'}><span>${n}</span><div><b>${esc(t)}</b><small>${esc(MATCH_ITEMS[k])}</small></div><em>${k?'🔒':'열림'}</em></li>`).join('')}</ul>
+   <p class="fine">나 혼자의 관계 방식은 🤝 관계 사용설명서에서 볼 수 있어요.</p></article>
+  ${MATCH_SALE_OPEN?`<div class="rterms"><p class="th">결제 전에 확인해주세요</p><ul>
+    <li>결제하면 <b>바로 리포트를 만들기 시작해요.</b> 만들어진 뒤에는 청약철회가 제한돼요.</li>
+    <li>아직 만들기 전이라면 <b>전액 환불</b>돼요.</li>
+    <li>리포트를 만들지 못하면 <b>자동으로 다시 시도</b>하고, 그래도 만들지 못하면 <b>결제를 자동으로 취소</b>해요.</li>
+    <li>한 번 결제는 <b>지금 입력한 두 사람</b>에게만 쓰여요. 상대 정보를 바꾸면 새 리포트가 돼요.</li>
+    <li>①~⑥과 💞 카드는 <b>언제든 다시 볼 수 있어요.</b> ⑦ 두 사람 흐름은 리포트를 처음 만든 달부터 <b>12개월</b> 동안 제공돼요.</li>
+    <li>자세한 내용은 <a href="policy.html#refund" target="_blank" rel="noopener">환불정책</a>에서 확인하실 수 있어요.</li></ul>
+   <label class="rchk"><input type="checkbox" ${S.match.agree?'checked':''} onchange="matchSetAgree(this.checked)"> 위 내용을 확인했고, 결제 후 바로 리포트 생성에 동의해요.</label></div>
+  ${/^test_/.test(payKey())?'<p class="note paytest">🧪 테스트 결제로 열려 있어요. 실제로 돈이 나가지 않아요.</p>':''}
+  <div class="paybox"><div id="payMethods"></div><div id="payAgree"></div></div>
+  <p id="payMsg" class="paymsg" aria-live="polite">${esc(PAY.msg)}</p>
+  ${PAY.retryable&&PAY.ret&&!PAY.busy?'<button class="ghost" onclick="payConfirm()">결제 다시 확인하기</button>':''}
+  <button class="primary" id="matchBuyBtn" ${S.match.agree&&PAY.ready&&!PAY.busy?'':'disabled'} onclick="matchBuy()">${PAY.busy?'결제를 확인하고 있어요…':won(MATCH_PRICE)+'으로 전체 보기 →'}</button>
+  <p class="fine" style="text-align:center">한 번 결제하면 이 기기에서 계속 볼 수 있어요.</p>`
+  :`<div class="rterms"><p class="th">오픈 준비 중이에요</p><ul><li>궁합 사용설명서는 곧 열려요. 가격은 ${won(MATCH_PRICE)}이에요.</li><li>위 ①은 지금도 무료로 보실 수 있어요.</li></ul></div>
+  <button class="primary" disabled>오픈 준비 중</button>`}
+  <button class="ghost" onclick="go('matchInput')">← 상대 정보 수정</button>
+  <button class="ghost" onclick="go('result')">← 무료 결과로 돌아가기</button></section>`}
+window.matchSetAgree=v=>{S.match.agree=!!v;payBtn()};
+window.matchBuy=()=>payBuy('match');
+
+// ── 리포트 데이터 ────────────────────────────────────────────
+const RELKO=k=>RELK_KO[k];
+function matchPayload(g){
+  const c=S.match.calc,D=S.data,p=S.match.partner;
+  const person=(age,mb,rel)=>({나이:age,MBTI축:mb?{EI:mb[0],SN:mb[1],TF:mb[2],JP:mb[3]}:null,MBTI태그:mbtiTags(mb),
+    관계에서두드러진것:relTop(rel.scores).slice(0,3).map(k=>RELKO(k)+'('+(rel.scores[k]>=50?'활발':'잔잔')+')')});
+  const pAge=D.cy-(+p.date.slice(0,4));
+  const two={관계:MATCH_REL_KO[p.rel],나:person(D.age,S.mbti?.type||null,D.rel),상대:person(pAge,p.mbti||null,c.prel)};
+  if(g==='G1'){const cmpM=mbtiCompare(S.mbti?.type,p.mbti);
+    const fill=(v,el)=>v>3?EL_COMP[EL[el]].trait:'비슷한 기운이라 채워주기보다 나란히 가는 편';
+    return {A_두사람:two,B_궁합지표:{
+      지표:Object.fromEntries(MATCH_KEYS.map(k=>[MATCH_KO[k],c.idx.scores[k]])),
+      지표_뜻:Object.fromEntries(MATCH_KEYS.map(k=>[MATCH_KO[k],MATCH_DESC[k]])),
+      관계이름:c.typeName,
+      일간관계:{요약:(c.hap?MATCH_ELLINE.hap+' ':'')+MATCH_ELLINE[c.elr],
+        상대_쪽에서_본_나:MATCH_VIEW[c.elr].me+(c.hap?'. 처음부터 묘하게 끌리는 사람':''),
+        내_쪽에서_본_상대:MATCH_VIEW[c.elr].them+(c.hap?'. 처음부터 묘하게 끌리는 사람':'')},
+      일지관계:MATCH_BRMEAN[c.brr],
+      오행보완:{상대가_나에게_채워주는_것:fill(c.idx.fillMe,c.me.weak),내가_상대에게_채워주는_것:fill(c.idx.fillThem,c.them.weak)},
+      MBTI비교:cmpM||(S.mbti&&!p.mbti?'상대 MBTI 모름 — 상대 성향은 사주 지표로만 쓴다':!S.mbti&&p.mbti?'내 MBTI 없음 — 내 성향은 사주 지표로만 쓴다':'두 사람 MBTI 없음 — 사주 지표로만 쓴다'),
+      근거_쓰는법:'일간관계·일지관계·오행보완은 근거일 뿐이다. 사주 용어를 본문에 쓰지 말고 뜻만 생활 언어로 옮겨라.'}}}
+  if(g==='G2'){const DIR={both_active:'두 사람 다 관계가 활발해지는 달',both_quiet:'두 사람 다 관계가 조용한 달',
+      me_active:'나는 관계가 활발하고 상대는 조용한 달',them_active:'상대는 관계가 활발하고 나는 조용한 달'};
+    return {A_두사람:two,C_선정된_달:c.picks.map(pk=>{const m=c.months[pk.idx];
+      return {사용범위:'이 달에서만 사용',idx:pk.idx,라벨:m.label,두사람흐름:DIR[m.dir],선정이유:pk.type==='high'?'두 사람 흐름이 가장 활발한 달':'두 사람 흐름이 가장 조용한 달'}})}}
+  const a=S.match.ai.G1||{};
+  return {A_생성결과:{사용범위:'이 카드에서만 사용. 다른 데이터 금지',spark:a.spark||'',gapWords:a.gapWords||'',
+    repair:a.repair||'',keepRhythm:a.keepRhythm||'',keepSpace:a.keepSpace||'',keepGrow:a.keepGrow||''}};
+}
+
+// ── 호출 · 저장 ──────────────────────────────────────────────
+function matchKey(){return 'myluck:match:'+MATCH_PROMPT_VERSION+':'+S.match.calc.pair}
+function matchSave(){const d={};['G1','G2','G3'].forEach(k=>{const v=S.match.ai[k];if(v&&!v.loading&&!v.error)d[k]=v});if(S.match.meta)d.meta=S.match.meta;
+  try{localStorage.setItem(matchKey(),JSON.stringify(d))}catch(_){}}
+function matchLoad(){try{return JSON.parse(localStorage.getItem(matchKey())||'null')}catch(_){return null}}
+async function matchCall(g){const base=apiBase();if(!base)throw {code:'upstream'};
+  let r;try{r=await fetch(base+'/api/card',{method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({card:g,data:matchPayload(g),orderId:matchOrderId(),pair:S.match.calc.pair})})}catch(_){throw {code:'network'}}
+  let j;try{j=await r.json()}catch(_){throw {code:'upstream'}}
+  if(!j.ok)throw {code:j.code||'upstream'};return j.result}
+const matchOk=g=>S.match.ai[g]&&!S.match.ai[g].loading&&!S.match.ai[g].error;
+async function matchRun(g){
+  S.match.ai[g]={loading:true};if(S.step==='matchReport')render();
+  const RETRY=new Set(['network','upstream']);
+  for(let i=0;i<3;i++){try{S.match.ai[g]=await matchCall(g);matchSave();break}
+    catch(e){const code=e&&e.code;if(i<2&&RETRY.has(code)){await new Promise(r=>setTimeout(r,1400+Math.random()*1200));continue}
+      S.match.ai[g]={error:ERRMSG[code]||'리포트를 만들지 못했어요.',tried:true}}}
+  if(g==='G1'&&S.match.ai.G1.error)await matchAutoRefund();
+  if(S.step==='matchReport')render();
+  if(g==='G1'&&!S.match.ai.G1.error&&!S.match.ai.G3)matchRun('G3');
+}
+window.matchRun=matchRun;
+async function matchAutoRefund(){const id=matchOrderId(),base=apiBase();if(!id||!base)return;
+  try{const r=await fetch(base+'/api/pay/refund-failed',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({orderId:id})});
+    const j=await r.json();
+    if(j.ok){matchSetOrder(S.match.calc.pair,null);
+      S.match.ai.G1={error:'리포트를 만들지 못해 결제를 자동으로 취소했어요. 카드사에 따라 1~3영업일 안에 취소가 반영돼요. 불편을 드려 죄송해요.',tried:true,refunded:true}}}catch(_){}}
+function matchMakeMeta(){const M=S.match.calc.months,f=M[0],t=M[M.length-1];
+  return {made:new Date().toISOString().slice(0,10),from:{y:f.year,m:f.label},to:{y:t.year,m:t.label},end:+new Date(t.end),
+    picks:S.match.calc.picks.map(p=>({idx:p.idx,type:p.type,year:M[p.idx].year,label:M[p.idx].label}))}}
+function matchStart(){
+  const c=matchLoad();S.match.ai={G1:null,G2:null,G3:null};
+  S.match.meta=(c&&c.meta)||matchMakeMeta();
+  if(c){const x=Object.assign({},c);delete x.meta;Object.assign(S.match.ai,x)}
+  if(!(c&&c.meta))matchSave();
+  go('matchReport');
+  if(!S.match.ai.G1)matchRun('G1');
+  if(!S.match.ai.G2)setTimeout(()=>{if(!S.match.ai.G2)matchRun('G2')},2500);
+  else if(S.match.ai.G1&&!S.match.ai.G3)matchRun('G3');
+}
+
+// ── 리포트 화면 ──────────────────────────────────────────────
+function matchWait(g,label){const a=S.match.ai[g];
+  if(a?.refunded)return `<div class="note">${esc(a.error)}</div>`;
+  if(a?.error)return `<div class="note">${esc(a.error)} <button class="mini" onclick="matchRun('${g}')">다시 시도</button></div>`;
+  return `<div class="loading"><span class="dot"></span><span>${label}</span></div>`}
+const msec=(k,body)=>`<article class="card rsec" id="ms${k}"><p class="no">${MATCH_SECS[k][0]} ${MATCH_SECS[k][1]}</p>${body}</article>`;
+const mp=(lab,v)=>v?`<p class="tri"><span class="lab">${lab}</span>${esc(v)}</p>`:'';
+const mwait=k=>msec(k,matchWait('G1','두 사람을 정리하는 중…'));
+function matchProgress(){
+  const step=[['두 사람 지표를 계산했어요','',true],['두 사람을 정리했어요','두 사람을 정리하는 중',matchOk('G1')],
+    ['12개월 흐름을 정리했어요','12개월 흐름을 보는 중',matchOk('G2')],['우리 사용법을 썼어요','우리 사용법을 쓰는 중',matchOk('G3')]];
+  const done=step.filter(s=>s[2]).length;if(done===4)return '';
+  return `<div class="rprog"><p><b>리포트를 만들고 있어요</b> <small>${done} / 4</small></p>
+   <div class="bar"><i style="width:${done/4*100}%;background:var(--accent)"></i></div>
+   <ul>${step.map(([a,b,v])=>`<li class="${v?'on':''}">${v?'✔ '+a:'⋯ '+b}</li>`).join('')}</ul></div>`}
+function matchSecs(){const a=S.match.ai.G1,ok=matchOk('G1'),c=S.match.calc;
+  let h=msec(0,`<p class="rtype">「${esc(c.typeName)}」</p>`+(ok?`<p>${esc(a.pairFeel)}</p>`:matchWait('G1','두 사람을 정리하는 중…'))
+    +`<details class="relbars"${S.ui.matchBarOpen?' open':''} ontoggle="uiToggle('matchBarOpen',this.open)"><summary>궁합 지표 5가지 보기</summary>${mbarBody()}</details>`+basisHTML(c.basis));
+  if(!ok)return h+[1,2,3,4,5].map(mwait).join('');
+  h+=msec(1,mp('내가 끌리는 지점',a.pullMe)+mp('상대가 끌리는 지점',a.pullThem)+mp('가까워지는 계기',a.spark));
+  h+=msec(2,mp('상대에게 나는',a.meToThem)+mp('나에게 상대는',a.themToMe)+mp('서로 채워주는 것',a.giveTake));
+  h+=msec(3,mp('속도가 엇갈릴 때',a.gapPace)+mp('표현이 엇갈릴 때',a.gapWords)+mp('다르게 읽기 쉬운 것',a.misread));
+  h+=msec(4,mp('부딪히면 나는',a.fightMe)+mp('부딪히면 상대는',a.fightThem)
+    +`<p class="quote">“${esc(String(a.sayThis).replace(/^[“"']|[”"']$/g,''))}”</p>`+mp('다시 편해지는 방법',a.repair));
+  h+=msec(5,mp('편한 연락 리듬',a.keepRhythm)+mp('서로 지켜줄 영역',a.keepSpace)+mp('함께 커지는 것',a.keepGrow));
+  return h}
+function matchSec7(){const a=S.match.ai.G2,c=S.match.calc;
+  const strip=`<div class="mstrip">${c.months.map(m=>`<div class="${c.picks.some(p=>p.idx===m.idx)?'pk':''}"><i style="height:${m.me}%" title="나 ${m.me}"></i><i class="t" style="height:${m.them}%" title="상대 ${m.them}"></i><small>${esc(m.label)}</small></div>`).join('')}</div>
+   <p class="fine mlg"><span class="k1"></span>${mname()} <span class="k2"></span>${pname()} · 관계 흐름의 활발함 (50이 보통)</p>`;
+  if(!matchOk('G2'))return msec(6,strip+matchWait('G2','12개월 흐름을 보는 중…'));
+  const meta=S.match.meta,fy=meta?meta.from.y:S.data.cy;
+  const picks=(meta&&meta.picks)||c.picks.map(p=>({idx:p.idx,year:c.months[p.idx].year,label:c.months[p.idx].label}));
+  const body=(a.months||[]).map((m,i)=>{const pick=picks.find(p=>p.idx===m.idx)||picks[i];if(!pick)return '';
+    const lab=pick.year===fy?pick.label:pick.year+'년 '+pick.label;
+    return `<div class="rmonth"><p class="mh"><b>${esc(lab)}</b> <em>${esc(m.title)}</em></p>
+     <p class="tri"><span class="lab">🔮 흐름</span>${esc(m.flow)}</p><p class="tri"><span class="lab">🧬 우리의 반응</span>${esc(m.us)}</p>
+     <p class="use">${esc(m.usage)}</p></div>`}).join('');
+  const per=meta?`${meta.from.y}년 ${meta.from.m} ~ ${meta.to.y}년 ${meta.to.m}`:'';
+  return msec(6,`<p class="rperiod">📅 흐름 기간 · ${esc(per)}</p>`+strip+body+`<p class="rclose">${esc(a.closing)}</p>`)}
+function matchShareInner(){const a=S.match.ai.G3||{},c=S.match.calc,D=S.data;
+  return `<p class="rtype">「${esc(c.typeName)}」</p><p class="rshare">${esc(a.shareText||'')}</p>
+   <div class="rkeys">${MATCH_KEYS.slice(0,3).map(k=>`<div><span class="ki">${{pull:'💘',ease:'🛋️',talk:'💬'}[k]}</span><small>${MATCH_KO[k]}</small><b>${c.idx.scores[k]>=60?'크게 느껴져요':c.idx.scores[k]>=45?'보통이에요':'천천히 쌓여요'}</b></div>`).join('')}</div>`}
+function matchSecShare(){if(!matchOk('G3'))return msec(7,matchWait('G3','우리 사용법을 쓰는 중…'));
+  return msec(7,matchShareInner()+`<button class="primary" onclick="saveMatchShare()">💞 카드 이미지로 저장</button>`)}
+function viewMatchReport(){const c=S.match.calc;if(!c)return viewMatchInput();
+  return `<section class="res">
+  <header class="rhead"><p class="brand">💞 궁합 사용설명서</p><h2>${mname()} × ${pname()}</h2><p class="fine">${esc(MATCH_REL_KO[S.match.partner.rel]||'')}</p></header>
+  ${matchProgress()}
+  <nav class="rjump">${MATCH_SECS.map(([n],k)=>`<button onclick="matchGo(${k})">${n}</button>`).join('')}</nav>
+  <div id="matchBody">
+   <div class="rcap"><p class="brand">💞 궁합 사용설명서</p><p>${mname()} × ${pname()} · ${esc((S.match.meta&&S.match.meta.made)||'')}</p></div>
+   ${matchPairHead()}${matchSecs()}${matchSec7()}${matchSecShare()}
+   <p class="fine rcapfoot">내 운 사용설명서 · 사주 × MBTI · ${MATCH_PROMPT_VERSION}</p></div>
+  ${matchOk('G1')&&matchOk('G2')&&matchOk('G3')?`<button class="primary" onclick="saveMatchAll()">📄 리포트 전체를 이미지로 저장</button>`:''}
+  <p class="fine">명리 이론과 자기보고 성향을 엮은 참고용 콘텐츠예요. 두 사람의 관계를 판정하는 기준으로 쓰지 말아주세요.</p>
+  <button class="ghost" onclick="go('matchInput')">다른 사람과 궁합 보기</button>
+  <button class="ghost" onclick="go('result')">← 무료 결과로 돌아가기</button>
+  <p id="saveMsg" class="fine" aria-live="polite"></p>
+  <div id="matchStage" aria-hidden="true"></div></section>`}
+window.matchGo=k=>{const el=document.getElementById('ms'+k);if(el)el.scrollIntoView({block:'start',behavior:'smooth'})};
+window.saveMatchShare=()=>{const st=$('matchStage');
+  st.innerHTML=`<div class="share relshare"><p class="sbrand">💞 우리 사용법</p>${matchPairHead()}${matchShareInner()}<p class="sfoot">내 운 사용설명서 · 사주 × MBTI</p></div>`;
+  capture(st.firstElementChild,`myluck-match-${stamp()}.png`)};
+window.saveMatchAll=()=>capture($('matchBody'),`myluck-match-full-${stamp()}.png`,'open');
+
+// 진입 배너 (카드 6 · 관계 사용설명서 ⑦ · 첫 화면)
+function matchPromo(){return `<button class="promo mpromo" onclick="matchOpen()">
+    <b>💞 그 사람과 나는 어떨까요?</b><small>두 사람의 사주 × MBTI로 보는 궁합 사용설명서</small>
+    <span class="ppr"><b class="pnow">${won(MATCH_PRICE)}</b>${MATCH_SALE_OPEN?'':'<em class="pbadge">오픈 준비 중</em>'}<span class="pdesc">궁합 사용설명서</span><span class="parrow">→</span></span></button>`}
+// 주소 끝 #match 로 들어오면 바로 상대 입력으로 (인스타 링크용)
+if(/^#match/.test(location.hash)&&!PAY_RETURN)READY.then(()=>matchOpen());
+
 
 function shareHTML(){const D=S.data,A=ok('P')?S.ai.P.profile:{},m=S.mbti;
  const best=D.months.slice().sort((a,b)=>b.scores[b.top]-a.scores[a.top])[0];

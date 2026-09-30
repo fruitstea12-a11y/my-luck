@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>상품 안내 — 내 운 사용설명서</title>
-<meta name="description" content="내 운 사용설명서 유료 상품 안내 — 관계 사용설명서 2,900원">
+<meta name="description" content="내 운 사용설명서 유료 상품 안내 — 관계 사용설명서 2,900원 · 궁합 사용설명서 4,900원">
 <link rel="icon" href="favicon.ico" sizes="32x32">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
@@ -77,6 +77,25 @@ li{margin:3px 0}
   <p class="fine" style="text-align:center;margin-top:8px">생년월일과 MBTI를 입력하면 ① 섹션을 무료로 먼저 볼 수 있어요.</p>
  </div>
 
+ <div class="card">
+  <div class="thumb"><img src="chars/imsu_m.webp" alt="궁합 사용설명서 캐릭터 (남)" width="120" height="160"><img src="chars/gito_f.webp" alt="궁합 사용설명서 캐릭터 (여)" width="120" height="160"></div>
+  <p class="name">💞 궁합 사용설명서 <span class="status" id="matchStatus"></span></p>
+  <p class="desc">나와 상대, 두 사람의 사주와 MBTI로 보는 궁합 디지털 리포트 — 연인·썸·배우자</p>
+  <p class="price"><b>4,900원</b><small>1회 결제 · 부가세 포함 · 두 사람 한 쌍 기준</small></p>
+  <table>
+   <tr><th>상품 형태</th><td>온라인 디지털 리포트 (실물 배송 없음)</td></tr>
+   <tr><th>제공 방법</th><td>상대 생년월일·성별·MBTI(선택) 입력 → 결제 후 바로 웹 화면에서 리포트 생성·열람</td></tr>
+   <tr><th>이용 범위</th><td>결제 1회 = 입력한 두 사람 한 쌍. 상대가 바뀌면 새 리포트</td></tr>
+   <tr><th>이용 기간</th><td>①~⑥과 💞 카드는 계속 열람 가능 · ⑦ 두 사람 흐름은 처음 만든 달부터 12개월 제공</td></tr>
+   <tr><th>결제 수단</th><td>신용·체크카드, 간편결제(카카오페이·네이버페이·토스페이 등)</td></tr>
+   <tr><th>환불</th><td>리포트 생성 전 전액 환불 · 생성 실패 시 재생성 또는 전액 환불 · <a href="policy.html#refund">환불정책 보기</a></td></tr>
+  </table>
+  <p style="margin:14px 0 2px;font-weight:600">리포트 구성</p>
+  <ol class="secs" id="msecs"></ol>
+  <a class="btn" href="./#match">궁합 사용설명서 만들기 →</a>
+  <p class="fine" style="text-align:center;margin-top:8px">두 사람 정보를 입력하면 ① 섹션과 궁합 지표 5가지를 무료로 먼저 볼 수 있어요.</p>
+ </div>
+
  <h2>무료 서비스</h2>
  <ul>
   <li><b>나의 운 사용설명서 6장</b> — 나는 어떤 사람, 인생 변곡점, 돈을 만드는 나, 일과 성과, 앞으로 12개월, 내 운 사용법</li>
@@ -104,7 +123,19 @@ li{margin:3px 0}
   document.getElementById('secs').innerHTML=secs.map(function(s){
     return '<li><span>'+s[0]+'</span><div><b>'+s[1]+(s[3]?'<span class="free">무료 미리보기</span>':'')+'</b><small>'+s[2]+'</small></div></li>';
   }).join('');
+  var ms=[['①','두 사람은','관계 이름 · 궁합 지표 5가지 · 함께 있을 때의 분위기',1],
+   ['②','끌리는 이유','내가 끌리는 지점 · 상대가 끌리는 지점 · 가까워지는 계기'],
+   ['③','서로에게 나는','상대에게 나는 · 나에게 상대는 · 서로 채워주는 것'],
+   ['④','엇갈리는 순간','속도 차이 · 표현 차이 · 오해하기 쉬운 지점'],
+   ['⑤','부딪혔을 때','나는 무엇부터 · 상대는 무엇부터 · 다시 편해지는 법 · 건넬 한 마디'],
+   ['⑥','오래 편한 법','연락 리듬 · 지켜줄 영역 · 함께 커지는 것'],
+   ['⑦','앞으로 12개월 두 사람 흐름','두 사람 흐름 그래프 + 움직이는 3개월 × (흐름 · 우리의 반응 · 함께 할 것)'],
+   ['💞','우리 사용법','둘이 같이 보는 공유 카드']];
+  document.getElementById('msecs').innerHTML=ms.map(function(s){
+    return '<li><span>'+s[0]+'</span><div><b>'+s[1]+(s[3]?'<span class="free">무료 미리보기</span>':'')+'</b><small>'+s[2]+'</small></div></li>';
+  }).join('');
   var C=window.LUCK_CONFIG||{};
+  document.getElementById('matchStatus').textContent=C.MATCH_SALE_OPEN?'판매 중':'결제 오픈 준비 중';
   document.getElementById('saleStatus').textContent=C.REL_SALE_OPEN?'판매 중':'결제 오픈 준비 중';
   var B=window.LUCK_BUSINESS||{},e=function(t){return String(t).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})};
   var L=[['상호',B.name],['대표',B.owner],['사업자등록번호',B.bizNo],['통신판매업신고',B.mailNo],['주소',B.address],['전화',B.phone],['이메일',B.email]].filter(function(x){return x[1]});
