@@ -8,7 +8,8 @@ window.LUCK_CONFIG = {
   REL_RENEW_OPEN: false,
   // 💞 궁합 사용설명서(4,900원) 결제 오픈. false 면 미리보기(①·지표)까지만 보이고 버튼은 '오픈 준비 중'.
   // 오픈 전 본인 실결제 확인: https://mywoon.kr/?matchtest=1 로 들어가면 이 탭에서만 결제 버튼이 열린다.
-  MATCH_SALE_OPEN: false,
+  // 2026-10-01: 본인 실결제 확인 후 판매 오픈
+  MATCH_SALE_OPEN: true,
   // 토스페이먼츠 결제위젯 클라이언트 키 (공개돼도 되는 키). 테스트: test_gck_…  실제: live_gck_…
   // 시크릿 키(test_gsk_ / live_gsk_)는 절대 여기에 넣지 않는다. Cloudflare Worker 의 TOSS_SECRET_KEY 에만 둔다.
   // 키를 바꿀 때는 Worker 의 시크릿 키도 같은 종류(test/live)로 함께 바꿔야 한다.
