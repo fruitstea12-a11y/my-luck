@@ -3198,6 +3198,8 @@ function matchPromo(){return `<button class="promo mpromo" onclick="matchOpen()"
     <span class="ppr"><b class="pnow">${won(MATCH_PRICE)}</b>${MATCH_SALE_OPEN?'':'<em class="pbadge">오픈 준비 중</em>'}<span class="pdesc">궁합 사용설명서</span><span class="parrow">→</span></span></button>`}
 // 주소 끝 #match 로 들어오면 바로 상대 입력으로 (인스타 링크용)
 if(/^#match/.test(location.hash)&&!PAY_RETURN)READY.then(()=>matchOpen());
+// 주소 끝 #start — 부자 사주 확인 페이지 등에서 넘어올 때 바로 입력 화면(저장된 생년월일이 미리 채워짐)
+if(/^#start/.test(location.hash)&&!PAY_RETURN)READY.then(()=>go('input'));
 
 
 function shareHTML(){const D=S.data,A=ok('P')?S.ai.P.profile:{},m=S.mbti;

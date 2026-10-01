@@ -1,0 +1,312 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>부자 사주 확인 — 내 사주에 재성이 있을까? | 내 운 사용설명서</title>
+<meta name="description" content="생년월일만 넣으면 10초 만에 확인해요. 신왕재왕·식상생재·재고(돈 창고)·정재/편재 타입·재성이 들어오는 10년 흐름까지, 명리학 부자 사주 5가지 특징을 내 사주로 바로 봅니다.">
+<link rel="canonical" href="https://mywoon.kr/rich">
+<meta name="theme-color" content="#F4ECDF">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="내 운 사용설명서">
+<meta property="og:locale" content="ko_KR">
+<meta property="og:title" content="부자 사주 확인 — 내 사주에도 있을까?">
+<meta property="og:description" content="신왕재왕·식상생재·돈 창고·정재/편재 타입·재성이 들어오는 시기까지 생년월일로 바로 확인">
+<meta property="og:url" content="https://mywoon.kr/rich">
+<meta property="og:image" content="https://mywoon.kr/og.png?v=2">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="favicon.ico">
+<script src="https://cdn.jsdelivr.net/npm/astronomy-engine@2.1.19/astronomy.browser.min.js"></script>
+<style>
+:root{--paper:#F4ECDF;--panel:#FBF6EC;--ink:#2B2622;--sub:#6E655C;--line:#DCCFBC;--chip:#EBE0CE;--accent:#9B3D2A;--gold:#B8893E;--goldbg:#B8893E1f}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Pretendard","Noto Sans KR","Malgun Gothic",sans-serif;line-height:1.6;word-break:keep-all}
+main{max-width:520px;margin:0 auto;padding:22px 16px 48px}
+.brand{margin:0;font-size:12.5px;letter-spacing:.04em;color:var(--accent);font-weight:700}
+.brand a{color:inherit;text-decoration:none}
+h1{margin:6px 0 6px;font-size:26px;line-height:1.3;letter-spacing:-.01em}
+.lead{margin:0 0 18px;color:var(--sub);font-size:14.5px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:16px}
+label.f{display:block;font-size:13px;font-weight:700;color:var(--sub);margin:0 0 6px}
+.row{display:grid;grid-template-columns:1.3fr 1fr 1fr;gap:6px;margin-bottom:12px}
+.row2{display:grid;grid-template-columns:1fr 1fr auto;gap:6px;align-items:center;margin-bottom:12px}
+select{width:100%;font:inherit;font-size:15px;padding:10px 8px;border:1px solid var(--line);border-radius:10px;background:#fff;color:var(--ink)}
+.chk{font-size:13.5px;color:var(--sub);white-space:nowrap}
+.seg{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:14px}
+.seg button{font:inherit;padding:10px;border-radius:10px;border:1px solid var(--line);background:#fff;color:var(--sub)}
+.seg button.on{background:var(--chip);color:var(--ink);font-weight:700;border-color:var(--sub)}
+.primary{display:block;width:100%;font:inherit;font-size:16px;font-weight:700;padding:14px;border:0;border-radius:14px;background:var(--ink);color:var(--paper);cursor:pointer}
+.err{color:var(--accent);font-size:13px;min-height:1em;margin:0 0 8px}
+.priv{margin:10px 0 0;font-size:12.5px;color:var(--sub)}
+#res{margin-top:18px}
+.verdict{background:var(--ink);color:var(--paper);border-radius:18px;padding:18px 16px;margin-bottom:12px}
+.verdict small{display:block;font-size:12px;opacity:.75;margin-bottom:4px}
+.verdict b{display:block;font-size:22px;line-height:1.35;margin-bottom:6px}
+.verdict p{margin:0;font-size:14.5px;opacity:.92}
+.pillars{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:4px 0 6px}
+.pl{background:#fff;border:1px solid var(--line);border-radius:12px;text-align:center;padding:8px 2px}
+.pl small{display:block;font-size:11px;color:var(--sub)}
+.pl .c{display:block;font-size:22px;font-weight:700;line-height:1.25;margin:2px 0}
+.pl .c.j{color:var(--gold);background:var(--goldbg);border-radius:8px}
+.pl .g{display:block;font-size:10.5px;color:var(--sub)}
+.legend{font-size:12px;color:var(--sub);margin:0 0 4px}
+.item{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:14px 16px;margin-top:10px}
+.item h3{margin:0 0 4px;font-size:15px;display:flex;align-items:center;gap:8px}
+.item h3 .no{display:inline-grid;place-items:center;width:22px;height:22px;border-radius:50%;background:var(--chip);font-size:12px}
+.tag{display:inline-block;font-size:12.5px;font-weight:700;padding:2px 10px;border-radius:999px;margin:2px 0 6px}
+.tag.yes{background:var(--goldbg);color:#8a6418}
+.tag.mid{background:var(--chip);color:var(--sub)}
+.tag.no{background:#9B3D2A14;color:var(--accent)}
+.item p{margin:0;font-size:14.5px}
+.basis{margin-top:6px!important;font-size:12px!important;color:var(--sub)}
+.dw{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.dw span{font-size:12.5px;padding:3px 9px;border-radius:999px;border:1px solid var(--line);background:#fff}
+.dw span.j{background:#B8893E3d;border-color:#b8893e;color:#6b4c12;font-weight:700}
+.dw span.now{outline:2px solid var(--ink)}
+.cta{margin-top:18px;background:var(--panel);border:1px solid #b8893e66;border-radius:18px;padding:16px;box-shadow:inset 3px 0 0 var(--accent)}
+.cta b{display:block;font-size:16px;margin-bottom:4px}
+.cta p{margin:0 0 12px;font-size:14px;color:var(--sub)}
+.share{margin-top:10px;width:100%;font:inherit;font-size:14px;padding:11px;border-radius:12px;border:1px solid var(--line);background:#fff;color:var(--ink);cursor:pointer}
+.fine{margin-top:22px;font-size:12px;color:var(--sub)}
+footer{margin-top:24px;font-size:12px;color:var(--sub);text-align:center}
+footer a{color:var(--sub)}
+</style>
+</head>
+<body>
+<main>
+ <p class="brand"><a href="/">내 운 사용설명서</a> · 사주 재물 구조</p>
+ <h1>부자 사주 확인</h1>
+ <p class="lead">명리학에서 말하는 부자 사주 특징 5가지, 내 사주에도 있는지 생년월일로 10초 만에 확인해요.</p>
+
+ <section class="card" id="form">
+  <label class="f">생년월일 (양력)</label>
+  <div class="row"><select id="y" aria-label="년"></select><select id="m" aria-label="월"></select><select id="d" aria-label="일"></select></div>
+  <label class="f">태어난 시간</label>
+  <div class="row2"><select id="hh" aria-label="시"></select><select id="mi" aria-label="분"></select><label class="chk"><input type="checkbox" id="nt"> 몰라요</label></div>
+  <label class="f">성별 <small style="font-weight:400">(10년 흐름 계산에 필요해요)</small></label>
+  <div class="seg"><button type="button" data-g="f">여</button><button type="button" data-g="m">남</button></div>
+  <p class="err" id="err"></p>
+  <button class="primary" id="go">내 부자 사주 확인하기</button>
+  <p class="priv">🔒 입력한 정보는 서버로 보내지 않아요. 이 기기 안에서만 계산해요.</p>
+ </section>
+
+ <div id="res"></div>
+
+ <p class="fine">명리 이론에 기반한 참고용 콘텐츠예요. 재물 구조는 돈을 대하는 방식과 흐름을 보는 것이지, 실제 재산이나 투자 결과를 예측하지 않아요. 출생시간을 모르면 시주를 빼고 계산해요.</p>
+ <footer><a href="/">내 운 사용설명서 홈</a> · <a href="policy.html#privacy">개인정보처리방침</a></footer>
+</main>
+<script>
+// index.html 의 사주 엔진을 그대로 복사한 것 (rules-v0.1). 엔진을 고치면 여기도 같이 갱신.
+// ===== 사주 엔진 v0.1 (rules-v0.1) =====
+const STEM=['갑','을','병','정','무','기','경','신','임','계'];
+const BRANCH=['자','축','인','묘','진','사','오','미','신','유','술','해'];
+const STEM_H=['甲','乙','丙','丁','戊','己','庚','辛','壬','癸'];
+const BRANCH_H=['子','丑','寅','卯','辰','巳','午','未','申','酉','戌','亥'];
+const EL=['목','화','토','금','수'];
+const stemEl=s=>Math.floor(s/2);           // 0목1화2토3금4수
+const HIDDEN=[[[8,10],[9,20]],[[9,9],[7,3],[5,18]],[[4,7],[2,7],[0,16]],[[0,10],[1,20]],[[1,9],[9,3],[4,18]],[[4,7],[6,7],[2,16]],
+ [[2,10],[5,9],[3,11]],[[3,9],[1,3],[5,18]],[[4,7],[8,7],[6,16]],[[6,10],[7,20]],[[7,9],[3,3],[4,18]],[[4,7],[0,7],[8,16]]];
+const BR_EL=[4,2,0,0,2,1,1,2,3,3,2,4];
+const CLASH=b=>(b+6)%12;
+const HAP6={0:1,1:0,2:11,11:2,3:10,10:3,4:9,9:4,5:8,8:5,6:7,7:6};
+const TG=['비견','겁재','식신','상관','편재','정재','편관','정관','편인','정인'];
+function tenGod(day,s){const e=stemEl(day),o=stemEl(s),same=(day%2)===(s%2);
+  let k; if(o===e)k=0; else if(o===(e+1)%5)k=2; else if(o===(e+2)%5)k=4; else if(e===(o+2)%5)k=6; else k=8;
+  return TG[k+(same?0:1)];}
+const mod=(a,n)=>((a%n)+n)%n;
+function jdn(y,m,d){const a=Math.floor((14-m)/12),yy=y+4800-a,mm=m+12*a-3;return d+Math.floor((153*mm+2)/5)+365*yy+Math.floor(yy/4)-Math.floor(yy/100)+Math.floor(yy/400)-32045}
+const sunLon=date=>Astronomy.SunPosition(date).elon;
+function jeolNext(date){const l=sunLon(date);const t=mod(15+30*Math.ceil((l-15+1e-9)/30),360);return Astronomy.SearchSunLongitude(t,date,40).date}
+function jeolPrev(date){const l=sunLon(date);const t=mod(15+30*Math.floor((l-15)/30),360);return Astronomy.SearchSunLongitude(t,new Date(date.getTime()-40*864e5),40).date}
+function sajuYear(date){const y=date.getUTCFullYear();const ip=Astronomy.SearchSunLongitude(315,new Date(Date.UTC(y,0,1)),80).date;return date<ip?y-1:y}
+function yearPillar(sy){const i=mod(sy-4,60);return {s:i%10,b:i%12}}
+function monthPillar(date){const sy=sajuYear(date),ys=yearPillar(sy).s;const m=Math.floor(mod(sunLon(date)-315,360)/30);
+  return {s:mod(((ys%5)*2+2)+m,10),b:(m+2)%12}}
+function eot(date){const N=Math.floor((date-Date.UTC(date.getUTCFullYear(),0,0))/864e5);const B=2*Math.PI/365*(N-81);return 9.87*Math.sin(2*B)-7.53*Math.cos(B)-1.5*Math.sin(B)}
+// 한국 표준시·서머타임 이력 (출처: 위키백과 '한국 표준시' 일광절약시간 목록)
+const KR_DST=[['194806010000','194809130000'],['194904030000','194909110000'],['195004010000','195009100000'],['195105060000','195109090000'],
+ ['195505050000','195509090000'],['195605200000','195609300000'],['195705050000','195709220000'],['195805040000','195809210000'],
+ ['195905030000','195909200000'],['196005010000','196009180000'],['198705100200','198710110300'],['198805080200','198810090300']];
+function koreaClockOffset(y,m,d,hh,mm){const k=String(y)+String(m).padStart(2,'0')+String(d).padStart(2,'0')+String(hh??12).padStart(2,'0')+String(mm??0).padStart(2,'0');
+  const ymd=k.slice(0,8);const tz=(ymd>='19540321'&&ymd<='19610809')?8.5:(ymd<'19120101'?8.5:9);
+  const dst=KR_DST.some(([a,b])=>k>=a&&k<b);return {tz,dst}}
+function pairName(p){return STEM[p.s]+BRANCH[p.b]}
+
+function buildChart(inp){
+  // inp: {y,m,d,hh,mm|null,lon,tz,dst,gender:'m'|'f',ziMode:'jo'|'ya'}
+  const off=inp.tz+(inp.dst?1:0);
+  const hasTime=inp.hh!=null;
+  const clockH=hasTime?inp.hh:12, clockM=hasTime?inp.mm:0;
+  const utc=new Date(Date.UTC(inp.y,inp.m-1,inp.d,clockH,clockM)-off*36e5);
+  const trueMin=(inp.lon-inp.tz*15)*4+eot(utc);
+  const tst=new Date(utc.getTime()+(inp.tz*60+trueMin)*6e4); // true solar local (as UTC fields)
+  let dY=tst.getUTCFullYear(),dM=tst.getUTCMonth()+1,dD=tst.getUTCDate(),th=tst.getUTCHours(),tm=tst.getUTCMinutes();
+  let dayShift=0; if(hasTime&&inp.ziMode!=='ya'&&th===23)dayShift=1;
+  const dayIdx=mod(jdn(dY,dM,dD)+dayShift-2415021+10,60);
+  const year=yearPillar(sajuYear(utc)), month=monthPillar(utc), day={s:dayIdx%10,b:dayIdx%12};
+  let hour=null; if(hasTime){const hb=Math.floor((th+1)/2)%12;const hs=(inp.ziMode==='ya'&&th===23)?(day.s+1)%10:day.s;hour={s:mod((hs%5)*2+hb,10),b:hb}} // 야자시: 일주는 당일, 자시 천간은 다음날 기준
+  const pillars={year,month,day,hour};
+  // daewoon
+  const forward=((year.s%2===0)===(inp.gender==='m'));
+  const jd=forward?jeolNext(utc):jeolPrev(utc);
+  const days=Math.abs(jd-utc)/864e5; const startAge=days/3;
+  const dws=[];for(let i=1;i<=9;i++){const k=forward?i:-i;const idx=mod(sexIdx(month)+k,60);
+    const ageStart=startAge+(i-1)*10;dws.push({s:idx%10,b:idx%12,ageStart,yearStart:inp.y+ageStart})}
+  // jeol-day flag (no time)
+  const nearJeol=!hasTime&&(Math.abs(jeolNext(utc)-utc)<864e5||Math.abs(utc-jeolPrev(utc))<864e5);
+  const natal=analyzeNatal(pillars);
+  return {inp,utc,trueSolar:{min:Math.round(trueMin),h:th,m:tm},pillars,forward,daewoonStartAge:startAge,daewoon:dws,nearJeol,natal,hasTime}
+}
+function sexIdx(p){for(let i=0;i<60;i++)if(i%10===p.s&&i%12===p.b)return i}
+
+function analyzeNatal(P){
+  const day=P.day.s; const els=[0,0,0,0,0]; const gods={}; TG.forEach(t=>gods[t]=0);
+  const add=(s,w)=>{els[stemEl(s)]+=w;gods[tenGod(day,s)]+=w};
+  const stems=[[P.year.s,1],[P.month.s,1],[P.hour?P.hour.s:null,1]];
+  stems.forEach(([s,w])=>{if(s!=null)add(s,w)}); els[stemEl(day)]+=1;
+  const brs=[[P.year.b,1],[P.month.b,3],[P.day.b,1.5],[P.hour?P.hour.b:null,1]];
+  brs.forEach(([b,w])=>{if(b==null)return;HIDDEN[b].forEach(([s,d])=>add(s,w*d/30))});
+  const total=els.reduce((a,b)=>a+b,0);
+  const helpEl=[stemEl(day),mod(stemEl(day)-1,5)];
+  let help=0,all=0; stems.forEach(([s,w])=>{if(s==null)return;all+=w;if(helpEl.includes(stemEl(s)))help+=w});
+  brs.forEach(([b,w])=>{if(b==null)return;HIDDEN[b].forEach(([s,d])=>{all+=w*d/30;if(helpEl.includes(stemEl(s)))help+=w*d/30})});
+  const strength=Math.round(Math.max(5,Math.min(95,(help/all)*100*1.35)));
+  const band=strength<40?'신약':strength>60?'신강':'중화';
+  const share=els.map(v=>v/total);
+  const season=[11,0,1].includes(P.month.b)?'winter':[5,6,7].includes(P.month.b)?'summer':'mid';
+  const achieve={표현형:gods.식신+gods.상관,전문형:gods.편인+gods.정인,관리형:gods.정관,실행형:gods.편관+gods.겁재,기회형:gods.편재,안정형:gods.정재+gods.비견};
+  const achieveType=Object.entries(achieve).sort((a,b)=>b[1]-a[1]);
+  const weakEl=share.indexOf(Math.min(...share)), strongEl=share.indexOf(Math.max(...share));
+  return {dayStem:day,dayEl:stemEl(day),elements:share.map(v=>+(v*100).toFixed(1)),strength,band,season,gods,achieveType:achieveType.map(x=>x[0]),weakEl,strongEl}
+}
+
+// ===== 부자 사주 확인 (rich-v1) =====
+const $=id=>document.getElementById(id);
+const JAE=['편재','정재'],SIK=['식신','상관'];
+const KO_POS=['년','월','일','시'];
+// 재성 오행의 창고(庫): 목→未, 화→戌, 토→戌(화토동법), 금→丑, 수→辰
+const KU={0:7,1:10,2:10,3:1,4:4};
+let G='';
+(function init(){
+ const cy=new Date().getFullYear();
+ $('y').innerHTML='<option value="">년</option>'+Array.from({length:cy-1919},(_,k)=>cy-k).map(v=>`<option ${v===1990?'':''} value="${v}">${v}년</option>`).join('');
+ $('m').innerHTML='<option value="">월</option>'+Array.from({length:12},(_,k)=>`<option value="${k+1}">${k+1}월</option>`).join('');
+ const days=()=>{const Y=+$('y').value||2000,M=+$('m').value||1,n=new Date(Y,M,0).getDate(),cur=$('d').value;
+  $('d').innerHTML='<option value="">일</option>'+Array.from({length:n},(_,k)=>`<option value="${k+1}" ${+cur===k+1?'selected':''}>${k+1}일</option>`).join('')};
+ days();$('y').onchange=days;$('m').onchange=days;
+ $('hh').innerHTML='<option value="">시</option>'+Array.from({length:24},(_,k)=>`<option value="${k}">${k}시</option>`).join('');
+ $('mi').innerHTML=Array.from({length:12},(_,k)=>`<option value="${k*5}">${k*5}분</option>`).join('');
+ $('nt').onchange=()=>{$('hh').disabled=$('mi').disabled=$('nt').checked};
+ document.querySelectorAll('.seg button').forEach(b=>b.onclick=()=>{G=b.dataset.g;document.querySelectorAll('.seg button').forEach(x=>x.classList.toggle('on',x===b))});
+ // 앱에 저장된 정보가 있으면 미리 채운다
+ try{const p=JSON.parse(localStorage.getItem('myluck:profile')||'null');const i=p&&p.input;if(i&&i.date){const [a,b,c]=i.date.split('-').map(Number);$('y').value=a;$('m').value=b;days();$('d').value=c;
+  if(i.noTime){$('nt').checked=true;$('hh').disabled=$('mi').disabled=true}else if(i.time){const [h,mm]=i.time.split(':').map(Number);$('hh').value=h;$('mi').value=Math.round(mm/5)*5%60}
+  if(i.gender){G=i.gender;document.querySelector(`.seg button[data-g="${G}"]`)?.classList.add('on')}}}catch(_){}
+ $('go').onclick=run;
+})();
+
+function run(){
+ const y=+$('y').value,m=+$('m').value,d=+$('d').value,nt=$('nt').checked,hh=nt?null:($('hh').value===''?null:+$('hh').value),mm=nt?null:+$('mi').value;
+ if(!y||!m||!d){$('err').textContent='생년월일을 모두 골라주세요.';return}
+ if(!nt&&hh==null){$('err').textContent='태어난 시간을 고르거나 "몰라요"를 체크해주세요.';return}
+ if(!G){$('err').textContent='성별을 골라주세요.';return}
+ $('err').textContent='';
+ const off=koreaClockOffset(y,m,d,hh,mm);
+ const chart=buildChart({y,m,d,hh,mm,lon:127.5,tz:off.tz,dst:off.dst,gender:G,ziMode:'jo'});
+ const R=analyze(chart,y);
+ $('res').innerHTML=render(R,chart);
+ $('res').scrollIntoView({behavior:'smooth',block:'start'});
+ window.__last={y,m,d,hh,mm,nt};
+}
+
+function analyze(chart,birthY){
+ const P=chart.pillars,day=P.day.s,n=chart.natal,g=n.gods;
+ const jaeEl=(stemEl(day)+2)%5;
+ // 여덟 글자: 천간 + 지지 본기(가장 큰 지장간)
+ const cells=['year','month','day','hour'].map((k,i)=>{const p=P[k];if(!p)return null;
+  const mainS=HIDDEN[p.b][HIDDEN[p.b].length-1][0];
+  return {pos:KO_POS[i],s:p.s,b:p.b,gs:k==='day'?'나':tenGod(day,p.s),gb:tenGod(day,mainS)}});
+ let jaeCnt=0;cells.forEach(c=>{if(!c)return;if(c.gs!=='나'&&JAE.includes(c.gs))jaeCnt++;if(JAE.includes(c.gb))jaeCnt++});
+ const jaeW=g.편재+g.정재,sikW=g.식신+g.상관;
+ const brs=cells.filter(Boolean).map(c=>c.b);
+ const ku=KU[jaeEl],hasKu=brs.includes(ku);
+ const noJae=jaeCnt===0&&jaeW<0.35;
+ // 1. 감당하는 힘
+ let s1;
+ if(noJae)s1={k:'mid',t:'재성이 드러나지 않은 구조',p:'돈 글자가 원국에 거의 없어서, 감당하는 힘보다 "언제 들어오느냐"가 더 중요한 사주예요. 아래 5번 시기를 함께 보세요.'};
+ else if(n.band==='신강'&&jaeW>=1.6)s1={k:'yes',t:'신왕재왕 — 나도 강하고 돈도 강한 편',p:'내 힘과 돈의 기운이 함께 있는 구조예요. 큰돈이 오가도 흔들리지 않고 감당하는 쪽으로 봐요.'};
+ else if(n.band==='신약'&&jaeW>=1.5)s1={k:'no',t:'재다신약 — 돈은 많고 내 힘은 아끼는 편',p:'주변에 돈의 흐름은 많은데 내 힘이 그만큼 받쳐주지 못하는 구조예요. 벌기보다 지키는 장치(자동 저축, 지출 상한)를 먼저 만들면 손에 남는 돈이 달라져요.'};
+ else if(n.band==='신강')s1={k:'mid',t:'신강 — 감당할 힘은 충분한 편',p:'내 힘이 강해서 돈이 들어올 때 감당하는 그릇은 있는 편이에요. 돈의 기운이 강해지는 시기에 크게 움직이기 좋아요.'};
+ else if(n.band==='신약')s1={k:'mid',t:'신약 — 힘을 나눠 쓰는 편',p:'한 번에 크게 벌이기보다 나눠서 꾸준히 쌓을 때 돈이 남는 구조예요. 도와주는 사람·환경이 붙을 때 재물이 함께 커져요.'};
+ else s1={k:'mid',t:'중화 — 힘과 돈이 균형을 이룬 편',p:'한쪽으로 치우치지 않아 무리한 욕심만 피하면 돈이 꾸준히 붙는 구조예요.'};
+ // 2. 식상생재
+ let s2;
+ if(sikW>=1.6&&jaeW>=1.0)s2={k:'yes',t:'있음 — 재능이 돈으로 흐르는 구조',p:'만들고 표현하는 힘(식상)이 돈(재성)으로 이어져요. 내 기술·콘텐츠·손재주로 버는 방식이 잘 맞아요.'};
+ else if(sikW>=1)s2={k:'mid',t:'재능은 강하고, 돈으로 잇는 고리는 약한 편',p:'표현하고 만드는 힘은 큰데 그걸 돈으로 바꾸는 연결이 약해요. 가격을 매기고 파는 연습, 혹은 돈 관리에 강한 사람과 짝을 이루면 흐름이 생겨요.'};
+ else if(jaeW>=0.8)s2={k:'mid',t:'재능보다 돈 감각이 앞서는 편',p:'만드는 힘보다 돈의 흐름을 읽는 힘이 더 커요. 직접 만들기보다 고르고 연결하고 관리해서 버는 방식이 잘 맞아요.'};
+ else s2={k:'no',t:'뚜렷하지 않음',p:'재능→돈으로 바로 이어지는 구조는 약해요. 다른 경로(맡은 자리·배움·사람)에서 돈이 오는 편이에요.'};
+ // 3. 재고
+ const s3=hasKu?{k:'yes',t:`있음 — ${BRANCH_H[ku]}(${BRANCH[ku]}) 돈 창고`,p:'재성의 창고가 사주에 있어서 번 돈을 모아두는 힘이 있다고 봐요. 수입이 같아도 자산이 쌓이는 쪽이에요.'}
+                :{k:'mid',t:'없음',p:`돈 창고 글자(${BRANCH_H[ku]})는 원국에 없어요. 모으는 힘은 습관으로 만드는 편이 빨라요. 통장을 목적별로 나누는 것만으로도 차이가 커요.`};
+ // 4. 정재/편재
+ let s4;
+ if(noJae)s4={k:'mid',t:'아직 정해지지 않은 타입',p:'원국에 돈 글자가 거의 없어서, 재성이 들어오는 10년 흐름의 성격에 따라 모으는 쪽·굴리는 쪽이 정해져요.'};
+ else if(g.정재>=g.편재*1.3)s4={k:'yes',t:'정재형 — 모으는 부자',p:'꾸준하고 안정적인 돈이 맞는 타입이에요. 고정 수입을 차곡차곡 쌓고 새는 곳을 막을 때 가장 크게 불어나요.'};
+ else if(g.편재>=g.정재*1.3)s4={k:'yes',t:'편재형 — 굴리는 부자',p:'크게 움직이는 돈이 맞는 타입이에요. 기회를 알아보고 판을 키우는 데 강해요. 대신 들어오는 만큼 나가는 폭도 커서 기준선을 미리 정해두면 좋아요.'};
+ else s4={k:'yes',t:'혼합형 — 모으면서 굴리는 타입',p:'안정적인 돈과 움직이는 돈이 비슷하게 섞여 있어요. 기본은 모으고, 일부만 떼어 기회에 쓰는 방식이 잘 맞아요.'};
+ // 5. 재성 대운
+ const cy=new Date().getFullYear(),age=cy-birthY;
+ const dws=chart.daewoon.map(dw=>{const mainS=HIDDEN[dw.b][HIDDEN[dw.b].length-1][0];const j=JAE.includes(tenGod(day,dw.s))||JAE.includes(tenGod(day,mainS));
+  const a0=Math.floor(dw.ageStart)+1,a1=a0+9;return {a0,a1,y0:birthY+a0-1,j,now:age>=a0&&age<=a1}}).filter(x=>x.a0<=90);
+ const nextJ=dws.find(x=>x.j&&x.a1>=age);
+ const s5={k:noJae?'no':(nextJ?'yes':'mid'),t:noJae?'무재 사주 — 대운에서 돈이 들어오는 타입':(nextJ?(nextJ.now?'지금이 재성 10년 흐름 안이에요':`다음 재성 흐름: ${nextJ.a0}세 무렵(${nextJ.y0}년~)`):'남은 10년 흐름에 재성이 적은 편'),
+  p:noJae?'재성이 없다고 돈과 인연이 없는 게 아니에요. 돈에 매이지 않아 오히려 큰 그릇이 되기도 하고, 10년 흐름에서 재성이 들어올 때 돈이 함께 따라와요.'
+   :(nextJ?(nextJ.now?'돈의 기운이 10년 단위로 들어와 있는 시기예요. 벌이·저축 계획을 이 시기에 크게 세워두면 좋아요.':'그 시기에 돈의 그릇이 커져요. 지금은 그때를 위한 기반(기술·신용·종잣돈)을 만들어두는 시기예요.')
+   :'원국의 재성과 실력(식상)·자리(관성)를 키워 버는 쪽이 맞아요.'),dws};
+ // 대표 타입
+ let head;
+ if(s1.k==='yes')head={t:'신왕재왕형 부자 사주',p:'나도 강하고 돈도 강한, 전통적으로 가장 이상적인 재물 구조예요.'};
+ else if(s2.k==='yes')head={t:'식상생재형 — 재능으로 버는 사주',p:'좋아하는 일을 꾸준히 하면 돈이 따라오는 구조예요.'};
+ else if(s1.k==='no')head={t:'재다신약형 — 지키면 크는 사주',p:'돈의 흐름은 충분해요. 지키는 힘을 키우면 손에 남는 돈이 달라져요.'};
+ else if(noJae)head={t:'무재형 — 때를 기다려 크는 사주',p:'돈은 10년 흐름에서 들어와요. 그 전까지 실력과 자리를 키우는 쪽이 맞아요.'};
+ else if(hasKu)head={t:'재고형 — 모으는 힘이 있는 사주',p:'번 돈을 쌓아두는 창고가 있는 구조예요.'};
+ else head={t:s4.t.split(' — ')[0]+' 재물 사주',p:s4.p.split('. ')[0]+'.'};
+ return {cells,jaeCnt,s:[s1,s2,s3,s4,s5],head,jaeEl};
+}
+
+function render(R,chart){
+ const esc=t=>String(t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+ const cell=c=>c?`<div class="pl"><small>${c.pos}주</small><span class="c ${JAE.includes(c.gs)?'j':''}">${STEM_H[c.s]}</span><span class="g">${c.gs}</span><span class="c ${JAE.includes(c.gb)?'j':''}">${BRANCH_H[c.b]}</span><span class="g">${c.gb}</span></div>`
+  :`<div class="pl"><small>시주</small><span class="c" style="color:var(--line)">?</span><span class="g">시간 모름</span><span class="c" style="color:var(--line)">?</span><span class="g">&nbsp;</span></div>`;
+ const H=['돈을 감당하는 힘','재능이 돈으로 흐르는가 (식상생재)','돈 창고가 있는가 (재고)','모으는 부자 vs 굴리는 부자','재성이 들어오는 10년 흐름'];
+ const B=[`신강도 ${chart.natal.strength}/100 (${chart.natal.band}) · 재성 비중 ${(chart.natal.gods.편재+chart.natal.gods.정재).toFixed(1)}`,
+  `식신·상관 ${(chart.natal.gods.식신+chart.natal.gods.상관).toFixed(1)} · 편재·정재 ${(chart.natal.gods.편재+chart.natal.gods.정재).toFixed(1)}`,
+  `재성(${EL[R.jaeEl]})의 창고 = ${BRANCH_H[KU[R.jaeEl]]}`,
+  `정재 ${chart.natal.gods.정재.toFixed(1)} · 편재 ${chart.natal.gods.편재.toFixed(1)}`,
+  `금색 = 천간이나 지지 본기에 재성이 있는 10년`];
+ const items=R.s.map((s,i)=>`<section class="item"><h3><span class="no">${i+1}</span>${H[i]}</h3><span class="tag ${s.k}">${esc(s.t)}</span><p>${esc(s.p)}</p>
+  ${i===4?`<div class="dw">${s.dws.map(x=>`<span class="${x.j?'j':''} ${x.now?'now':''}">${x.a0}~${x.a1}세${x.now?' · 지금':''}</span>`).join('')}</div>`:''}<p class="basis">근거 · ${B[i]}</p></section>`).join('');
+ return `<section class="verdict"><small>내 재물 구조</small><b>${esc(R.head.t)}</b><p>${esc(R.head.p)}</p></section>
+ <section class="card"><p class="legend">내 사주 여덟 글자 · <b style="color:var(--gold)">금색</b>이 재성(돈 글자) · 재성 ${R.jaeCnt}개</p>
+ <div class="pillars">${['hour','day','month','year'].map(k=>cell(R.cells[{year:0,month:1,day:2,hour:3}[k]])).join('')}</div>
+ <p class="legend">일주 윗글자(${STEM_H[chart.pillars.day.s]})가 '나'예요. 지지는 가장 큰 지장간(본기) 기준이에요.</p></section>
+ ${items}
+ <section class="cta"><b>돈이 언제, 어떻게 움직이는지까지</b><p>연도별 돈 흐름 그래프, 돈이 크게 움직이는 해, 돈이 새는 패턴, MBTI로 본 돈 쓰는 방식까지 무료 6카드로 이어서 볼 수 있어요.</p>
+  <button class="primary" onclick="toApp()">내 운 사용설명서 무료로 보기</button>
+  <button class="share" onclick="shareIt()">결과 공유하기</button></section>`;
+}
+
+function toApp(){
+ const L=window.__last;if(!L)return location.href='/';
+ const date=`${L.y}-${String(L.m).padStart(2,'0')}-${String(L.d).padStart(2,'0')}`,time=L.nt?'':`${String(L.hh).padStart(2,'0')}:${String(L.mm).padStart(2,'0')}`;
+ try{const old=JSON.parse(localStorage.getItem('myluck:profile')||'null')||{};const oi=old.input||{};
+  const same=oi.date===date&&oi.gender===G&&(!!oi.noTime)===L.nt&&(L.nt||oi.time===time);
+  const input=same?oi:{name:oi.name||'',date,time,noTime:L.nt,sido:'u',sgg:0,lon:127.5,tz:null,place:'모름',gender:G,ya:false,dst:false};
+  localStorage.setItem('myluck:profile',JSON.stringify({input,mbti:same?old.mbti||null:null,savedAt:Date.now()}))}catch(_){}
+ location.href='/#start';
+}
+function shareIt(){const url='https://mywoon.kr/rich',t='부자 사주 확인 — 내 사주에도 있을까?';
+ if(navigator.share)navigator.share({title:t,url}).catch(()=>{});else{navigator.clipboard?.writeText(url);alert('링크를 복사했어요.')}}
+</script>
+</body>
+</html>
