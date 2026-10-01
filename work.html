@@ -1,0 +1,345 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>퇴사·이직 타이밍 확인 — 내 사주는 퇴사각? | 내 운 사용설명서</title>
+<meta name="description" content="생년월일만 넣으면 10초 만에 확인해요. 내 일 타입, 회사와의 궁합, 올해·내년 흐름, 앞으로 12개월 중 이동 기운이 큰 달, 지금 10년 흐름까지 사주로 봅니다.">
+<link rel="canonical" href="https://mywoon.kr/work">
+<meta name="theme-color" content="#F4ECDF">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="내 운 사용설명서">
+<meta property="og:locale" content="ko_KR">
+<meta property="og:title" content="퇴사·이직 타이밍 — 내 사주는 퇴사각?">
+<meta property="og:description" content="내 일 타입 · 회사와의 궁합 · 움직임이 큰 달까지 생년월일로 바로 확인">
+<meta property="og:url" content="https://mywoon.kr/work">
+<meta property="og:image" content="https://mywoon.kr/og.png?v=2">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="favicon.ico">
+<script src="https://cdn.jsdelivr.net/npm/astronomy-engine@2.1.19/astronomy.browser.min.js"></script>
+<style>
+:root{--paper:#F4ECDF;--panel:#FBF6EC;--ink:#2B2622;--sub:#6E655C;--line:#DCCFBC;--chip:#EBE0CE;--accent:#9B3D2A;--gold:#B8893E;--goldbg:#B8893E1f}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Pretendard","Noto Sans KR","Malgun Gothic",sans-serif;line-height:1.6;word-break:keep-all}
+main{max-width:520px;margin:0 auto;padding:22px 16px 48px}
+.brand{margin:0;font-size:12.5px;letter-spacing:.04em;color:var(--accent);font-weight:700}
+.brand a{color:inherit;text-decoration:none}
+h1{margin:6px 0 6px;font-size:26px;line-height:1.3;letter-spacing:-.01em}
+.lead{margin:0 0 18px;color:var(--sub);font-size:14.5px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:16px}
+label.f{display:block;font-size:13px;font-weight:700;color:var(--sub);margin:0 0 6px}
+.row{display:grid;grid-template-columns:1.3fr 1fr 1fr;gap:6px;margin-bottom:12px}
+.row2{display:grid;grid-template-columns:1fr 1fr auto;gap:6px;align-items:center;margin-bottom:12px}
+select{width:100%;font:inherit;font-size:15px;padding:10px 8px;border:1px solid var(--line);border-radius:10px;background:#fff;color:var(--ink)}
+.chk{font-size:13.5px;color:var(--sub);white-space:nowrap}
+.seg{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:14px}
+.seg button{font:inherit;padding:10px;border-radius:10px;border:1px solid var(--line);background:#fff;color:var(--sub)}
+.seg button.on{background:var(--chip);color:var(--ink);font-weight:700;border-color:var(--sub)}
+.primary{display:block;width:100%;font:inherit;font-size:16px;font-weight:700;padding:14px;border:0;border-radius:14px;background:var(--ink);color:var(--paper);cursor:pointer}
+.err{color:var(--accent);font-size:13px;min-height:1em;margin:0 0 8px}
+.priv{margin:10px 0 0;font-size:12.5px;color:var(--sub)}
+#res{margin-top:18px}
+.verdict{background:var(--ink);color:var(--paper);border-radius:18px;padding:18px 16px;margin-bottom:12px}
+.verdict small{display:block;font-size:12px;opacity:.75;margin-bottom:4px}
+.verdict b{display:block;font-size:22px;line-height:1.35;margin-bottom:6px}
+.verdict p{margin:0;font-size:14.5px;opacity:.92}
+.pillars{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:4px 0 6px}
+.pl{background:#fff;border:1px solid var(--line);border-radius:12px;text-align:center;padding:8px 2px}
+.pl small{display:block;font-size:11px;color:var(--sub)}
+.pl .c{display:block;font-size:22px;font-weight:700;line-height:1.25;margin:2px 0}
+.pl .c.j{color:var(--gold);background:var(--goldbg);border-radius:8px}
+.pl .g{display:block;font-size:10.5px;color:var(--sub)}
+.legend{font-size:12px;color:var(--sub);margin:0 0 4px}
+.item{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:14px 16px;margin-top:10px}
+.item h3{margin:0 0 4px;font-size:15px;display:flex;align-items:center;gap:8px}
+.item h3 .no{display:inline-grid;place-items:center;width:22px;height:22px;border-radius:50%;background:var(--chip);font-size:12px}
+.tag{display:inline-block;font-size:12.5px;font-weight:700;padding:2px 10px;border-radius:999px;margin:2px 0 6px}
+.tag.yes{background:var(--goldbg);color:#8a6418}
+.tag.mid{background:var(--chip);color:var(--sub)}
+.tag.no{background:#9B3D2A14;color:var(--accent)}
+.item p{margin:0;font-size:14.5px}
+.basis{margin-top:6px!important;font-size:12px!important;color:var(--sub)}
+.dw{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.dw span{font-size:12.5px;padding:3px 9px;border-radius:999px;border:1px solid var(--line);background:#fff}
+.dw span.j{background:#B8893E3d;border-color:#b8893e;color:#6b4c12;font-weight:700}
+.dw span.now{outline:2px solid var(--ink)}
+.cta{margin-top:18px;background:var(--panel);border:1px solid #b8893e66;border-radius:18px;padding:16px;box-shadow:inset 3px 0 0 var(--accent)}
+.cta b{display:block;font-size:16px;margin-bottom:4px}
+.cta p{margin:0 0 12px;font-size:14px;color:var(--sub)}
+.share{margin-top:10px;width:100%;font:inherit;font-size:14px;padding:11px;border-radius:12px;border:1px solid var(--line);background:#fff;color:var(--ink);cursor:pointer}
+.fine{margin-top:22px;font-size:12px;color:var(--sub)}
+footer{margin-top:24px;font-size:12px;color:var(--sub);text-align:center}
+footer a{color:var(--sub)}
+
+.mchat{padding:14px 12px}.chead{display:flex;align-items:center;gap:10px;margin:0 2px 12px}
+.chead img,.chead .ph{width:46px;height:46px;border-radius:50%;object-fit:cover;border:2px solid #b8893e66;flex:none}
+.chead .ph{display:grid;place-items:center;background:var(--chip);font-weight:700;font-size:13px;color:var(--sub)}
+.chead b{display:block;font-size:15px}.chead small{display:block;font-size:11.5px;color:var(--sub)}
+.cbody{display:flex;flex-direction:column;gap:8px}
+.bub{max-width:88%;align-self:flex-start;background:#fff;border:1px solid var(--line);border-radius:4px 16px 16px 16px;padding:10px 13px;font-size:14.5px;line-height:1.55;opacity:0;transform:translateY(6px);animation:bubin .35s ease forwards;animation-delay:calc(var(--i)*.5s)}
+.bub.wide{max-width:100%;align-self:stretch}
+.bub .bt{margin:0 0 6px;font-size:12.5px;font-weight:700;color:var(--accent)}
+.mchat.done .bub{animation:none;opacity:1;transform:none}
+@keyframes bubin{to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.bub{animation:none;opacity:1;transform:none}}
+.months{display:grid;gap:8px;margin-top:8px}
+.mon{background:#fff;border:1px solid var(--line);border-radius:12px;padding:10px 12px}
+.mon b{font-size:15px}.mon .rk{display:inline-block;font-size:11.5px;font-weight:700;color:#8a6418;background:var(--goldbg);border-radius:999px;padding:1px 8px;margin-left:6px}
+.mon p{margin:4px 0 0!important;font-size:13.5px!important;color:var(--ink)}
+.yrs{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
+.yr{background:#fff;border:1px solid var(--line);border-radius:12px;padding:10px 12px}
+.yr small{display:block;font-size:12px;color:var(--sub)}.yr b{display:block;font-size:14.5px;margin:2px 0}
+.yr p{margin:0!important;font-size:13px!important}
+</style>
+</head>
+<body>
+<main>
+ <p class="brand"><a href="/">내 운 사용설명서</a> · 사주 직장운</p>
+ <h1>퇴사·이직 타이밍 확인</h1>
+ <p class="lead">내 사주는 회사랑 붙는 타입일까, 내 판을 벌이는 타입일까? 앞으로 12개월 중 움직임이 큰 달까지 10초 만에 확인해요.</p>
+
+ <section class="card" id="form">
+  <label class="f">생년월일 (양력)</label>
+  <div class="row"><select id="y" aria-label="년"></select><select id="m" aria-label="월"></select><select id="d" aria-label="일"></select></div>
+  <label class="f">태어난 시간</label>
+  <div class="row2"><select id="hh" aria-label="시"></select><select id="mi" aria-label="분"></select><label class="chk"><input type="checkbox" id="nt"> 몰라요</label></div>
+  <label class="f">성별 <small style="font-weight:400">(10년 흐름 계산에 필요해요)</small></label>
+  <div class="seg"><button type="button" data-g="f">여</button><button type="button" data-g="m">남</button></div>
+  <p class="err" id="err"></p>
+  <button class="primary" id="go">내 퇴사·이직 타이밍 확인하기</button>
+  <p class="priv">🔒 입력한 정보는 서버로 보내지 않아요. 이 기기 안에서만 계산해요.</p>
+ </section>
+
+ <div id="res"></div>
+
+ <p class="fine">명리 이론에 기반한 참고용 콘텐츠예요. 퇴사·이직을 권하거나 결과를 예측하지 않아요. 흐름이 바뀌기 쉬운 시기를 미리 알고 준비하는 데 써주세요. 출생시간을 모르면 시주를 빼고 계산해요.</p>
+ <footer><a href="/">내 운 사용설명서 홈</a> · <a href="/rich">부자 사주 확인</a> · <a href="policy.html#privacy">개인정보처리방침</a></footer>
+</main>
+<script>
+// index.html 의 사주 엔진을 그대로 복사한 것 (rules-v0.1). 엔진을 고치면 여기도 같이 갱신.
+// ===== 사주 엔진 v0.1 (rules-v0.1) =====
+const STEM=['갑','을','병','정','무','기','경','신','임','계'];
+const BRANCH=['자','축','인','묘','진','사','오','미','신','유','술','해'];
+const STEM_H=['甲','乙','丙','丁','戊','己','庚','辛','壬','癸'];
+const BRANCH_H=['子','丑','寅','卯','辰','巳','午','未','申','酉','戌','亥'];
+const EL=['목','화','토','금','수'];
+const stemEl=s=>Math.floor(s/2);           // 0목1화2토3금4수
+const HIDDEN=[[[8,10],[9,20]],[[9,9],[7,3],[5,18]],[[4,7],[2,7],[0,16]],[[0,10],[1,20]],[[1,9],[9,3],[4,18]],[[4,7],[6,7],[2,16]],
+ [[2,10],[5,9],[3,11]],[[3,9],[1,3],[5,18]],[[4,7],[8,7],[6,16]],[[6,10],[7,20]],[[7,9],[3,3],[4,18]],[[4,7],[0,7],[8,16]]];
+const BR_EL=[4,2,0,0,2,1,1,2,3,3,2,4];
+const CLASH=b=>(b+6)%12;
+const HAP6={0:1,1:0,2:11,11:2,3:10,10:3,4:9,9:4,5:8,8:5,6:7,7:6};
+const TG=['비견','겁재','식신','상관','편재','정재','편관','정관','편인','정인'];
+function tenGod(day,s){const e=stemEl(day),o=stemEl(s),same=(day%2)===(s%2);
+  let k; if(o===e)k=0; else if(o===(e+1)%5)k=2; else if(o===(e+2)%5)k=4; else if(e===(o+2)%5)k=6; else k=8;
+  return TG[k+(same?0:1)];}
+const mod=(a,n)=>((a%n)+n)%n;
+function jdn(y,m,d){const a=Math.floor((14-m)/12),yy=y+4800-a,mm=m+12*a-3;return d+Math.floor((153*mm+2)/5)+365*yy+Math.floor(yy/4)-Math.floor(yy/100)+Math.floor(yy/400)-32045}
+const sunLon=date=>Astronomy.SunPosition(date).elon;
+function jeolNext(date){const l=sunLon(date);const t=mod(15+30*Math.ceil((l-15+1e-9)/30),360);return Astronomy.SearchSunLongitude(t,date,40).date}
+function jeolPrev(date){const l=sunLon(date);const t=mod(15+30*Math.floor((l-15)/30),360);return Astronomy.SearchSunLongitude(t,new Date(date.getTime()-40*864e5),40).date}
+function sajuYear(date){const y=date.getUTCFullYear();const ip=Astronomy.SearchSunLongitude(315,new Date(Date.UTC(y,0,1)),80).date;return date<ip?y-1:y}
+function yearPillar(sy){const i=mod(sy-4,60);return {s:i%10,b:i%12}}
+function monthPillar(date){const sy=sajuYear(date),ys=yearPillar(sy).s;const m=Math.floor(mod(sunLon(date)-315,360)/30);
+  return {s:mod(((ys%5)*2+2)+m,10),b:(m+2)%12}}
+function eot(date){const N=Math.floor((date-Date.UTC(date.getUTCFullYear(),0,0))/864e5);const B=2*Math.PI/365*(N-81);return 9.87*Math.sin(2*B)-7.53*Math.cos(B)-1.5*Math.sin(B)}
+// 한국 표준시·서머타임 이력 (출처: 위키백과 '한국 표준시' 일광절약시간 목록)
+const KR_DST=[['194806010000','194809130000'],['194904030000','194909110000'],['195004010000','195009100000'],['195105060000','195109090000'],
+ ['195505050000','195509090000'],['195605200000','195609300000'],['195705050000','195709220000'],['195805040000','195809210000'],
+ ['195905030000','195909200000'],['196005010000','196009180000'],['198705100200','198710110300'],['198805080200','198810090300']];
+function koreaClockOffset(y,m,d,hh,mm){const k=String(y)+String(m).padStart(2,'0')+String(d).padStart(2,'0')+String(hh??12).padStart(2,'0')+String(mm??0).padStart(2,'0');
+  const ymd=k.slice(0,8);const tz=(ymd>='19540321'&&ymd<='19610809')?8.5:(ymd<'19120101'?8.5:9);
+  const dst=KR_DST.some(([a,b])=>k>=a&&k<b);return {tz,dst}}
+function pairName(p){return STEM[p.s]+BRANCH[p.b]}
+
+function buildChart(inp){
+  // inp: {y,m,d,hh,mm|null,lon,tz,dst,gender:'m'|'f',ziMode:'jo'|'ya'}
+  const off=inp.tz+(inp.dst?1:0);
+  const hasTime=inp.hh!=null;
+  const clockH=hasTime?inp.hh:12, clockM=hasTime?inp.mm:0;
+  const utc=new Date(Date.UTC(inp.y,inp.m-1,inp.d,clockH,clockM)-off*36e5);
+  const trueMin=(inp.lon-inp.tz*15)*4+eot(utc);
+  const tst=new Date(utc.getTime()+(inp.tz*60+trueMin)*6e4); // true solar local (as UTC fields)
+  let dY=tst.getUTCFullYear(),dM=tst.getUTCMonth()+1,dD=tst.getUTCDate(),th=tst.getUTCHours(),tm=tst.getUTCMinutes();
+  let dayShift=0; if(hasTime&&inp.ziMode!=='ya'&&th===23)dayShift=1;
+  const dayIdx=mod(jdn(dY,dM,dD)+dayShift-2415021+10,60);
+  const year=yearPillar(sajuYear(utc)), month=monthPillar(utc), day={s:dayIdx%10,b:dayIdx%12};
+  let hour=null; if(hasTime){const hb=Math.floor((th+1)/2)%12;const hs=(inp.ziMode==='ya'&&th===23)?(day.s+1)%10:day.s;hour={s:mod((hs%5)*2+hb,10),b:hb}} // 야자시: 일주는 당일, 자시 천간은 다음날 기준
+  const pillars={year,month,day,hour};
+  // daewoon
+  const forward=((year.s%2===0)===(inp.gender==='m'));
+  const jd=forward?jeolNext(utc):jeolPrev(utc);
+  const days=Math.abs(jd-utc)/864e5; const startAge=days/3;
+  const dws=[];for(let i=1;i<=9;i++){const k=forward?i:-i;const idx=mod(sexIdx(month)+k,60);
+    const ageStart=startAge+(i-1)*10;dws.push({s:idx%10,b:idx%12,ageStart,yearStart:inp.y+ageStart})}
+  // jeol-day flag (no time)
+  const nearJeol=!hasTime&&(Math.abs(jeolNext(utc)-utc)<864e5||Math.abs(utc-jeolPrev(utc))<864e5);
+  const natal=analyzeNatal(pillars);
+  return {inp,utc,trueSolar:{min:Math.round(trueMin),h:th,m:tm},pillars,forward,daewoonStartAge:startAge,daewoon:dws,nearJeol,natal,hasTime}
+}
+function sexIdx(p){for(let i=0;i<60;i++)if(i%10===p.s&&i%12===p.b)return i}
+
+function analyzeNatal(P){
+  const day=P.day.s; const els=[0,0,0,0,0]; const gods={}; TG.forEach(t=>gods[t]=0);
+  const add=(s,w)=>{els[stemEl(s)]+=w;gods[tenGod(day,s)]+=w};
+  const stems=[[P.year.s,1],[P.month.s,1],[P.hour?P.hour.s:null,1]];
+  stems.forEach(([s,w])=>{if(s!=null)add(s,w)}); els[stemEl(day)]+=1;
+  const brs=[[P.year.b,1],[P.month.b,3],[P.day.b,1.5],[P.hour?P.hour.b:null,1]];
+  brs.forEach(([b,w])=>{if(b==null)return;HIDDEN[b].forEach(([s,d])=>add(s,w*d/30))});
+  const total=els.reduce((a,b)=>a+b,0);
+  const helpEl=[stemEl(day),mod(stemEl(day)-1,5)];
+  let help=0,all=0; stems.forEach(([s,w])=>{if(s==null)return;all+=w;if(helpEl.includes(stemEl(s)))help+=w});
+  brs.forEach(([b,w])=>{if(b==null)return;HIDDEN[b].forEach(([s,d])=>{all+=w*d/30;if(helpEl.includes(stemEl(s)))help+=w*d/30})});
+  const strength=Math.round(Math.max(5,Math.min(95,(help/all)*100*1.35)));
+  const band=strength<40?'신약':strength>60?'신강':'중화';
+  const share=els.map(v=>v/total);
+  const season=[11,0,1].includes(P.month.b)?'winter':[5,6,7].includes(P.month.b)?'summer':'mid';
+  const achieve={표현형:gods.식신+gods.상관,전문형:gods.편인+gods.정인,관리형:gods.정관,실행형:gods.편관+gods.겁재,기회형:gods.편재,안정형:gods.정재+gods.비견};
+  const achieveType=Object.entries(achieve).sort((a,b)=>b[1]-a[1]);
+  const weakEl=share.indexOf(Math.min(...share)), strongEl=share.indexOf(Math.max(...share));
+  return {dayStem:day,dayEl:stemEl(day),elements:share.map(v=>+(v*100).toFixed(1)),strength,band,season,gods,achieveType:achieveType.map(x=>x[0]),weakEl,strongEl}
+}
+
+
+// ===== 퇴사·이직 타이밍 (work-v1) =====
+const $=id=>document.getElementById(id);
+const KO_POS=['년','월','일','시'];
+const CAT={비견:'비겁',겁재:'비겁',식신:'식상',상관:'식상',편재:'재성',정재:'재성',편관:'관성',정관:'관성',편인:'인성',정인:'인성'};
+const mainStem=b=>HIDDEN[b][HIDDEN[b].length-1][0];
+const YEOKMA={8:2,0:2,4:2,2:8,6:8,10:8,5:11,9:11,1:11,11:5,3:5,7:5};
+const TYPE={
+ 관성:{t:'조직형',s:'회사가 맞는 사람',p:'정해진 자리와 역할 안에서 실력이 가장 잘 드러나는 타입이에요. 직함·책임·평가가 있는 곳에서 힘을 받아요.'},
+ 식상:{t:'내 판형',s:'내 식대로 할 때 터지는 사람',p:'만들고 표현하는 힘이 큰 타입이에요. 시키는 일만 할 때보다 내 아이디어가 들어갈 때 성과가 확 올라가요.'},
+ 재성:{t:'성과형',s:'숫자로 보여줄 때 빛나는 사람',p:'결과와 보상이 분명할 때 움직이는 타입이에요. 실적·인센티브·협상이 있는 일에서 힘이 나요.'},
+ 인성:{t:'전문가형',s:'깊이로 인정받는 사람',p:'배우고 쌓은 것으로 승부하는 타입이에요. 자격·전문 분야·노하우가 있을 때 자리가 단단해져요.'},
+ 비겁:{t:'독립형',s:'내 이름으로 서고 싶은 사람',p:'주도권이 있을 때 편한 타입이에요. 동료와 경쟁하며 크기도 하고, 언젠가 내 일을 하고 싶은 마음이 큰 편이에요.'}};
+const YTXT={관성:['제안·책임이 들어오는 해','자리나 역할이 새로 붙는 흐름이에요. 승진·이직 제안처럼 "맡을 일"이 생기기 쉬워요.'],
+ 식상:['내 판이 커지는 해','표현하고 만드는 기운이 강해져요. 부업·사이드 프로젝트·포트폴리오를 키우기 좋은 흐름이에요.'],
+ 재성:['성과·보상 기운의 해','결과가 숫자로 드러나기 쉬운 흐름이에요. 연봉 협상·성과 정리를 해두면 좋아요.'],
+ 인성:['준비하고 쌓는 해','배우고 자격을 갖추기 좋은 흐름이에요. 옮기기 전 스펙을 다지는 시기로 쓰기 좋아요.'],
+ 비겁:['경쟁·독립 기운의 해','주변과 비교가 많아지고 내 걸 하고 싶은 마음이 커지는 흐름이에요. 혼자 결정하기 전에 숫자부터 확인해두면 좋아요.']};
+let G='';
+(function init(){
+ const cy=new Date().getFullYear();
+ $('y').innerHTML='<option value="">년</option>'+Array.from({length:cy-1919},(_,k)=>cy-k).map(v=>`<option ${v===1990?'':''} value="${v}">${v}년</option>`).join('');
+ $('m').innerHTML='<option value="">월</option>'+Array.from({length:12},(_,k)=>`<option value="${k+1}">${k+1}월</option>`).join('');
+ const days=()=>{const Y=+$('y').value||2000,M=+$('m').value||1,n=new Date(Y,M,0).getDate(),cur=$('d').value;
+  $('d').innerHTML='<option value="">일</option>'+Array.from({length:n},(_,k)=>`<option value="${k+1}" ${+cur===k+1?'selected':''}>${k+1}일</option>`).join('')};
+ days();$('y').onchange=days;$('m').onchange=days;
+ $('hh').innerHTML='<option value="">시</option>'+Array.from({length:24},(_,k)=>`<option value="${k}">${k}시</option>`).join('');
+ $('mi').innerHTML=Array.from({length:12},(_,k)=>`<option value="${k*5}">${k*5}분</option>`).join('');
+ $('nt').onchange=()=>{$('hh').disabled=$('mi').disabled=$('nt').checked};
+ document.querySelectorAll('.seg button').forEach(b=>b.onclick=()=>{G=b.dataset.g;document.querySelectorAll('.seg button').forEach(x=>x.classList.toggle('on',x===b))});
+ // 앱에 저장된 정보가 있으면 미리 채운다
+ try{const p=JSON.parse(localStorage.getItem('myluck:profile')||'null');const i=p&&p.input;if(i&&i.date){const [a,b,c]=i.date.split('-').map(Number);$('y').value=a;$('m').value=b;days();$('d').value=c;
+  if(i.noTime){$('nt').checked=true;$('hh').disabled=$('mi').disabled=true}else if(i.time){const [h,mm]=i.time.split(':').map(Number);$('hh').value=h;$('mi').value=Math.round(mm/5)*5%60}
+  if(i.gender){G=i.gender;document.querySelector(`.seg button[data-g="${G}"]`)?.classList.add('on')}}}catch(_){}
+ $('go').onclick=run;
+})();
+
+
+function run(){
+ const y=+$('y').value,m=+$('m').value,d=+$('d').value,nt=$('nt').checked,hh=nt?null:($('hh').value===''?null:+$('hh').value),mm=nt?null:+$('mi').value;
+ if(!y||!m||!d){$('err').textContent='생년월일을 모두 골라주세요.';return}
+ if(!nt&&hh==null){$('err').textContent='태어난 시간을 고르거나 "몰라요"를 체크해주세요.';return}
+ if(!G){$('err').textContent='성별을 골라주세요.';return}
+ $('err').textContent='';
+ const off=koreaClockOffset(y,m,d,hh,mm);
+ const chart=buildChart({y,m,d,hh,mm,lon:127.5,tz:off.tz,dst:off.dst,gender:G,ziMode:'jo'});
+ const R=analyze(chart,y);
+ $('res').innerHTML=render(R,chart);
+ $('res').scrollIntoView({behavior:'smooth',block:'start'});
+ window.__last={y,m,d,hh,mm,nt};
+}
+function godsOf(day,p){return [tenGod(day,p.s),tenGod(day,mainStem(p.b))]}
+function analyze(chart,birthY){
+ const P=chart.pillars,day=P.day.s,g=chart.natal.gods;
+ const cat={관성:0,식상:0,재성:0,인성:0,비겁:0};Object.entries(g).forEach(([k,v])=>cat[CAT[k]]+=v);
+ const type=Object.entries(cat).sort((a,b)=>b[1]-a[1])[0][0];
+ const gwan=cat.관성,sang=g.상관;
+ const others=[P.year,P.month,P.hour].filter(Boolean);
+ const hap=others.some(p=>p.s===(day+5)%10&&CAT[tenGod(day,p.s)]==='관성');
+ let fit;
+ if(hap||gwan>=1.8){fit={k:'yes',t:'회사랑 붙는 사주',p:hap?'나를 뜻하는 글자가 회사·조직을 뜻하는 글자와 합을 이루고 있어요. 투덜대도 결국 조직 안에서 자리를 지키는 쪽이에요.':'회사·조직의 기운이 강해요. 소속과 직함이 있을 때 마음이 편하고 실력도 잘 나와요.'};
+  if(sang>=1)fit.p+=' 다만 할 말은 하는 기운(상관)도 함께 있어서, 남더라도 내 목소리는 내는 타입이에요.'}
+ else if(sang>=1.2&&gwan>=0.6)fit={k:'no',t:'회사랑 부딪히는 사주',p:'할 말은 하는 기운(상관)과 조직의 기운(관성)이 함께 있어요. 윗선·규칙과 부딪히기 쉬운 대신, 바꿔야 할 것을 바꾸는 힘이 있어요. 맞는 자리를 찾으면 크게 인정받아요.'};
+ else if(gwan<0.5)fit={k:'mid',t:'회사가 답답한 사주',p:'조직의 기운이 약한 편이라 규칙·보고가 많은 곳에서 쉽게 지쳐요. 재량이 큰 자리, 프로젝트형 일, 내 일과 잘 맞아요.'};
+ else fit={k:'mid',t:'회사랑 버티는 사주',p:'조직과 적당한 거리를 두고 버티는 힘이 있어요. 회사는 기반으로 두고, 내 성장은 따로 챙길 때 가장 오래 가요.'};
+ const yearInfo=yy=>{const yp=yearPillar(yy);const [gs,gb]=godsOf(day,yp);const c1=CAT[gs],c2=CAT[gb];
+  const clashM=CLASH(P.month.b)===yp.b,clashD=CLASH(P.day.b)===yp.b,ym=YEOKMA[P.day.b]===yp.b;
+  const pick=c1==='관성'?'관성':c2;
+  let [t,p]=YTXT[pick];
+  if(clashM){t='자리가 흔들리는 해';p='일터를 뜻하는 자리가 부딪히는 흐름이에요. 부서 이동·이직·환경 변화가 생기기 쉬워요. 갑작스러운 결정보다 미리 준비해두면 좋은 변화로 쓸 수 있어요.'}
+  else if(clashD||ym)p+=' 이동 기운도 함께 들어와서 환경이 바뀔 가능성이 커요.';
+  return {yy,yp,t,p}};
+ const now=new Date(),cy=now.getFullYear();
+ const years=[yearInfo(cy),yearInfo(cy+1)];
+ const months=[];
+ for(let i=0;i<12;i++){const dt=new Date(Date.UTC(cy,now.getMonth()+i,15,3));const mp=monthPillar(dt);
+  const [gs,gb]=godsOf(day,mp);let sc=0,why=[];
+  if(CLASH(P.month.b)===mp.b){sc+=3;why.push('일터 자리가 움직여요')}
+  if(CLASH(P.day.b)===mp.b){sc+=2;why.push('내 자리가 흔들려요')}
+  if(YEOKMA[P.day.b]===mp.b){sc+=1.5;why.push('이동 기운이 들어와요')}
+  if(CAT[gs]==='관성'||CAT[gb]==='관성'){sc+=1;why.push('제안·책임이 붙기 쉬워요')}
+  if(HAP6[P.month.b]===mp.b){sc+=0.5;why.push('새 인연·자리와 손잡기 쉬워요')}
+  if(CAT[gs]==='식상'){sc+=0.5;why.push('내 판을 키우기 좋아요')}
+  months.push({y:dt.getUTCFullYear(),m:dt.getUTCMonth()+1,sc,why,i})}
+ const top=months.filter(x=>x.sc>0).sort((a,b)=>b.sc-a.sc||a.i-b.i).slice(0,3).sort((a,b)=>a.i-b.i);
+ const age=cy-birthY;
+ const dws=chart.daewoon.map(dw=>({a0:Math.floor(dw.ageStart)+1,s:dw.s,b:dw.b}));
+ const cur=dws.filter(x=>x.a0<=age).pop()||dws[0];const nxt=dws.find(x=>x.a0>age);
+ const [ds,db]=godsOf(day,cur);const dc=CAT[db]===CAT[ds]?CAT[db]:(CAT[db]||CAT[ds]);
+ const DTXT={관성:'자리를 잡고 올라가는 10년',식상:'내 판을 벌이는 10년',재성:'성과를 거두는 10년',인성:'쌓고 준비하는 10년',비겁:'독립과 경쟁의 10년'};
+ const DP={관성:'조직 안에서 직함과 책임이 커지기 쉬운 시기예요. 옮기더라도 "더 큰 자리"로 가는 이동이 잘 맞아요.',
+  식상:'내 아이디어와 실력이 밖으로 드러나는 시기예요. 부업·창작·내 브랜드를 시작하기 좋은 10년이에요.',
+  재성:'일한 만큼 결과가 손에 잡히는 시기예요. 연봉·성과 협상에 힘이 실려요.',
+  인성:'배우고 자격을 갖추며 힘을 모으는 시기예요. 지금 쌓은 것이 다음 10년의 무기가 돼요.',
+  비겁:'내 이름으로 서고 싶은 마음이 커지는 시기예요. 함께할 사람과 숫자를 먼저 챙기면 독립이 단단해져요.'};
+ const dw={t:DTXT[dc],p:DP[dc],cur,nxt,now:age};
+ return {type,cat,fit,years,top,dw};
+}
+function render(R,chart){
+ const esc=t=>String(t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+ const T=TYPE[R.type];
+ const B=[];const bub=(h,cls='')=>B.push(`<div class="bub ${cls}" style="--i:${B.length}">${h}</div>`);
+ bub('사주 넣어주셨네요. 회사 쪽으로만 딱 봐드릴게요.');
+ bub(`일하는 스타일은 <b>「${T.t}」</b>, ${esc(T.s)}이에요.`);
+ bub(`회사랑은요… <b>${esc(R.fit.t)}</b>예요 ㅎㅎ`);
+ const y0=R.years[0],y1=R.years[1];
+ bub(`올해는 <b>${esc(y0.t)}</b>, 내년은 <b>${esc(y1.t)}</b>예요.`);
+ if(R.top.length)bub(`앞으로 12개월 중에 움직임이 제일 큰 달은 <b>${R.top.map(x=>x.m+'월').join(', ')}</b>이에요. 아래에 이유 적어둘게요.`);
+ else bub('앞으로 12개월은 크게 흔들리는 달 없이 잔잔한 편이에요. 준비하기 좋은 시기예요.');
+ bub('퇴사는 결정이 아니라 타이밍이라고 생각해요. 준비해두면 어느 달이 와도 내 편이에요 😊');
+ const head=`<article class="card mchat" onclick="this.classList.add('done')">
+  <div class="chead"><img src="chars/doyun.webp" alt="도윤" onerror="this.outerHTML='<span class=&quot;ph&quot;>도윤</span>'"><div><b>도윤</b><small>직장운을 봐주는 AI 캐릭터</small></div></div>
+  <div class="cbody">${B.join('')}</div></article>`;
+ const gw=chart.natal.gods,cat=R.cat;
+ const s1=`<section class="item"><h3><span class="no">1</span>나는 어떤 일 타입</h3><span class="tag yes">${T.t} — ${esc(T.s)}</span><p>${esc(T.p)}</p>
+  <p class="basis">근거 · 관성 ${cat.관성.toFixed(1)} · 식상 ${cat.식상.toFixed(1)} · 재성 ${cat.재성.toFixed(1)} · 인성 ${cat.인성.toFixed(1)} · 비겁 ${cat.비겁.toFixed(1)}</p></section>`;
+ const s2=`<section class="item"><h3><span class="no">2</span>회사와의 궁합</h3><span class="tag ${R.fit.k}">${esc(R.fit.t)}</span><p>${esc(R.fit.p)}</p>
+  <p class="basis">근거 · 관성(회사·조직) ${cat.관성.toFixed(1)} · 상관(할 말 하는 기운) ${gw.상관.toFixed(1)}</p></section>`;
+ const s3=`<section class="item"><h3><span class="no">3</span>올해 · 내년 흐름</h3><div class="yrs">${R.years.map(x=>`<div class="yr"><small>${x.yy}년 ${STEM_H[x.yp.s]}${BRANCH_H[x.yp.b]}</small><b>${esc(x.t)}</b><p>${esc(x.p)}</p></div>`).join('')}</div>
+  <p class="basis">근거 · 그해 기운이 나에게 어떤 십성인지 + 일터 자리(월지)와 부딪히는지</p></section>`;
+ const s4=`<section class="item"><h3><span class="no">4</span>앞으로 12개월, 움직임이 큰 달</h3>${R.top.length?`<div class="months">${R.top.map((x,k)=>`<div class="mon"><b>${x.y}년 ${x.m}월</b><span class="rk">이동 기운 ${['★★★','★★','★'][[...R.top].sort((a,b)=>b.sc-a.sc).indexOf(x)]}</span><p>${esc(x.why.join(' · '))}</p></div>`).join('')}</div>`:'<p>크게 흔들리는 달 없이 잔잔한 12개월이에요. 이력서·포트폴리오를 다듬어두기 좋아요.</p>'}
+  <p class="basis">근거 · 절기 기준이라 달은 매월 4~8일쯤 바뀌어요. "이 달에 꼭"이 아니라 흐름이 바뀌기 쉬운 달이에요.</p></section>`;
+ const s5=`<section class="item"><h3><span class="no">5</span>지금 10년</h3><span class="tag yes">${esc(R.dw.t)}</span><p>${esc(R.dw.p)}</p>
+  <p class="basis">근거 · 지금 대운 ${STEM_H[R.dw.cur.s]}${BRANCH_H[R.dw.cur.b]}(${R.dw.cur.a0}세~)${R.dw.nxt?` · 다음 흐름은 ${R.dw.nxt.a0}세 무렵부터`:''}</p></section>`;
+ return `${head}${s1}${s2}${s3}${s4}${s5}
+ <section class="cta"><b>일할 때 나는 어떻게 성과를 낼까</b><p>무료 6카드 중 「성과를 만드는 나」에서 내 일하는 방식, 성과가 커지는 해, MBTI로 본 일 스타일까지 이어서 볼 수 있어요.</p>
+  <button class="primary" onclick="toApp()">내 운 사용설명서 무료로 보기</button>
+  <button class="share" onclick="shareIt()">결과 공유하기</button></section>`;
+}
+function toApp(){
+ const L=window.__last;if(!L)return location.href='/';
+ const date=`${L.y}-${String(L.m).padStart(2,'0')}-${String(L.d).padStart(2,'0')}`,time=L.nt?'':`${String(L.hh).padStart(2,'0')}:${String(L.mm).padStart(2,'0')}`;
+ try{const old=JSON.parse(localStorage.getItem('myluck:profile')||'null')||{};const oi=old.input||{};
+  const same=oi.date===date&&oi.gender===G&&(!!oi.noTime)===L.nt&&(L.nt||oi.time===time);
+  const input=same?oi:{name:oi.name||'',date,time,noTime:L.nt,sido:'u',sgg:0,lon:127.5,tz:null,place:'모름',gender:G,ya:false,dst:false};
+  localStorage.setItem('myluck:profile',JSON.stringify({input,mbti:same?old.mbti||null:null,savedAt:Date.now()}))}catch(_){}
+ location.href='/#start';
+}
+function shareIt(){const url='https://mywoon.kr/work',t='퇴사·이직 타이밍 — 내 사주는 퇴사각?';
+ if(navigator.share)navigator.share({title:t,url}).catch(()=>{});else{navigator.clipboard?.writeText(url);alert('링크를 복사했어요.')}}
+</script>
+</body>
+</html>
