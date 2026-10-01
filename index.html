@@ -1205,7 +1205,7 @@ function viewMbtiResult(){const m=S.mbti;
   <h2>${m.type} <small>로 추정돼요</small></h2>
   ${dy(`제가 보기엔 <b>${m.type}</b> 쪽이에요! 경계형이 있으면 그 축은 상황 따라 왔다 갔다 하는 편이에요.`)}
   <div class="axes">${Object.entries(m.pct).map(([k,v])=>`<div class="ax"><span>${v.letter} ${v.pct}%</span><div class="bar"><i style="width:${v.pct}%"></i></div>${v.edge?`<em>${k[0]}/${k[1]} 경계형</em>`:''}</div>`).join('')}</div>
-  <p class="fine">간이 문항으로 추정한 성향이며, 공식 MBTI 검사 결과와 다를 수 있습니다.</p>
+  <p class="fine">간이 문항으로 추정한 성향이며, 공식 MBTI 검사 결과와 다를 수 있습니다. 도윤은 내 운 사용설명서의 AI 캐릭터예요.</p>
   <button class="primary" onclick="go('confirm')">나의 운 사용설명서 보기</button>
   <button class="ghost" onclick="S.qi=0;S.ans=[];go('quiz')">다시 테스트</button></section>`}
 // ---------- compute ----------
@@ -3041,9 +3041,9 @@ function matchChat(){const c=S.match.calc,s=c.idx.scores,p=S.match.partner||{};
   bub(`이게 두 분 사이에서 실제로 어떤 장면으로 나오는지, 그리고 어떻게 맞춰가면 편한지는 리포트에서 자세히 말씀드릴게요.`);
   const Q=MATCH_LOCKS.map((l,j)=>`<div class="bub me" style="--i:${B.length+j}">🔒 ${esc(l)}</div>`).join('');
   return `<article class="card mchat" onclick="chatAll()">
-   <div class="chead"><img src="chars/seonhwa.webp" alt="선화"><div><b>선화</b><small>궁합을 풀어주는 AI 캐릭터</small></div><em class="freetag">무료 공개</em></div>
+   <div class="chead"><img src="chars/seonhwa.webp" alt="선화"><div><b>선화</b><small>두 사람 궁합을 봐드려요</small></div><em class="freetag">무료 공개</em></div>
    <div class="cbody">${B.join('')}${Q}</div>
-   <p class="fine">대화 속 지표와 관계 이름은 두 사람의 사주 원국에서 코드가 계산한 값이에요. 화면을 누르면 바로 다 보여요.</p></article>`}
+   <p class="fine">대화 속 지표와 관계 이름은 두 사람의 사주 원국에서 코드가 계산한 값이에요. 화면을 누르면 바로 다 보여요.<br>선화는 내 운 사용설명서의 AI 캐릭터예요.</p></article>`}
 // ── 미리보기 · 결제 ──────────────────────────────────────────
 const MATCH_SECS=[['①','두 사람은'],['②','끌리는 이유'],['③','서로에게 나는'],['④','엇갈리는 순간'],
   ['⑤','부딪혔을 때'],['⑥','오래 편한 법'],['⑦','앞으로 12개월 두 사람 흐름'],['💞','우리 사용법']];
