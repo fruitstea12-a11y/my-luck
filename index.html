@@ -86,7 +86,7 @@ p{margin:0 0 6px} small{color:var(--sub)}
 .tri.warn{border-color:#d9a441;background:rgba(217,164,65,.06)}
 .tri>p+p{padding-top:8px;border-top:1px solid var(--line,#efe9e0)}
 .intro .fine{font-size:13px;line-height:1.6;color:var(--sub);max-width:30em;margin:6px auto 0} .err{color:var(--accent);min-height:1.4em;font-size:14px}
-.stepno{font-size:12px;color:var(--sub);letter-spacing:.06em;margin:0}
+.qhost{display:flex;align-items:flex-start;gap:10px;margin:10px 0 14px}.qhost img{width:44px;height:44px;border-radius:50%;object-fit:cover;border:2px solid #b8893e66;flex:none}.qhost div{background:var(--panel,#fbf7ef);border:1px solid var(--line);border-radius:4px 16px 16px 16px;padding:8px 12px;font-size:14px;line-height:1.5;word-break:keep-all}.qhost .nm{display:block;font-size:12px;font-weight:700;color:var(--sub);margin-bottom:1px}.stepno{font-size:12px;color:var(--sub);letter-spacing:.06em;margin:0}
 button{font:inherit;color:var(--ink);background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 14px;cursor:pointer}
 button:disabled{opacity:.4;cursor:default}
 button:focus-visible,input:focus-visible,select:focus-visible,summary:focus-visible{outline:3px solid var(--to);outline-offset:2px}
@@ -1183,8 +1183,11 @@ function viewConfirm(){const i=S.input,m=S.mbti;
   <p class="fine">이 정보로 해석을 만들어요. 결과 화면에서도 바꿀 수 있어요.</p>
   <button class="ghost" onclick="${S.data?"go('result')":"go('mbtiAsk')"}">← 뒤로</button></section>`}
 
+const dy=t=>`<div class="qhost"><img src="chars/doyun.webp" alt="도윤"><div><span class="nm">도윤</span>${t}</div></div>`;
+const DYQ=i=>i===0?'MBTI 몰라도 괜찮아요. 12문항이면 끝나요!':i===6?'벌써 반 왔어요! 너무 고민 말고 먼저 떠오르는 쪽으로요.':i===11?'마지막 문항이에요 😊':i<6?'평소 내 모습에 가까운 쪽으로 편하게 골라주세요.':'정답은 없어요. 요즘의 나를 떠올려보세요.';
 function viewQuiz(){const q=QS[S.qi];return `<section class="quiz"><p class="stepno">MBTI 성향 테스트 · ${S.qi+1} / 12</p>
   <div class="prog"><i style="width:${S.qi/12*100}%"></i></div>
+  ${dy(DYQ(S.qi))}
   <h2>${esc(q[2])}</h2>
   <div class="scale">
    <button onclick="answer(2)"><b>A</b>${esc(q[3])}</button>
@@ -1200,6 +1203,7 @@ function viewMbtiResult(){const m=S.mbti;
  if(!m||!m.pct)return viewConfirm();   // 축 비율 없이 이 화면에 오면 빈 화면이 된다
  return `<section><p class="stepno">MBTI 성향 테스트 결과</p>
   <h2>${m.type} <small>로 추정돼요</small></h2>
+  ${dy(`제가 보기엔 <b>${m.type}</b> 쪽이에요! 경계형이 있으면 그 축은 상황 따라 왔다 갔다 하는 편이에요.`)}
   <div class="axes">${Object.entries(m.pct).map(([k,v])=>`<div class="ax"><span>${v.letter} ${v.pct}%</span><div class="bar"><i style="width:${v.pct}%"></i></div>${v.edge?`<em>${k[0]}/${k[1]} 경계형</em>`:''}</div>`).join('')}</div>
   <p class="fine">간이 문항으로 추정한 성향이며, 공식 MBTI 검사 결과와 다를 수 있습니다.</p>
   <button class="primary" onclick="go('confirm')">나의 운 사용설명서 보기</button>

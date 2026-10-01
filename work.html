@@ -302,16 +302,16 @@ function render(R,chart){
  const esc=t=>String(t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
  const T=TYPE[R.type];
  const B=[];const bub=(h,cls='')=>B.push(`<div class="bub ${cls}" style="--i:${B.length}">${h}</div>`);
- bub('사주 넣어주셨네요. 회사 쪽으로만 딱 봐드릴게요.');
- bub(`일하는 스타일은 <b>「${T.t}」</b>, ${esc(T.s)}이에요.`);
- bub(`회사랑은요… <b>${esc(R.fit.t)}</b>예요 ㅎㅎ`);
+ bub('사주를 넣으셨구려. 일터 쪽 흐름만 짚어드리겠소.');
+ bub(`일하는 결은 <b>「${T.t}」</b>, ${esc(T.s)}이오.`);
+ bub(`회사와는… <b>${esc(R.fit.t)}</b>요.`);
  const y0=R.years[0],y1=R.years[1];
- bub(`올해는 <b>${esc(y0.t)}</b>, 내년은 <b>${esc(y1.t)}</b>예요.`);
- if(R.top.length)bub(`앞으로 12개월 중에 움직임이 제일 큰 달은 <b>${R.top.map(x=>x.m+'월').join(', ')}</b>이에요. 아래에 이유 적어둘게요.`);
- else bub('앞으로 12개월은 크게 흔들리는 달 없이 잔잔한 편이에요. 준비하기 좋은 시기예요.');
- bub('퇴사는 결정이 아니라 타이밍이라고 생각해요. 준비해두면 어느 달이 와도 내 편이에요 😊');
+ bub(`올해는 <b>${esc(y0.t)}</b>, 내년은 <b>${esc(y1.t)}</b>. 그리 흘러가오.`);
+ if(R.top.length)bub(`앞으로 열두 달 중 움직임이 가장 큰 달은 <b>${R.top.map(x=>x.m+'월').join(', ')}</b>이오. 까닭은 아래 적어두었소.`);
+ else bub('앞으로 열두 달은 크게 흔들리는 달 없이 잔잔하오. 채비하기 좋은 때요.');
+ bub('떠날지 머물지는 그대가 정하는 것이오. 다만 때를 알고 채비해두면, 어느 달이 와도 그대 편이 될 것이오.');
  const head=`<article class="card mchat" onclick="this.classList.add('done')">
-  <div class="chead"><img src="chars/doyun.webp" alt="도윤" onerror="this.outerHTML='<span class=&quot;ph&quot;>도윤</span>'"><div><b>도윤</b><small>직장운을 봐주는 AI 캐릭터</small></div></div>
+  <div class="chead"><img src="chars/hawon.webp" alt="하온" onerror="this.outerHTML='<span class=&quot;ph&quot;>하온</span>'"><div><b>하온</b><small>흐름과 때를 읽는 AI 캐릭터</small></div></div>
   <div class="cbody">${B.join('')}</div></article>`;
  const gw=chart.natal.gods,cat=R.cat;
  const s1=`<section class="item"><h3><span class="no">1</span>나는 어떤 일 타입</h3><span class="tag yes">${T.t} — ${esc(T.s)}</span><p>${esc(T.p)}</p>
