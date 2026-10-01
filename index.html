@@ -479,7 +479,7 @@ button.rbridge span{color:var(--accent);font-weight:700}
 .paybox{margin:12px -4px 0;min-height:40px}
 .paymsg{min-height:1.2em;margin:6px 0 0;font-size:13px;color:var(--accent);text-align:center}
 .paytest{text-align:center}
-.fact{margin:10px 0 14px;padding:10px 14px;border-radius:12px;background:#7a2e2e0f;border:1px solid #7a2e2e33}.fact small{display:block;font-size:11.5px;font-weight:700;color:#8a2f2f;margin-bottom:3px}.fact p{margin:0;font-size:15.5px;font-weight:600;line-height:1.5;word-break:keep-all}.sfact{margin:6px 12px 8px;font-size:14px;font-weight:600;line-height:1.45;word-break:keep-all;color:#8a2f2f}.sumbox{margin:14px 0 12px;padding:14px 16px;border-radius:16px;background:var(--panel,#fbf7ef);border:1px solid #b8963e55;box-shadow:inset 3px 0 0 #8a2f2f}.sumh{margin:0 0 8px;font-size:13px;font-weight:700;letter-spacing:.02em;color:#8a2f2f}.sumrow{margin:0 0 10px}.sumrow:last-child{margin:0}.sumrow b{display:block;font-size:12px;color:#8a6d2a;margin-bottom:2px}.sumrow p{margin:0;font-size:14.5px;line-height:1.55;word-break:keep-all}.sumrow ol{margin:2px 0 0;padding-left:20px;font-size:14.5px;line-height:1.6;word-break:keep-all}.privnote{margin:0 0 12px;padding:9px 12px;border-radius:10px;background:#b8963e14;font-size:13px;line-height:1.5;color:#5b4a2a;word-break:keep-all}</style>
+.fact{margin:10px 0 14px;padding:10px 14px;border-radius:12px;background:#7a2e2e0f;border:1px solid #7a2e2e33}.fact small{display:block;font-size:11.5px;font-weight:700;color:#8a2f2f;margin-bottom:3px}.fact p{margin:0;font-size:15.5px;font-weight:600;line-height:1.5;word-break:keep-all}.sfact{margin:6px 12px 8px;font-size:14px;font-weight:600;line-height:1.45;word-break:keep-all;color:#8a2f2f}.sumbox{margin:14px 0 12px;padding:14px 16px;border-radius:16px;background:var(--panel,#fbf7ef);border:1px solid #b8963e55;box-shadow:inset 3px 0 0 #8a2f2f}.sumh{margin:0 0 8px;font-size:13px;font-weight:700;letter-spacing:.02em;color:#8a2f2f}.sumrow{margin:0 0 10px}.sumrow:last-child{margin:0}.sumrow b{display:block;font-size:12px;color:#8a6d2a;margin-bottom:2px}.sumrow p{margin:0;font-size:14.5px;line-height:1.55;word-break:keep-all}.sumrow ol{margin:2px 0 0;padding-left:20px;font-size:14.5px;line-height:1.6;word-break:keep-all}.privnote{margin:0 0 12px;padding:9px 12px;border-radius:10px;background:#b8963e14;font-size:13px;line-height:1.5;color:#5b4a2a;word-break:keep-all}.mchat{padding:14px 12px}.chead{display:flex;align-items:center;gap:10px;margin:0 2px 12px}.chead img{width:46px;height:46px;border-radius:50%;object-fit:cover;border:2px solid #b8893e66}.chead b{display:block;font-size:15px}.chead small{display:block;font-size:11.5px;color:var(--sub)}.chead .freetag{margin-left:auto}.cbody{display:flex;flex-direction:column;gap:8px}.bub{max-width:86%;align-self:flex-start;background:var(--panel);border:1px solid var(--line);border-radius:4px 16px 16px 16px;padding:10px 13px;font-size:14.5px;line-height:1.55;word-break:keep-all;opacity:0;transform:translateY(6px);animation:bubin .35s ease forwards;animation-delay:calc(var(--i)*.55s)}.bub.wide{max-width:100%;align-self:stretch}.bub .bt{margin:0 0 6px;font-size:12.5px;font-weight:700;color:var(--accent)}.bub.me{align-self:flex-end;background:var(--chip);border-radius:16px 4px 16px 16px;font-size:13.5px;color:var(--sub)}.mchat.done .bub{animation:none;opacity:1;transform:none}@keyframes bubin{to{opacity:1;transform:none}}@media (prefers-reduced-motion:reduce){.bub{animation:none;opacity:1;transform:none}}</style>
 </head>
 <body><main class="wrap" id="view">
 <!-- 검색엔진용 기본 내용. 화면이 뜨면 스크립트가 이 자리를 바꾼다. -->
@@ -3016,6 +3016,30 @@ function matchSec1Free(){const c=S.match.calc;
   return `<p class="rtype">「${esc(c.typeName)}」</p>${c.lines.map(l=>`<p class="rlead">${esc(l)}</p>`).join('')}
    <p class="sec">두 사람의 궁합 지표 5가지</p>${mbarBody()}${basisHTML(c.basis)}`}
 
+// ── 선화가 대화로 풀어주는 미리보기 (AI 호출 없음 — 코드 계산값과 정해진 문장만) ──
+const MATCH_TEASE={
+  pull:['끌림이 꽤 높게 나왔어요. 서로 상대의 어디에 끌리는지가 분명한 사이예요.','끌림은 잔잔한 편이에요. 대신 천천히 스며드는 계기가 따로 있어요.'],
+  ease:['편안함이 높게 나왔어요. 오래 같이 있어도 힘이 덜 드는 사이예요.','편안함은 낮은 편이에요. 서로 긴장을 푸는 방식이 달라서 그래요.'],
+  talk:['대화가 잘 통하는 쪽으로 나왔어요. 말이 이어지는 주제가 따로 있어요.','대화는 결이 좀 달라요. 같은 말도 다르게 받아들이는 지점이 있어요.'],
+  pace:['속도차가 크게 나왔어요. 한 사람은 빠르고 한 사람은 천천히 가는 사이예요.','속도는 비슷한 편이에요. 같이 움직이기 편한 사이예요.'],
+  friction:['부딪힘이 높게 나왔어요. 나쁜 뜻이 아니라, 서로를 움직이게 하는 지점이 있다는 거예요.','부딪힘은 낮은 편이에요. 큰 다툼보다 작게 쌓이는 서운함을 보면 돼요.']};
+window.chatAll=()=>{const el=document.querySelector('.mchat');if(el)el.classList.add('done')};
+function matchChat(){const c=S.match.calc,s=c.idx.scores,p=S.match.partner||{};
+  const me=S.input.name?esc(S.input.name)+'님, ':'';
+  const you=p.name?esc(p.name)+'님':'그분';
+  const k=MATCH_KEYS.slice().sort((a,b)=>Math.abs(s[b]-50)-Math.abs(s[a]-50))[0],hi=s[k]>=50;
+  const B=[];const bub=(h,cls='')=>B.push(`<div class="bub ${cls}" style="--i:${B.length}">${h}</div>`);
+  bub(`${me}${you}과의 사주를 나란히 놓고 봤어요.`);
+  bub(`두 분은 한마디로 <b>「${esc(c.typeName)}」</b>예요.`);
+  c.lines.forEach(l=>bub(esc(l)));
+  bub(`<p class="bt">두 분 궁합 지표 5가지</p>${mbarBody()}${basisHTML(c.basis)}`,'wide');
+  bub(esc(MATCH_TEASE[k][hi?0:1]));
+  bub(`이게 두 분 사이에서 실제로 어떤 장면으로 나오는지, 그리고 어떻게 맞춰가면 편한지는 리포트에서 자세히 말씀드릴게요.`);
+  const Q=MATCH_LOCKS.map((l,j)=>`<div class="bub me" style="--i:${B.length+j}">🔒 ${esc(l)}</div>`).join('');
+  return `<article class="card mchat" onclick="chatAll()">
+   <div class="chead"><img src="chars/seonhwa.webp" alt="선화"><div><b>선화</b><small>궁합을 풀어주는 AI 캐릭터</small></div><em class="freetag">무료 공개</em></div>
+   <div class="cbody">${B.join('')}${Q}</div>
+   <p class="fine">대화 속 지표와 관계 이름은 두 사람의 사주 원국에서 코드가 계산한 값이에요. 화면을 누르면 바로 다 보여요.</p></article>`}
 // ── 미리보기 · 결제 ──────────────────────────────────────────
 const MATCH_SECS=[['①','두 사람은'],['②','끌리는 이유'],['③','서로에게 나는'],['④','엇갈리는 순간'],
   ['⑤','부딪혔을 때'],['⑥','오래 편한 법'],['⑦','앞으로 12개월 두 사람 흐름'],['💞','우리 사용법']];
@@ -3029,10 +3053,8 @@ function viewMatchIntro(){const c=S.match.calc;if(!c)return viewMatchInput();
   return `<section class="res">
   <header class="rhead"><p class="brand">💞 궁합 사용설명서</p><h2>${mname()} × ${pname()}</h2><p class="fine">${esc(rk)}</p></header>
   ${matchPairHead()}
-  <article class="card rsec"><p class="no">① 두 사람은 <em class="freetag">무료 공개</em></p>${matchSec1Free()}
-   <p class="fine">여기까지는 두 사람의 사주 원국에서 코드가 계산한 값이에요.</p></article>
+  ${matchChat()}
   <article class="card"><p class="no">리포트에서 이어서 보는 것</p>
-   <div class="rlocks">${MATCH_LOCKS.map(l=>`<p>🔒 ${esc(l)}</p>`).join('')}</div>
    <ul class="rlist">${MATCH_SECS.map(([n,t],k)=>`<li${k?'':' class="free"'}><span>${n}</span><div><b>${esc(t)}</b><small>${esc(MATCH_ITEMS[k])}</small></div><em>${k?'🔒':'열림'}</em></li>`).join('')}</ul>
    <p class="fine">나 혼자의 관계 방식은 🤝 관계 사용설명서에서 볼 수 있어요.</p></article>
   ${MATCH_SALE_OPEN?`<div class="rterms"><p class="th">결제 전에 확인해주세요</p><ul>
