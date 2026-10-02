@@ -110,7 +110,9 @@ window.LUCK_ITEM_PRODUCTS = {
     { name: '호니아 통장지갑', url: 'https://link.coupang.com/a/hvRxoyLhPE', img: 'https://img2c.coupangcdn.com/image/affiliate/banner/d489b68a3e56ea8dfd00c1b075c29ca9@2x.jpg', active: true },
   ],
   '저금통': [],
-  '재테크 책': [],
+  '재테크 책': [
+    { name: '돈의 심리학 (모건 하우절)', url: 'https://link.coupang.com/a/hvRz8eJDrg', img: 'https://img4c.coupangcdn.com/image/affiliate/banner/3431865af66273690f56a8bf1976603b@2x.jpg', active: true },
+  ],
   '2027 다이어리': [
     { name: '2027 미니 주간 업무 다이어리', url: 'https://link.coupang.com/a/hvRqM2pLWK', img: 'https://image6.coupangcdn.com/image/affiliate/banner/bd4edc0809cb76fe3c08b01d47867936@2x.jpg', active: true },
   ],
