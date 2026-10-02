@@ -103,7 +103,9 @@ window.LUCK_ITEM_PRODUCTS = {
   '타이머': 'G2',
   '데스크 오거나이저': 'G3',
   '플래너': 'T2',
-  '남성 지갑': [],
+  '남성 지갑': [
+    { name: '타미힐피거 남성 반지갑', url: 'https://link.coupang.com/a/hvRj5m4JSS', img: 'https://img2a.coupangcdn.com/image/affiliate/banner/b0f7908b558738a8cbb9f7559af81eea@2x.jpg', active: true },
+  ],
   '통장 지갑': [],
   '저금통': [],
   '재테크 책': [],
