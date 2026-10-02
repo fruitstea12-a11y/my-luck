@@ -122,7 +122,9 @@ window.LUCK_ITEM_PRODUCTS = {
   '명함지갑': [
     { name: '빅드림 비즈니스 명함 케이스 2개', url: 'https://link.coupang.com/a/hvR4Dql8Nw', img: 'https://img4a.coupangcdn.com/image/affiliate/banner/442bf60e4bcd139770c5dd7c7e9ea4b1@2x.jpg', active: true },
   ],
-  '발표 리모컨': [],
+  '발표 리모컨': [
+    { name: 'X-pointer 무선 프리젠터', url: 'https://link.coupang.com/a/hvSgf041tY', img: 'https://image12.coupangcdn.com/image/affiliate/banner/6f4ae198e6902809bb90b98e96f7e027@2x.jpg', active: true },
+  ],
   '노트북 파우치': [
     { name: '모아브 노트북 쿠션 파우치', url: 'https://link.coupang.com/a/hvRZTAv87U', img: 'https://img1c.coupangcdn.com/image/affiliate/banner/e44a31d12f14ed9a2b1b344c412f6476@2x.jpg', active: true },
   ],
