@@ -121,7 +121,9 @@ window.LUCK_ITEM_PRODUCTS = {
   ],
   '명함지갑': [],
   '발표 리모컨': [],
-  '노트북 파우치': [],
+  '노트북 파우치': [
+    { name: '모아브 노트북 쿠션 파우치', url: 'https://link.coupang.com/a/hvRZTAv87U', img: 'https://img1c.coupangcdn.com/image/affiliate/banner/e44a31d12f14ed9a2b1b344c412f6476@2x.jpg', active: true },
+  ],
   '공부 책': [
     { name: '몰입 확장판 (황농문)', url: 'https://link.coupang.com/a/hvRO3YJA5I', img: 'https://img1c.coupangcdn.com/image/affiliate/banner/a69121e5232b02f56c935c3c3c1329ba@2x.jpg', active: true },
     { name: '아주 작은 습관의 힘 (제임스 클리어)', url: 'https://link.coupang.com/a/hvRRqy8hLo', img: 'https://img4c.coupangcdn.com/image/affiliate/banner/64d63c7e3afde1ae3225c59be879fb1a@2x.jpg', active: true },
