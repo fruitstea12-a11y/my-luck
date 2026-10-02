@@ -122,4 +122,7 @@ window.LUCK_ITEM_PRODUCTS = {
   '명함지갑': [],
   '발표 리모컨': [],
   '노트북 파우치': [],
+  '공부 책': [
+    { name: '몰입 확장판 (황농문)', url: 'https://link.coupang.com/a/hvRO3YJA5I', img: 'https://img1c.coupangcdn.com/image/affiliate/banner/a69121e5232b02f56c935c3c3c1329ba@2x.jpg', active: true },
+  ],
 };
