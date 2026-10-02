@@ -119,7 +119,9 @@ window.LUCK_ITEM_PRODUCTS = {
   '2027 다이어리': [
     { name: '2027 미니 주간 업무 다이어리', url: 'https://link.coupang.com/a/hvRqM2pLWK', img: 'https://image6.coupangcdn.com/image/affiliate/banner/bd4edc0809cb76fe3c08b01d47867936@2x.jpg', active: true },
   ],
-  '명함지갑': [],
+  '명함지갑': [
+    { name: '빅드림 비즈니스 명함 케이스 2개', url: 'https://link.coupang.com/a/hvR4Dql8Nw', img: 'https://img4a.coupangcdn.com/image/affiliate/banner/442bf60e4bcd139770c5dd7c7e9ea4b1@2x.jpg', active: true },
+  ],
   '발표 리모컨': [],
   '노트북 파우치': [
     { name: '모아브 노트북 쿠션 파우치', url: 'https://link.coupang.com/a/hvRZTAv87U', img: 'https://img1c.coupangcdn.com/image/affiliate/banner/e44a31d12f14ed9a2b1b344c412f6476@2x.jpg', active: true },
