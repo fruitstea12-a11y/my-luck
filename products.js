@@ -109,7 +109,9 @@ window.LUCK_ITEM_PRODUCTS = {
   '통장 지갑': [],
   '저금통': [],
   '재테크 책': [],
-  '2027 다이어리': [],
+  '2027 다이어리': [
+    { name: '2027 미니 주간 업무 다이어리', url: 'https://link.coupang.com/a/hvRqM2pLWK', img: 'https://image6.coupangcdn.com/image/affiliate/banner/bd4edc0809cb76fe3c08b01d47867936@2x.jpg', active: true },
+  ],
   '명함지갑': [],
   '발표 리모컨': [],
   '노트북 파우치': [],
