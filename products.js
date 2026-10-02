@@ -106,7 +106,9 @@ window.LUCK_ITEM_PRODUCTS = {
   '남성 지갑': [
     { name: '타미힐피거 남성 반지갑', url: 'https://link.coupang.com/a/hvRj5m4JSS', img: 'https://img2a.coupangcdn.com/image/affiliate/banner/b0f7908b558738a8cbb9f7559af81eea@2x.jpg', active: true },
   ],
-  '통장 지갑': [],
+  '통장 지갑': [
+    { name: '호니아 통장지갑', url: 'https://link.coupang.com/a/hvRxoyLhPE', img: 'https://img2c.coupangcdn.com/image/affiliate/banner/d489b68a3e56ea8dfd00c1b075c29ca9@2x.jpg', active: true },
+  ],
   '저금통': [],
   '재테크 책': [],
   '2027 다이어리': [
