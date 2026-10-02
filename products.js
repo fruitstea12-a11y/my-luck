@@ -96,4 +96,19 @@ window.LUCK_ITEM_PRODUCTS = {
     { name: '도톰 양털 극세사 담요', url: 'https://link.coupang.com/a/hfS0Wq4xEG', img: 'https://img5a.coupangcdn.com/image/affiliate/banner/9c0e4bfef1cf600b2629ce26e8c9653a@2x.jpg', active: true },
     { name: '이중 거즈 블랭킷', url: 'https://link.coupang.com/a/hfTd35rPqu', img: 'https://image8.coupangcdn.com/image/affiliate/banner/2d04d72bbd28b69563b8169ac6c96c86@2x.jpg', active: true },
   ],
+
+  // ── /rich · /work 결과 페이지용 (쿠팡 파트너스 링크를 받으면 아래 빈 칸을 채운다) ──
+  // 형식: '키': { name: '상품명', url: 'https://link.coupang.com/a/...', img: '이미지주소', active: true }
+  '메탈 볼펜': 'G1',
+  '타이머': 'G2',
+  '데스크 오거나이저': 'G3',
+  '플래너': 'T2',
+  '남성 지갑': [],
+  '통장 지갑': [],
+  '저금통': [],
+  '재테크 책': [],
+  '2027 다이어리': [],
+  '명함지갑': [],
+  '발표 리모컨': [],
+  '노트북 파우치': [],
 };

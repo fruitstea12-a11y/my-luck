@@ -17,6 +17,7 @@
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="favicon.ico">
 <script src="https://cdn.jsdelivr.net/npm/astronomy-engine@2.1.19/astronomy.browser.min.js"></script>
+<script src="products.js?v=20261002"></script>
 <style>
 :root{--paper:#F4ECDF;--panel:#FBF6EC;--ink:#2B2622;--sub:#6E655C;--line:#DCCFBC;--chip:#EBE0CE;--accent:#9B3D2A;--gold:#B8893E;--goldbg:#B8893E1f}
 *{box-sizing:border-box}
@@ -90,6 +91,15 @@ footer a{color:var(--sub)}
 .yr{background:#fff;border:1px solid var(--line);border-radius:12px;padding:10px 12px}
 .yr small{display:block;font-size:12px;color:var(--sub)}.yr b{display:block;font-size:14.5px;margin:2px 0}
 .yr p{margin:0!important;font-size:13px!important}
+.shop{margin:14px 0 0;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px 16px}
+.shop small{color:var(--sub);font-size:12.5px}
+.shop ul{list-style:none;padding:0;margin:8px 0 0;display:flex;flex-direction:column;gap:6px}
+.shop a{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--ink);background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:8px 12px;font-size:13px}
+.shop a img{flex:none;width:52px;height:52px;border-radius:8px;object-fit:cover;background:#fff}
+.shop a .pt{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+.shop a .pt b{font-weight:600;line-height:1.4}
+.shop a em{font-style:normal;font-size:11px;color:var(--sub)}
+.shop .fine{margin:8px 0 0;font-size:10.5px;line-height:1.5;color:var(--sub)}
 </style>
 </head>
 <body>
@@ -352,10 +362,31 @@ function render(R,chart){
  const s5=`<section class="item"><h3><span class="no">5</span>지금 10년</h3><span class="tag yes">${esc(R.dw.t)}</span><p>${esc(R.dw.p)}</p>
   <p class="basis">근거 · 지금 대운 ${STEM_H[R.dw.cur.s]}${BRANCH_H[R.dw.cur.b]}(${R.dw.cur.a0}세~)${R.dw.nxt?` · 다음 흐름은 ${R.dw.nxt.a0}세 무렵부터`:''}</p></section>`;
  return `${head}${s1}${s2}${s3}${s4}${s5}
+${shopHTML(workWants(R),'내 일 타입에 맞춘 아이템')}
  <section class="cta"><b>일할 때 나는 어떻게 성과를 낼까</b><p>무료 6카드 중 「성과를 만드는 나」에서 내 일하는 방식, 성과가 커지는 해, MBTI로 본 일 스타일까지 이어서 볼 수 있어요.</p>
   <button class="primary" onclick="toApp()">내 운 사용설명서 무료로 보기</button>
   <button class="share" onclick="shareIt()">결과 공유하기</button></section>`;
 }
+// ---------- 쿠팡 파트너스 (products.js 의 LUCK_ITEM_PRODUCTS 키 이름으로 찾음. 없는 키는 건너뜀) ----------
+function workWants(R){const w=[['2027 다이어리','연말 준비 · 내년 흐름 미리 적기']];
+ const T={관성:[['명함지갑','조직형 · 자리와 직함'],['메탈 볼펜','조직형 · 서명하는 자리']],
+  식상:[['발표 리모컨','내 판형 · 보여줄 때 터지는 타입'],['포스트잇','내 판형 · 아이디어 붙잡기']],
+  재성:[['타이머','성과형 · 숫자로 보여주기'],['플래너','성과형 · 목표 쪼개기']],
+  인성:[['책','전문가형 · 깊이 쌓기'],['클리어파일','전문가형 · 자료 정리']],
+  비겁:[['노트북 파우치','독립형 · 어디서든 일하기'],['플래너','독립형 · 내 일정은 내가']]};
+ w.push(...(T[R.type]||[]));
+ if(R.top.some(x=>x.sc>=3))w.push(['노트북 파우치','움직임 큰 달 · 이동 준비'],['클리어파일','움직임 큰 달 · 이력서 정리']);
+ w.push(['데스크 오거나이저','내 결과 · 책상 정리']);
+ return w}
+function pickProd(name){const M=window.LUCK_ITEM_PRODUCTS||{},P=window.LUCK_PRODUCTS||{};let v=M[name];
+ if(typeof v==='string')v=(P[v]||[]).slice(0,1);
+ return (Array.isArray(v)?v:v?[v]:[]).filter(x=>x&&x.url&&x.active!==false&&(!x.gender||!G||x.gender===G))}
+function shopHTML(wants,title){const esc=t=>String(t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+ const seen=new Set(),rows=[];
+ wants.forEach(([key,lab])=>{if(rows.length>=3)return;const p=pickProd(key).find(x=>!seen.has(x.url));if(p){seen.add(p.url);rows.push([lab,p])}});
+ if(!rows.length)return '';
+ return `<section class="shop"><small>🛒 ${esc(title)}</small><ul>${rows.map(([lab,p])=>`<li><a href="${esc(p.url)}" target="_blank" rel="nofollow sponsored noopener">${p.img?`<img src="${esc(p.img)}" alt="" loading="lazy" referrerpolicy="unsafe-url" onerror="this.remove()">`:''}<span class="pt"><b>${esc(p.name)}</b><em>${esc(lab)}</em></span></a></li>`).join('')}</ul>
+ <p class="fine">이 영역에는 쿠팡 파트너스 링크가 포함되어 있으며, 구매가 일어나면 일정액의 수수료를 제공받습니다. 운을 바꾸는 물건이 아니라 내 결과와 어울리는 생활 아이템이에요.</p></section>`}
 function toApp(){
  const L=window.__last;if(!L)return location.href='/';
  const date=`${L.y}-${String(L.m).padStart(2,'0')}-${String(L.d).padStart(2,'0')}`,time=L.nt?'':`${String(L.hh).padStart(2,'0')}:${String(L.mm).padStart(2,'0')}`;

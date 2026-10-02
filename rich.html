@@ -17,6 +17,7 @@
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="favicon.ico">
 <script src="https://cdn.jsdelivr.net/npm/astronomy-engine@2.1.19/astronomy.browser.min.js"></script>
+<script src="products.js?v=20261002"></script>
 <style>
 :root{--paper:#F4ECDF;--panel:#FBF6EC;--ink:#2B2622;--sub:#6E655C;--line:#DCCFBC;--chip:#EBE0CE;--accent:#9B3D2A;--gold:#B8893E;--goldbg:#B8893E1f}
 *{box-sizing:border-box}
@@ -70,6 +71,15 @@ select{width:100%;font:inherit;font-size:15px;padding:10px 8px;border:1px solid 
 .fine{margin-top:22px;font-size:12px;color:var(--sub)}
 footer{margin-top:24px;font-size:12px;color:var(--sub);text-align:center}
 footer a{color:var(--sub)}
+.shop{margin:14px 0 0;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px 16px}
+.shop small{color:var(--sub);font-size:12.5px}
+.shop ul{list-style:none;padding:0;margin:8px 0 0;display:flex;flex-direction:column;gap:6px}
+.shop a{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--ink);background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:8px 12px;font-size:13px}
+.shop a img{flex:none;width:52px;height:52px;border-radius:8px;object-fit:cover;background:#fff}
+.shop a .pt{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+.shop a .pt b{font-weight:600;line-height:1.4}
+.shop a em{font-style:normal;font-size:11px;color:var(--sub)}
+.shop .fine{margin:8px 0 0;font-size:10.5px;line-height:1.5;color:var(--sub)}
 </style>
 </head>
 <body>
@@ -291,11 +301,30 @@ function render(R,chart){
  <div class="pillars">${['hour','day','month','year'].map(k=>cell(R.cells[{year:0,month:1,day:2,hour:3}[k]])).join('')}</div>
  <p class="legend">일주 윗글자(${STEM_H[chart.pillars.day.s]})가 '나'예요. 지지는 가장 큰 지장간(본기) 기준이에요.</p></section>
  ${items}
+${shopHTML(richWants(R,chart),'내 재물 결과에 맞춘 아이템')}
  <section class="cta"><b>돈이 언제, 어떻게 움직이는지까지</b><p>연도별 돈 흐름 그래프, 돈이 크게 움직이는 해, 돈이 새는 패턴, MBTI로 본 돈 쓰는 방식까지 무료 6카드로 이어서 볼 수 있어요.</p>
   <button class="primary" onclick="toApp()">내 운 사용설명서 무료로 보기</button>
   <button class="share" onclick="shareIt()">결과 공유하기</button></section>`;
 }
 
+// ---------- 쿠팡 파트너스 (products.js 의 LUCK_ITEM_PRODUCTS 키 이름으로 찾음. 없는 키는 건너뜀) ----------
+function richWants(R,chart){const s=R.s,w=[];
+ const wallet=G==='m'?['남성 지갑','내 결과 · 돈 들고 다니는 지갑']:['작은 지갑','내 결과 · 돈 들고 다니는 지갑'];
+ if(s[2].k!=='yes')w.push(['통장 지갑','돈 창고 없음 · 통장을 목적별로'],['가계부 노트','돈 창고 없음 · 새는 돈 막기']);
+ if(chart.natal.band==='신약')w.push(['가계부 노트','신약 · 지키는 장치 먼저']);
+ if(/정재/.test(s[3].t))w.push(['저금통','모으는 부자 · 차곡차곡'],['가계부 노트','모으는 부자 · 차곡차곡']);
+ else w.push(['재테크 책','굴리는 부자 · 판을 키우는 공부']);
+ w.push(wallet,['영수증 파우치','내 결과 · 돈 흐름 정리']);
+ return w}
+function pickProd(name){const M=window.LUCK_ITEM_PRODUCTS||{},P=window.LUCK_PRODUCTS||{};let v=M[name];
+ if(typeof v==='string')v=(P[v]||[]).slice(0,1);
+ return (Array.isArray(v)?v:v?[v]:[]).filter(x=>x&&x.url&&x.active!==false&&(!x.gender||!G||x.gender===G))}
+function shopHTML(wants,title){const esc=t=>String(t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+ const seen=new Set(),rows=[];
+ wants.forEach(([key,lab])=>{if(rows.length>=3)return;const p=pickProd(key).find(x=>!seen.has(x.url));if(p){seen.add(p.url);rows.push([lab,p])}});
+ if(!rows.length)return '';
+ return `<section class="shop"><small>🛒 ${esc(title)}</small><ul>${rows.map(([lab,p])=>`<li><a href="${esc(p.url)}" target="_blank" rel="nofollow sponsored noopener">${p.img?`<img src="${esc(p.img)}" alt="" loading="lazy" referrerpolicy="unsafe-url" onerror="this.remove()">`:''}<span class="pt"><b>${esc(p.name)}</b><em>${esc(lab)}</em></span></a></li>`).join('')}</ul>
+ <p class="fine">이 영역에는 쿠팡 파트너스 링크가 포함되어 있으며, 구매가 일어나면 일정액의 수수료를 제공받습니다. 운을 바꾸는 물건이 아니라 내 결과와 어울리는 생활 아이템이에요.</p></section>`}
 function toApp(){
  const L=window.__last;if(!L)return location.href='/';
  const date=`${L.y}-${String(L.m).padStart(2,'0')}-${String(L.d).padStart(2,'0')}`,time=L.nt?'':`${String(L.hh).padStart(2,'0')}:${String(L.mm).padStart(2,'0')}`;
