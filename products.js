@@ -109,7 +109,9 @@ window.LUCK_ITEM_PRODUCTS = {
   '통장 지갑': [
     { name: '호니아 통장지갑', url: 'https://link.coupang.com/a/hvRxoyLhPE', img: 'https://img2c.coupangcdn.com/image/affiliate/banner/d489b68a3e56ea8dfd00c1b075c29ca9@2x.jpg', active: true },
   ],
-  '저금통': [],
+  '저금통': [
+    { name: '황금 돼지저금통', url: 'https://link.coupang.com/a/hvRIdHYTHU', img: 'https://img1a.coupangcdn.com/image/affiliate/banner/ff61bba77126bf82ffbc81356370a448@2x.jpg', active: true },
+  ],
   '재테크 책': [
     { name: '돈의 심리학 (모건 하우절)', url: 'https://link.coupang.com/a/hvRz8eJDrg', img: 'https://img4c.coupangcdn.com/image/affiliate/banner/3431865af66273690f56a8bf1976603b@2x.jpg', active: true },
     { name: '경제적 자유를 얻기 위한 5단계 (수미숨)', url: 'https://link.coupang.com/a/hvRFhtUcW4', img: 'https://image5.coupangcdn.com/image/affiliate/banner/f17b85f7eaee9fcd1b19aff59ca87fa5@2x.jpg', active: true },
