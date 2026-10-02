@@ -17,7 +17,7 @@
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="favicon.ico">
 <script src="https://cdn.jsdelivr.net/npm/astronomy-engine@2.1.19/astronomy.browser.min.js"></script>
-<script src="products.js?v=20261002e"></script>
+<script src="products.js?v=20261002f"></script>
 <style>
 :root{--paper:#F4ECDF;--panel:#FBF6EC;--ink:#2B2622;--sub:#6E655C;--line:#DCCFBC;--chip:#EBE0CE;--accent:#9B3D2A;--gold:#B8893E;--goldbg:#B8893E1f}
 *{box-sizing:border-box}
@@ -318,7 +318,8 @@ function richWants(R,chart){const s=R.s,w=[];
  return w}
 function pickProd(name){const M=window.LUCK_ITEM_PRODUCTS||{},P=window.LUCK_PRODUCTS||{};let v=M[name];
  if(typeof v==='string')v=(P[v]||[]).slice(0,1);
- return (Array.isArray(v)?v:v?[v]:[]).filter(x=>x&&x.url&&x.active!==false&&(!x.gender||!G||x.gender===G))}
+ const a=(Array.isArray(v)?v:v?[v]:[]).filter(x=>x&&x.url&&x.active!==false&&(!x.gender||!G||x.gender===G));
+ const k=a.length?Math.floor((Date.now()+9*3600e3)/864e5)%a.length:0;return a.slice(k).concat(a.slice(0,k))}  // 여러 개면 날마다 돌아가며
 function shopHTML(wants,title){const esc=t=>String(t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
  const seen=new Set(),rows=[];
  wants.forEach(([key,lab])=>{if(rows.length>=3)return;const p=pickProd(key).find(x=>!seen.has(x.url));if(p){seen.add(p.url);rows.push([lab,p])}});
