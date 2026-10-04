@@ -1,0 +1,359 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>연애 사주 확인 — 나는 왜 연애가 이렇게 풀릴까? | 내 운 사용설명서</title>
+<meta name="description" content="생년월일만 넣으면 10초 만에 확인해요. 이성 인연의 양·도화·연애 스타일·배우자 자리·이성운이 열리는 달까지, 내 사주의 연애 구조를 바로 봅니다.">
+<link rel="canonical" href="https://mywoon.kr/love">
+<meta name="theme-color" content="#F4ECDF">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="내 운 사용설명서">
+<meta property="og:locale" content="ko_KR">
+<meta property="og:title" content="연애 사주 확인 — 내 연애운, 어떤 구조일까?">
+<meta property="og:description" content="이성 인연·도화·연애 스타일·이성운이 열리는 달까지 생년월일로 바로 확인">
+<meta property="og:url" content="https://mywoon.kr/love">
+<meta property="og:image" content="https://mywoon.kr/og.png?v=2">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="favicon.ico">
+<script src="https://cdn.jsdelivr.net/npm/astronomy-engine@2.1.19/astronomy.browser.min.js"></script>
+<style>
+:root{--paper:#F4ECDF;--panel:#FBF6EC;--ink:#2B2622;--sub:#6E655C;--line:#DCCFBC;--chip:#EBE0CE;--accent:#9B3D2A;--gold:#B8893E;--goldbg:#B8893E1f}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Pretendard","Noto Sans KR","Malgun Gothic",sans-serif;line-height:1.6;word-break:keep-all}
+main{max-width:520px;margin:0 auto;padding:22px 16px 48px}
+.brand{margin:0;font-size:12.5px;letter-spacing:.04em;color:var(--accent);font-weight:700}
+.brand a{color:inherit;text-decoration:none}
+h1{margin:6px 0 6px;font-size:26px;line-height:1.3;letter-spacing:-.01em}
+.lead{margin:0 0 18px;color:var(--sub);font-size:14.5px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:16px}
+label.f{display:block;font-size:13px;font-weight:700;color:var(--sub);margin:0 0 6px}
+.row{display:grid;grid-template-columns:1.3fr 1fr 1fr;gap:6px;margin-bottom:12px}
+.row2{display:grid;grid-template-columns:1fr 1fr auto;gap:6px;align-items:center;margin-bottom:12px}
+select{width:100%;font:inherit;font-size:15px;padding:10px 8px;border:1px solid var(--line);border-radius:10px;background:#fff;color:var(--ink)}
+.chk{font-size:13.5px;color:var(--sub);white-space:nowrap}
+.seg{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:14px}
+.seg button{font:inherit;padding:10px;border-radius:10px;border:1px solid var(--line);background:#fff;color:var(--sub)}
+.seg button.on{background:var(--chip);color:var(--ink);font-weight:700;border-color:var(--sub)}
+.primary{display:block;width:100%;font:inherit;font-size:16px;font-weight:700;padding:14px;border:0;border-radius:14px;background:var(--ink);color:var(--paper);cursor:pointer}
+.err{color:var(--accent);font-size:13px;min-height:1em;margin:0 0 8px}
+.priv{margin:10px 0 0;font-size:12.5px;color:var(--sub)}
+#res{margin-top:18px}
+.verdict{background:var(--ink);color:var(--paper);border-radius:18px;padding:18px 16px;margin-bottom:12px}
+.verdict small{display:block;font-size:12px;opacity:.75;margin-bottom:4px}
+.verdict b{display:block;font-size:22px;line-height:1.35;margin-bottom:6px}
+.verdict p{margin:0;font-size:14.5px;opacity:.92}
+.pillars{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:4px 0 6px}
+.pl{background:#fff;border:1px solid var(--line);border-radius:12px;text-align:center;padding:8px 2px}
+.pl small{display:block;font-size:11px;color:var(--sub)}
+.pl .c{display:block;font-size:22px;font-weight:700;line-height:1.25;margin:2px 0}
+.pl .c.j{color:var(--gold);background:var(--goldbg);border-radius:8px}
+.pl .g{display:block;font-size:10.5px;color:var(--sub)}
+.legend{font-size:12px;color:var(--sub);margin:0 0 4px}
+.item{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:14px 16px;margin-top:10px}
+.item h3{margin:0 0 4px;font-size:15px;display:flex;align-items:center;gap:8px}
+.item h3 .no{display:inline-grid;place-items:center;width:22px;height:22px;border-radius:50%;background:var(--chip);font-size:12px}
+.tag{display:inline-block;font-size:12.5px;font-weight:700;padding:2px 10px;border-radius:999px;margin:2px 0 6px}
+.tag.yes{background:var(--goldbg);color:#8a6418}
+.tag.mid{background:var(--chip);color:var(--sub)}
+.tag.no{background:#9B3D2A14;color:var(--accent)}
+.item p{margin:0;font-size:14.5px}
+.basis{margin-top:6px!important;font-size:12px!important;color:var(--sub)}
+.dw{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.dw span{font-size:12.5px;padding:3px 9px;border-radius:999px;border:1px solid var(--line);background:#fff}
+.dw span.j{background:#B8893E3d;border-color:#b8893e;color:#6b4c12;font-weight:700}
+.dw span.now{outline:2px solid var(--ink)}
+.cta{margin-top:18px;background:var(--panel);border:1px solid #b8893e66;border-radius:18px;padding:16px;box-shadow:inset 3px 0 0 var(--accent)}
+.cta b{display:block;font-size:16px;margin-bottom:4px}
+.cta p{margin:0 0 12px;font-size:14px;color:var(--sub)}
+.share{margin-top:10px;width:100%;font:inherit;font-size:14px;padding:11px;border-radius:12px;border:1px solid var(--line);background:#fff;color:var(--ink);cursor:pointer}
+.fine{margin-top:22px;font-size:12px;color:var(--sub)}
+footer{margin-top:24px;font-size:12px;color:var(--sub);text-align:center}
+footer a{color:var(--sub)}
+.shop{margin:14px 0 0;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px 16px}
+.shop small{color:var(--sub);font-size:12.5px}
+.shop ul{list-style:none;padding:0;margin:8px 0 0;display:flex;flex-direction:column;gap:6px}
+.shop a{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--ink);background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:8px 12px;font-size:13px}
+.shop a img{flex:none;width:52px;height:52px;border-radius:8px;object-fit:cover;background:#fff}
+.shop a .pt{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+.shop a .pt b{font-weight:600;line-height:1.4}
+.shop a em{font-style:normal;font-size:11px;color:var(--sub)}
+.shop .fine{margin:8px 0 0;font-size:10.5px;line-height:1.5;color:var(--sub)}
+.dh{font-style:normal;font-size:10px;color:var(--accent);vertical-align:super;margin-left:1px}
+.dw span.cl{border:1.5px dashed var(--sub)}
+</style>
+</head>
+<body>
+<main>
+ <p class="brand"><a href="/">내 운 사용설명서</a> · 사주 연애 구조</p>
+ <h1>연애 사주 확인</h1>
+ <p class="lead">나는 왜 연애가 이렇게 풀릴까? 이성 인연·끌리는 힘·썸에서 멈추는 이유·이성운이 열리는 달을 생년월일로 10초 만에 확인해요.</p>
+
+ <section class="card" id="form">
+  <label class="f">생년월일 (양력)</label>
+  <div class="row"><select id="y" aria-label="년"></select><select id="m" aria-label="월"></select><select id="d" aria-label="일"></select></div>
+  <label class="f">태어난 시간</label>
+  <div class="row2"><select id="hh" aria-label="시"></select><select id="mi" aria-label="분"></select><label class="chk"><input type="checkbox" id="nt"> 몰라요</label></div>
+  <label class="f">성별 <small style="font-weight:400">(이성 글자와 10년 흐름 계산에 필요해요)</small></label>
+  <div class="seg"><button type="button" data-g="f">여</button><button type="button" data-g="m">남</button></div>
+  <p class="err" id="err"></p>
+  <button class="primary" id="go">내 연애 사주 확인하기</button>
+  <p class="priv">🔒 입력한 정보는 서버로 보내지 않아요. 이 기기 안에서만 계산해요.</p>
+ </section>
+
+ <div id="res"></div>
+
+ <p class="fine">명리 이론에 기반한 참고용 콘텐츠예요. 연애 구조는 관계를 대하는 방식과 흐름을 보는 것이지, 실제 만남이나 결과를 단정하지 않아요. 출생시간을 모르면 시주를 빼고 계산해요.</p>
+ <footer><a href="/">내 운 사용설명서 홈</a> · <a href="policy.html#privacy">개인정보처리방침</a></footer>
+</main>
+<script>
+// index.html 의 사주 엔진을 그대로 복사한 것 (rules-v0.1). 엔진을 고치면 여기도 같이 갱신.
+// ===== 사주 엔진 v0.1 (rules-v0.1) =====
+const STEM=['갑','을','병','정','무','기','경','신','임','계'];
+const BRANCH=['자','축','인','묘','진','사','오','미','신','유','술','해'];
+const STEM_H=['甲','乙','丙','丁','戊','己','庚','辛','壬','癸'];
+const BRANCH_H=['子','丑','寅','卯','辰','巳','午','未','申','酉','戌','亥'];
+const EL=['목','화','토','금','수'];
+const stemEl=s=>Math.floor(s/2);           // 0목1화2토3금4수
+const HIDDEN=[[[8,10],[9,20]],[[9,9],[7,3],[5,18]],[[4,7],[2,7],[0,16]],[[0,10],[1,20]],[[1,9],[9,3],[4,18]],[[4,7],[6,7],[2,16]],
+ [[2,10],[5,9],[3,11]],[[3,9],[1,3],[5,18]],[[4,7],[8,7],[6,16]],[[6,10],[7,20]],[[7,9],[3,3],[4,18]],[[4,7],[0,7],[8,16]]];
+const BR_EL=[4,2,0,0,2,1,1,2,3,3,2,4];
+const CLASH=b=>(b+6)%12;
+const HAP6={0:1,1:0,2:11,11:2,3:10,10:3,4:9,9:4,5:8,8:5,6:7,7:6};
+const TG=['비견','겁재','식신','상관','편재','정재','편관','정관','편인','정인'];
+function tenGod(day,s){const e=stemEl(day),o=stemEl(s),same=(day%2)===(s%2);
+  let k; if(o===e)k=0; else if(o===(e+1)%5)k=2; else if(o===(e+2)%5)k=4; else if(e===(o+2)%5)k=6; else k=8;
+  return TG[k+(same?0:1)];}
+const mod=(a,n)=>((a%n)+n)%n;
+function jdn(y,m,d){const a=Math.floor((14-m)/12),yy=y+4800-a,mm=m+12*a-3;return d+Math.floor((153*mm+2)/5)+365*yy+Math.floor(yy/4)-Math.floor(yy/100)+Math.floor(yy/400)-32045}
+const sunLon=date=>Astronomy.SunPosition(date).elon;
+function jeolNext(date){const l=sunLon(date);const t=mod(15+30*Math.ceil((l-15+1e-9)/30),360);return Astronomy.SearchSunLongitude(t,date,40).date}
+function jeolPrev(date){const l=sunLon(date);const t=mod(15+30*Math.floor((l-15)/30),360);return Astronomy.SearchSunLongitude(t,new Date(date.getTime()-40*864e5),40).date}
+function sajuYear(date){const y=date.getUTCFullYear();const ip=Astronomy.SearchSunLongitude(315,new Date(Date.UTC(y,0,1)),80).date;return date<ip?y-1:y}
+function yearPillar(sy){const i=mod(sy-4,60);return {s:i%10,b:i%12}}
+function monthPillar(date){const sy=sajuYear(date),ys=yearPillar(sy).s;const m=Math.floor(mod(sunLon(date)-315,360)/30);
+  return {s:mod(((ys%5)*2+2)+m,10),b:(m+2)%12}}
+function eot(date){const N=Math.floor((date-Date.UTC(date.getUTCFullYear(),0,0))/864e5);const B=2*Math.PI/365*(N-81);return 9.87*Math.sin(2*B)-7.53*Math.cos(B)-1.5*Math.sin(B)}
+// 한국 표준시·서머타임 이력 (출처: 위키백과 '한국 표준시' 일광절약시간 목록)
+const KR_DST=[['194806010000','194809130000'],['194904030000','194909110000'],['195004010000','195009100000'],['195105060000','195109090000'],
+ ['195505050000','195509090000'],['195605200000','195609300000'],['195705050000','195709220000'],['195805040000','195809210000'],
+ ['195905030000','195909200000'],['196005010000','196009180000'],['198705100200','198710110300'],['198805080200','198810090300']];
+function koreaClockOffset(y,m,d,hh,mm){const k=String(y)+String(m).padStart(2,'0')+String(d).padStart(2,'0')+String(hh??12).padStart(2,'0')+String(mm??0).padStart(2,'0');
+  const ymd=k.slice(0,8);const tz=(ymd>='19540321'&&ymd<='19610809')?8.5:(ymd<'19120101'?8.5:9);
+  const dst=KR_DST.some(([a,b])=>k>=a&&k<b);return {tz,dst}}
+function pairName(p){return STEM[p.s]+BRANCH[p.b]}
+
+function buildChart(inp){
+  // inp: {y,m,d,hh,mm|null,lon,tz,dst,gender:'m'|'f',ziMode:'jo'|'ya'}
+  const off=inp.tz+(inp.dst?1:0);
+  const hasTime=inp.hh!=null;
+  const clockH=hasTime?inp.hh:12, clockM=hasTime?inp.mm:0;
+  const utc=new Date(Date.UTC(inp.y,inp.m-1,inp.d,clockH,clockM)-off*36e5);
+  const trueMin=(inp.lon-inp.tz*15)*4+eot(utc);
+  const tst=new Date(utc.getTime()+(inp.tz*60+trueMin)*6e4); // true solar local (as UTC fields)
+  let dY=tst.getUTCFullYear(),dM=tst.getUTCMonth()+1,dD=tst.getUTCDate(),th=tst.getUTCHours(),tm=tst.getUTCMinutes();
+  let dayShift=0; if(hasTime&&inp.ziMode!=='ya'&&th===23)dayShift=1;
+  const dayIdx=mod(jdn(dY,dM,dD)+dayShift-2415021+10,60);
+  const year=yearPillar(sajuYear(utc)), month=monthPillar(utc), day={s:dayIdx%10,b:dayIdx%12};
+  let hour=null; if(hasTime){const hb=Math.floor((th+1)/2)%12;const hs=(inp.ziMode==='ya'&&th===23)?(day.s+1)%10:day.s;hour={s:mod((hs%5)*2+hb,10),b:hb}} // 야자시: 일주는 당일, 자시 천간은 다음날 기준
+  const pillars={year,month,day,hour};
+  // daewoon
+  const forward=((year.s%2===0)===(inp.gender==='m'));
+  const jd=forward?jeolNext(utc):jeolPrev(utc);
+  const days=Math.abs(jd-utc)/864e5; const startAge=days/3;
+  const dws=[];for(let i=1;i<=9;i++){const k=forward?i:-i;const idx=mod(sexIdx(month)+k,60);
+    const ageStart=startAge+(i-1)*10;dws.push({s:idx%10,b:idx%12,ageStart,yearStart:inp.y+ageStart})}
+  // jeol-day flag (no time)
+  const nearJeol=!hasTime&&(Math.abs(jeolNext(utc)-utc)<864e5||Math.abs(utc-jeolPrev(utc))<864e5);
+  const natal=analyzeNatal(pillars);
+  return {inp,utc,trueSolar:{min:Math.round(trueMin),h:th,m:tm},pillars,forward,daewoonStartAge:startAge,daewoon:dws,nearJeol,natal,hasTime}
+}
+function sexIdx(p){for(let i=0;i<60;i++)if(i%10===p.s&&i%12===p.b)return i}
+
+function analyzeNatal(P){
+  const day=P.day.s; const els=[0,0,0,0,0]; const gods={}; TG.forEach(t=>gods[t]=0);
+  const add=(s,w)=>{els[stemEl(s)]+=w;gods[tenGod(day,s)]+=w};
+  const stems=[[P.year.s,1],[P.month.s,1],[P.hour?P.hour.s:null,1]];
+  stems.forEach(([s,w])=>{if(s!=null)add(s,w)}); els[stemEl(day)]+=1;
+  const brs=[[P.year.b,1],[P.month.b,3],[P.day.b,1.5],[P.hour?P.hour.b:null,1]];
+  brs.forEach(([b,w])=>{if(b==null)return;HIDDEN[b].forEach(([s,d])=>add(s,w*d/30))});
+  const total=els.reduce((a,b)=>a+b,0);
+  const helpEl=[stemEl(day),mod(stemEl(day)-1,5)];
+  let help=0,all=0; stems.forEach(([s,w])=>{if(s==null)return;all+=w;if(helpEl.includes(stemEl(s)))help+=w});
+  brs.forEach(([b,w])=>{if(b==null)return;HIDDEN[b].forEach(([s,d])=>{all+=w*d/30;if(helpEl.includes(stemEl(s)))help+=w*d/30})});
+  const strength=Math.round(Math.max(5,Math.min(95,(help/all)*100*1.35)));
+  const band=strength<40?'신약':strength>60?'신강':'중화';
+  const share=els.map(v=>v/total);
+  const season=[11,0,1].includes(P.month.b)?'winter':[5,6,7].includes(P.month.b)?'summer':'mid';
+  const achieve={표현형:gods.식신+gods.상관,전문형:gods.편인+gods.정인,관리형:gods.정관,실행형:gods.편관+gods.겁재,기회형:gods.편재,안정형:gods.정재+gods.비견};
+  const achieveType=Object.entries(achieve).sort((a,b)=>b[1]-a[1]);
+  const weakEl=share.indexOf(Math.min(...share)), strongEl=share.indexOf(Math.max(...share));
+  return {dayStem:day,dayEl:stemEl(day),elements:share.map(v=>+(v*100).toFixed(1)),strength,band,season,gods,achieveType:achieveType.map(x=>x[0]),weakEl,strongEl}
+}
+
+// ===== 연애 사주 확인 (love-v1) =====
+const $=id=>document.getElementById(id);
+const KO_POS=['년','월','일','시'];
+const DOHWA=[0,3,6,9];            // 자·묘·오·유 = 도화(이성에게 끌리는 글자)
+const SIB=['비견','겁재'],SIKS=['식신','상관'],INS=['편인','정인'];
+let G='';
+const mate=()=>G==='f'?['편관','정관']:['편재','정재'];   // 이성 글자: 여=관성, 남=재성
+const mateName=()=>G==='f'?'관성(남자 글자)':'재성(여자 글자)';
+(function init(){
+ const cy=new Date().getFullYear();
+ $('y').innerHTML='<option value="">년</option>'+Array.from({length:cy-1919},(_,k)=>cy-k).map(v=>`<option value="${v}">${v}년</option>`).join('');
+ $('m').innerHTML='<option value="">월</option>'+Array.from({length:12},(_,k)=>`<option value="${k+1}">${k+1}월</option>`).join('');
+ const days=()=>{const Y=+$('y').value||2000,M=+$('m').value||1,n=new Date(Y,M,0).getDate(),cur=$('d').value;
+  $('d').innerHTML='<option value="">일</option>'+Array.from({length:n},(_,k)=>`<option value="${k+1}" ${+cur===k+1?'selected':''}>${k+1}일</option>`).join('')};
+ days();$('y').onchange=days;$('m').onchange=days;
+ $('hh').innerHTML='<option value="">시</option>'+Array.from({length:24},(_,k)=>`<option value="${k}">${k}시</option>`).join('');
+ $('mi').innerHTML=Array.from({length:12},(_,k)=>`<option value="${k*5}">${k*5}분</option>`).join('');
+ $('nt').onchange=()=>{$('hh').disabled=$('mi').disabled=$('nt').checked};
+ document.querySelectorAll('.seg button').forEach(b=>b.onclick=()=>{G=b.dataset.g;document.querySelectorAll('.seg button').forEach(x=>x.classList.toggle('on',x===b))});
+ try{const p=JSON.parse(localStorage.getItem('myluck:profile')||'null');const i=p&&p.input;if(i&&i.date){const [a,b,c]=i.date.split('-').map(Number);$('y').value=a;$('m').value=b;days();$('d').value=c;
+  if(i.noTime){$('nt').checked=true;$('hh').disabled=$('mi').disabled=true}else if(i.time){const [h,mm]=i.time.split(':').map(Number);$('hh').value=h;$('mi').value=Math.round(mm/5)*5%60}
+  if(i.gender){G=i.gender;document.querySelector(`.seg button[data-g="${G}"]`)?.classList.add('on')}}}catch(_){}
+ $('go').onclick=run;
+})();
+
+function run(){
+ const y=+$('y').value,m=+$('m').value,d=+$('d').value,nt=$('nt').checked,hh=nt?null:($('hh').value===''?null:+$('hh').value),mm=nt?null:+$('mi').value;
+ if(!y||!m||!d){$('err').textContent='생년월일을 모두 골라주세요.';return}
+ if(!nt&&hh==null){$('err').textContent='태어난 시간을 고르거나 "몰라요"를 체크해주세요.';return}
+ if(!G){$('err').textContent='성별을 골라주세요.';return}
+ $('err').textContent='';
+ const off=koreaClockOffset(y,m,d,hh,mm);
+ const chart=buildChart({y,m,d,hh,mm,lon:127.5,tz:off.tz,dst:off.dst,gender:G,ziMode:'jo'});
+ const R=analyze(chart,y);
+ $('res').innerHTML=render(R,chart);
+ $('res').scrollIntoView({behavior:'smooth',block:'start'});
+ window.__last={y,m,d,hh,mm,nt};
+}
+
+// 앞으로 12개월의 월운 (절기 달 기준, 각 달 15일로 계산)
+function monthFlow(P,day,dayB){
+ const MT=mate(),now=new Date(),out=[];
+ for(let i=0;i<12;i++){
+  const dt=new Date(Date.UTC(now.getUTCFullYear(),now.getUTCMonth()+i,15,3));
+  const mp=monthPillar(dt),mainS=HIDDEN[mp.b][HIDDEN[mp.b].length-1][0];
+  let sc=0;
+  if(MT.includes(tenGod(day,mp.s)))sc++;
+  if(MT.includes(tenGod(day,mainS)))sc++;
+  const hap=HAP6[dayB]===mp.b,clash=CLASH(dayB)===mp.b,doh=DOHWA.includes(mp.b);
+  if(hap)sc++;
+  if(doh&&sc>0)sc+=0.5;
+  out.push({label:(dt.getUTCMonth()===0||i===0?`${dt.getUTCFullYear()%100}년 `:'')+`${dt.getUTCMonth()+1}월`,sc,hap,clash,doh,good:sc>=2,cur:i===0});
+ }
+ return out;
+}
+
+function analyze(chart,birthY){
+ const P=chart.pillars,day=P.day.s,n=chart.natal,g=n.gods,MT=mate();
+ const cells=['year','month','day','hour'].map((k,i)=>{const p=P[k];if(!p)return null;
+  const mainS=HIDDEN[p.b][HIDDEN[p.b].length-1][0];
+  return {pos:KO_POS[i],s:p.s,b:p.b,gs:k==='day'?'나':tenGod(day,p.s),gb:tenGod(day,mainS)}});
+ let mateCnt=0;cells.forEach(c=>{if(!c)return;if(c.gs!=='나'&&MT.includes(c.gs))mateCnt++;if(MT.includes(c.gb))mateCnt++});
+ const mateW=g[MT[0]]+g[MT[1]];
+ const brs=cells.filter(Boolean).map(c=>c.b);
+ const dayB=P.day.b;
+ const dohIdx=cells.map((c,i)=>c&&DOHWA.includes(c.b)?i:-1).filter(i=>i>=0);
+ const dohCnt=dohIdx.length;
+ const dohNear=dohIdx.some(i=>i===1||i===2);   // 월지·일지에 있으면 가까운 자리
+ // 1. 이성 인연의 양
+ let s1;
+ if(mateCnt>=3||mateW>=2.2)s1={k:'yes',t:'이성 글자가 많은 편 — 인연이 먼저 다가와요',p:'이성을 뜻하는 글자가 사주에 넉넉해요. 노력하지 않아도 사람이 붙는 편이라, 오히려 누구를 고를지가 숙제예요.'};
+ else if(mateCnt>=1)s1={k:'mid',t:'이성 글자가 적당한 편',p:'인연이 끊기지도 넘치지도 않는 구조예요. 만남의 자리를 만들면 그만큼 이어지는 편이라, 가만히 기다리는 것보다 움직일 때 결과가 나와요.'};
+ else if(mateW>=0.8)s1={k:'mid',t:'이성 글자가 속에 숨어 있는 편',p:'겉으로 드러난 이성 글자는 없지만 지지 속에 들어 있어요. 인연이 눈에 띄게 오기보다, 가까워진 뒤에 마음이 커지는 타입이에요.'};
+ else s1={k:'no',t:'이성 글자가 거의 없는 구조 — 인연이 늦게 열려요',p:'원국에는 이성 글자가 드러나지 않아요. 인연이 없는 게 아니라 10년 흐름이나 올해·달 운에서 들어올 때 한꺼번에 열리는 타입이에요. 아래 6번 시기를 꼭 보세요.'};
+ // 2. 끌리는 힘 (도화)
+ let s2;
+ if(dohCnt>=2&&dohNear)s2={k:'yes',t:`도화 ${dohCnt}개 — 분위기만으로도 눈에 띄는 편`,p:'이성에게 끌리는 기운(도화)이 가까운 자리까지 있어요. 말투·분위기 하나로 호감을 얻는 타입이라, 선을 어디에 둘지 스스로 정해 두면 편해요.'};
+ else if(dohCnt>=1)s2={k:'mid',t:`도화 ${dohCnt}개 — 은근한 매력이 있는 편`,p:'끌리는 기운이 있어서, 가까워질수록 매력이 크게 느껴지는 타입이에요. 첫인상보다 두 번째 만남에서 반응이 커요.'};
+ else s2={k:'mid',t:'도화 없음 — 진중하게 다가가는 편',p:'화려하게 끌리는 타입은 아니에요. 대신 오래 보면 믿음이 가는 쪽이라, 천천히 쌓는 연애가 잘 맞아요.'};
+ // 3. 연애 스타일 / 썸에서 멈추는 이유
+ const insW=g.편인+g.정인,sikW=g.식신+g.상관,bigW=g.비견+g.겁재,gwan=g.편관+g.정관;
+ const top=[['ins',insW],['sik',sikW],['big',bigW],['gwan',gwan]].sort((a,b)=>b[1]-a[1])[0];
+ let s3,style;
+ if(top[1]<1.2)s3=style={k:'yes',t:'균형형 — 한쪽으로 쏠리지 않는 연애',p:'생각·표현·자기 페이스가 고르게 있어서 연애의 흐름이 무난해요. 큰 약점이 없는 대신, 마음이 가는 사람에게는 먼저 표현하는 한 번이 필요해요.',h:'균형 잡힌 연애 사주'};
+ else if(top[0]==='ins')s3=style={k:'mid',t:'생각 많은 타입 — 머릿속에서 먼저 결론을 내요',p:'생각하고 따지는 기운(인성)이 강해요. 마음이 가도 머릿속에서 먼저 정리해 버려서, 상대가 다가오기 전에 선을 긋다가 썸에서 끝나기 쉬워요. 결론을 내기 전에 한 번 만나 보는 게 답이에요.',h:'생각이 앞서는 연애 사주'};
+ else if(top[0]==='sik')s3=style={k:'mid',t:'표현 센 타입 — 마음이 말과 행동으로 다 나와요',p:'표현하는 기운(식상)이 강해요. 호감이 생기면 숨기지 못하고, 재미없어지면 티가 나요. 속도가 빠른 만큼 상대와 속도를 맞추는 게 포인트예요.',h:'표현이 앞서는 연애 사주'};
+ else if(top[0]==='big')s3=style={k:'mid',t:'내 페이스 센 타입 — 연애에서도 주도권이 중요해요',p:'나를 지키는 기운(비견·겁재)이 강해요. 끌려가는 연애를 못 견뎌서, 상대가 맞춰 주지 않으면 흥미가 식기 쉬워요. 먼저 한 발 양보하는 연습이 연애를 길게 만들어요.',h:'내 페이스가 강한 연애 사주'};
+ else s3=style={k:'mid',t:'책임감 큰 타입 — 연애도 의무처럼 느끼기 쉬워요',p:'나를 누르고 이끄는 기운(관성)이 강해요. 좋아하는 마음보다 상대 기대를 먼저 챙기다 지치기 쉬워요. 내가 원하는 걸 한 번 말해 보는 게 중요해요.',h:'책임감이 앞서는 연애 사주'};
+ // 4. 배우자 자리(일지)의 안정감
+ const others=cells.filter((c,i)=>c&&i!==2).map(c=>c.b);
+ const clashes=others.filter(b=>b===CLASH(dayB)).length,haps=others.filter(b=>b===HAP6[dayB]).length;
+ const dayGod=cells[2].gb;
+ let s4;
+ if(clashes>0)s4={k:'no',t:'배우자 자리가 부딪혀요 — 인연의 변동이 큰 편',p:'내 연애·결혼 자리(일지)를 흔드는 글자가 같은 사주에 있어요. 만남과 헤어짐이 잦거나, 관계에 변화가 오는 시기가 뚜렷한 편이에요. 급하게 정하기보다 변화가 지나간 뒤 결정하면 좋아요.'};
+ else if(haps>0)s4={k:'yes',t:'배우자 자리에 합이 있어요 — 인연이 붙는 구조',p:'내 연애 자리와 손잡는 글자가 있어요. 한 번 마음을 열면 관계가 깊어지고 오래 가는 편이에요.'};
+ else s4={k:'mid',t:'배우자 자리가 조용해요 — 변동 없이 안정적인 편',p:'일지를 흔드는 글자도, 끌어당기는 글자도 크게 없어요. 큰 사건 없이 흘러가는 대신, 인연은 올해·달 운에서 들어오는 때가 중요해요.'};
+ // 5. 이성 문제 주의 구조
+ const hasPy=g[MT[0]]>=0.5&&g[MT[1]]>=0.5;         // 정·편 둘 다 (혼잡)
+ const dohClash=[[0,6],[3,9]].some(([a,b])=>brs.includes(a)&&brs.includes(b));
+ const w=[];if(hasPy)w.push(G==='f'?'정관·편관이 함께 있어 이성 글자가 섞여 있어요(관성혼잡). 마음이 한 사람에게 모이기 어려운 구조예요.':'정재·편재가 함께 있어 이성 글자가 섞여 있어요(재성혼잡). 마음이 한 사람에게 모이기 어려운 구조예요.');
+ if(dohClash)w.push('끌리는 글자(도화)끼리 부딪혀요. 호감과 갈등이 같이 들어오는 구조라, 이성 문제가 커지기 쉬워요.');
+ const s5=w.length?{k:'no',t:'이성 문제를 조심해야 하는 구조',p:w.join(' ')+' 선을 먼저 정하고, 애매한 관계를 오래 끌지 않는 게 좋아요.'}
+  :{k:'yes',t:'이성 문제가 꼬일 구조는 아니에요',p:'글자가 섞이거나 부딪히는 곳이 없어요. 마음이 정해지면 한 사람에게 모이는 편이라, 관계가 복잡해질 가능성이 낮아요.'};
+ // 6. 이성운이 열리는 때 (10년 + 앞으로 12개월)
+ const cy=new Date().getFullYear(),age=cy-birthY;
+ const dws=chart.daewoon.map(dw=>{const mainS=HIDDEN[dw.b][HIDDEN[dw.b].length-1][0];const j=MT.includes(tenGod(day,dw.s))||MT.includes(tenGod(day,mainS));
+  const a0=Math.floor(dw.ageStart)+1,a1=a0+9;return {a0,a1,y0:birthY+a0-1,j,now:age>=a0&&age<=a1}}).filter(x=>x.a0<=90);
+ const nextJ=dws.find(x=>x.j&&x.a1>=age);
+ const mf=monthFlow(P,day,dayB);
+ const goods=mf.filter(x=>x.good).map(x=>x.label);
+ const clashM=mf.filter(x=>x.clash).map(x=>x.label);
+ let t6,p6;
+ if(goods.length){t6=`앞으로 12개월 중 이성운이 열리는 달 ${goods.length}개`;p6=`금색 달에 이성 글자나 인연을 붙이는 글자가 들어와요. 이 달엔 소개·모임·연락을 먼저 해 보세요.`+(clashM.length?` 점선 테두리 달(${clashM.join(', ')})은 내 연애 자리를 흔드는 달이라 큰 결정은 피하는 게 좋아요.`:'')}
+ else{t6='앞으로 12개월은 잔잔한 흐름';p6='이성 글자가 눈에 띄게 들어오는 달은 없어요. 대신 이 기간엔 나를 가꾸고 만남의 자리를 넓히는 데 쓰면, 다음 흐름이 왔을 때 바로 이어져요.'+(clashM.length?` 흔들리는 달(${clashM.join(', ')})엔 큰 결정을 미루세요.`:'')}
+ const tenYr=nextJ?(nextJ.now?'지금이 이성 글자가 들어온 10년 흐름 안이에요.':`다음 이성 10년 흐름은 ${nextJ.a0}세 무렵(${nextJ.y0}년~)이에요.`):'남은 10년 흐름에서는 이성 글자가 적은 편이에요.';
+ const s6={k:goods.length?'yes':'mid',t:t6,p:p6+' '+tenYr,mf,dws};
+ // 대표 타입
+ let head;
+ if(s5.k==='no'&&(s2.k==='yes'||s1.k==='yes'))head={t:'이성이 몰리고 마음이 흔들리는 사주',p:'인연은 충분한데, 선을 정해 두지 않으면 관계가 복잡해지기 쉬운 구조예요.'};
+ else if(s1.k==='yes'&&s2.k==='yes')head={t:'이성이 먼저 다가오는 사주',p:'노력하지 않아도 인연이 붙는 구조예요. 고르는 눈이 연애운을 결정해요.'};
+ else if(s1.k==='no')head={t:'인연이 늦게 열리는 사주',p:'이성 글자가 시기에 맞춰 들어와요. 때가 오면 한꺼번에 열리는 타입이에요.'};
+ else if(s4.k==='no')head={t:'만남과 변화가 잦은 사주',p:'인연의 변동이 뚜렷한 구조예요. 변화가 지난 뒤의 선택이 오래 가요.'};
+ else head={t:style.h,p:style.p.split('. ')[0]+'.'};
+ return {cells,mateCnt,s:[s1,s2,s3,s4,s5,s6],head,goods,clashM};
+}
+
+function render(R,chart){
+ const esc=t=>String(t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+ const MT=mate();
+ const cell=c=>c?`<div class="pl"><small>${c.pos}주</small><span class="c ${MT.includes(c.gs)?'j':''}">${STEM_H[c.s]}</span><span class="g">${c.gs}</span><span class="c ${MT.includes(c.gb)?'j':''}">${BRANCH_H[c.b]}${DOHWA.includes(c.b)?'<i class="dh">桃</i>':''}</span><span class="g">${c.gb}</span></div>`
+  :`<div class="pl"><small>시주</small><span class="c" style="color:var(--line)">?</span><span class="g">시간 모름</span><span class="c" style="color:var(--line)">?</span><span class="g">&nbsp;</span></div>`;
+ const H=['이성 인연의 양','이성에게 끌리는 힘 (도화)','연애 스타일 · 썸에서 멈추는 이유','배우자 자리의 안정감','이성 문제 주의 구조','이성운이 열리는 때 (앞으로 12개월)'];
+ const gd=chart.natal.gods;
+ const B=[`${mateName()} ${R.mateCnt}개 · 비중 ${(gd[MT[0]]+gd[MT[1]]).toFixed(1)}`,
+  `도화 글자(子·卯·午·酉) = 사주의 '桃' 표시`,
+  `인성 ${(gd.편인+gd.정인).toFixed(1)} · 식상 ${(gd.식신+gd.상관).toFixed(1)} · 비겁 ${(gd.비견+gd.겁재).toFixed(1)} · 관성 ${(gd.편관+gd.정관).toFixed(1)}`,
+  `일지(${BRANCH_H[chart.pillars.day.b]})의 충·합 여부`,
+  `${G==='f'?'정관·편관 혼재':'정재·편재 혼재'} · 도화끼리 충 여부`,
+  `금색 = 이성 글자·합이 들어오는 달 · 점선 테두리 = 일지를 충하는 달 (절기 기준 달이라 월초 며칠은 앞 달이에요)`];
+ const items=R.s.map((s,i)=>`<section class="item"><h3><span class="no">${i+1}</span>${H[i]}</h3><span class="tag ${s.k}">${esc(s.t)}</span><p>${esc(s.p)}</p>
+  ${i===5?`<div class="dw">${s.mf.map(x=>`<span class="${x.good?'j':''} ${x.clash?'cl':''} ${x.cur?'now':''}">${x.label}${x.good?' ♥':''}${x.clash?' ⚡':''}</span>`).join('')}</div>
+  <p class="basis">10년 흐름 · 금색 = 이성 글자가 들어오는 10년</p><div class="dw">${s.dws.map(x=>`<span class="${x.j?'j':''} ${x.now?'now':''}">${x.a0}~${x.a1}세${x.now?' · 지금':''}</span>`).join('')}</div>`:''}<p class="basis">근거 · ${B[i]}</p></section>`).join('');
+ return `<section class="verdict"><small>내 연애 구조</small><b>${esc(R.head.t)}</b><p>${esc(R.head.p)}</p></section>
+ <section class="card"><p class="legend">내 사주 여덟 글자 · <b style="color:var(--gold)">금색</b>이 ${mateName()} · 이성 글자 ${R.mateCnt}개 · <i class="dh">桃</i> 도화</p>
+ <div class="pillars">${['hour','day','month','year'].map(k=>cell(R.cells[{year:0,month:1,day:2,hour:3}[k]])).join('')}</div>
+ <p class="legend">일주 윗글자(${STEM_H[chart.pillars.day.s]})가 '나'예요. 지지는 가장 큰 지장간(본기) 기준이에요.</p></section>
+ ${items}
+ <section class="cta"><b>나와 상대가 잘 맞는지까지</b><p>두 사람의 궁합, 서로 끌리는 이유와 부딪히는 지점, 연애가 길어지는 방법을 이어서 볼 수 있어요. 내 운 사용설명서에서 무료 6카드부터 시작해 보세요.</p>
+  <button class="primary" onclick="toApp()">내 운 사용설명서 무료로 보기</button>
+  <button class="share" onclick="shareIt()">결과 공유하기</button></section>`;
+}
+
+function toApp(){
+ const L=window.__last;if(!L)return location.href='/';
+ const date=`${L.y}-${String(L.m).padStart(2,'0')}-${String(L.d).padStart(2,'0')}`,time=L.nt?'':`${String(L.hh).padStart(2,'0')}:${String(L.mm).padStart(2,'0')}`;
+ try{const old=JSON.parse(localStorage.getItem('myluck:profile')||'null')||{};const oi=old.input||{};
+  const same=oi.date===date&&oi.gender===G&&(!!oi.noTime)===L.nt&&(L.nt||oi.time===time);
+  const input=same?oi:{name:oi.name||'',date,time,noTime:L.nt,sido:'u',sgg:0,lon:127.5,tz:null,place:'모름',gender:G,ya:false,dst:false};
+  localStorage.setItem('myluck:profile',JSON.stringify({input,mbti:same?old.mbti||null:null,savedAt:Date.now()}))}catch(_){}
+ location.href='/#start';
+}
+function shareIt(){const url='https://mywoon.kr/love',t='연애 사주 확인 — 내 연애운, 어떤 구조일까?';
+ if(navigator.share)navigator.share({title:t,url}).catch(()=>{});else{navigator.clipboard?.writeText(url);alert('링크를 복사했어요.')}}
+</script>
+</body>
+</html>
