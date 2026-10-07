@@ -1250,7 +1250,8 @@ async function start(){
   // 무료 카드 4종은 모두 미리 만든 조각을 조립한다(AI 호출 없음).
   ['P','A','B','M'].forEach(ensure);
   // 궁합 보기에서 내 정보를 먼저 넣으러 왔던 경우 → 상대 입력으로 이어간다
-  if(S.after==='match'){S.after=null;S.match.calc=null;go('matchInput')}}
+  if(S.after==='match'){S.after=null;S.match.calc=null;go('matchInput')}
+  else if(S.after==='rel'){S.after=null;relOpen()}}
 function ensure(g){const ready=true;if(ready&&(!S.ai[g]||(S.ai[g].error&&!S.ai[g].tried)))runAI(g)}
 
 function brief(){const D=S.data,c=D.chart,n=c.natal;
@@ -3226,6 +3227,11 @@ function matchPromo(){return `<button class="promo mpromo" onclick="matchOpen()"
 if(/^#match/.test(location.hash)&&!PAY_RETURN)READY.then(()=>matchOpen());
 // 주소 끝 #start — 부자 사주 확인 페이지 등에서 넘어올 때 바로 입력 화면(저장된 생년월일이 미리 채워짐)
 if(/^#start/.test(location.hash)&&!PAY_RETURN)READY.then(()=>go('input'));
+// 주소 끝 #rel — 관계 사용설명서 바로가기. 저장된 정보가 있으면 ① 무료 미리보기로, 없으면 입력 후 이어간다
+if(/^#rel/.test(location.hash)&&!PAY_RETURN)READY.then(()=>{const p=S.saved;
+  if(!p){S.after='rel';return go('input')}
+  S.input=p.input;S.mbti=p.mbti;try{S.data=makeData()}catch(e){S.after='rel';return go('input')}
+  relOpen()});
 
 
 function shareHTML(){const D=S.data,A=ok('P')?S.ai.P.profile:{},m=S.mbti;
